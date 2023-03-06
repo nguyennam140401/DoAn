@@ -2,7 +2,10 @@ import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 
 import counterReducer from "./features/counter/counterSlice";
 import cartReducer from "./features/cart/cartSlice";
+import authenReducer from "./features/authen/authenSlice";
+import applicationReducer from "./features/application/applicationSlice";
 import { productSlice } from "./features/product/productSlice";
+import { authenApi } from "./features/authen/authenApi";
 
 export function makeStore() {
 	return configureStore({
@@ -10,9 +13,14 @@ export function makeStore() {
 			counter: counterReducer,
 			cart: cartReducer,
 			[productSlice.reducerPath]: productSlice.reducer,
+			[authenApi.reducerPath]: authenApi.reducer,
+			authenReducer: authenReducer,
+			application: applicationReducer,
 		},
 		middleware: (getDefaultMiddleware) =>
-			getDefaultMiddleware().concat(productSlice.middleware),
+			getDefaultMiddleware()
+				.concat(productSlice.middleware)
+				.concat(authenApi.middleware),
 	});
 }
 

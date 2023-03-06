@@ -9,7 +9,6 @@ import { API_URL_BASE, productPath } from "../../constant/apiPath";
 import MainLayout from "../../layouts/MainLayout";
 import { addProduct } from "../../features/cart/cartSlice";
 import { ProductCart } from "../../features/cart/modal";
-import { useDispatch } from "react-redux";
 import { useAppDispatch } from "../../hooks";
 
 type ProductDetailPageProps = {
@@ -19,8 +18,9 @@ type ProductDetailPageProps = {
 const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 	const [quantity, setQuantity] = useState(1);
 	const [isFavorite, setIsFavorite] = useState(false);
-	const [rating, setRating] = useState(0);
 	const dispatch = useAppDispatch();
+	const handleAddCart = () => {};
+	const handleAddFavorite = () => {};
 	return (
 		<MainLayout>
 			<div className="flex flex-col md:flex-row">
@@ -62,7 +62,6 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 					<button
 						className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
 						onClick={() => {
-							console.log(product, quantity);
 							const payload: ProductCart = {
 								id: product.id,
 								name: product.name,

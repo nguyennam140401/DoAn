@@ -10,10 +10,8 @@ export const cartSlice = createSlice({
 	initialState,
 	reducers: {
 		addProduct: (state, action: PayloadAction<ProductCart>) => {
-			console.log(action.payload);
 			if (state.find((item) => item.id === action.payload.id) !== null) {
 				state.push(action.payload);
-				console.log(state);
 			} else {
 				let productExist = state.find((item) => item.id === action.payload.id);
 				if (productExist) {

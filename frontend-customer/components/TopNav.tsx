@@ -1,22 +1,41 @@
 import Link from "next/link";
-import React, { useEffect } from "react";
-import { useGetCartByIdQuery } from "../features/cart/cartAPI";
-import { useAppSelector } from "../hooks";
+import React from "react";
+import styled from "styled-components";
+import { useAppDispatch, useAppSelector } from "../hooks";
 import { AppState } from "../store";
 import Input from "./Input";
-
+import { useRouter } from "next/router";
+import { logoutSuccess } from "../features/authen/authenSlice";
 type Props = {};
-
+const Style = styled.div`
+	.avatar {
+		position: relative;
+		.avatar-options {
+			display: none;
+		}
+		&:hover {
+			.avatar-options {
+				display: block;
+			}
+		}
+		&::before {
+			content: "";
+			width: 100%;
+			height: 10px;
+			background-color: transparent;
+			position: absolute;
+			left: 0;
+			top: 100%;
+		}
+	}
+`;
 function TopNav({}: Props) {
 	const quantityProductInCart = useAppSelector((state: AppState) =>
 		state.cart.reduce((pre, current) => (pre += current.quantity), 0)
 	);
-	// useEffect(() => {
-	// 	//Lấy thông tin giỏ hàng khi lần đầu vào ứng dụng
-	// 	const idUser = "12345";
-	// 	useGetCartByIdQuery(idUser);
-	// }, []);
-
+	const authenReducer = useAppSelector(
+		(state: AppState) => state.authenReducer
+	);
 	const arrItemInNav = [
 		{
 			name: "Home",
@@ -42,13 +61,29 @@ function TopNav({}: Props) {
 			name: "Liên hệ",
 			url: "/",
 		},
+	];
+	const arrMenuAuthen = [
 		{
-			name: "Đăng nhập",
-			url: "/",
+			name: "Setting",
+			icon: "",
+		},
+		{
+			name: "Wishlist",
+			icon: "",
+		},
+		{
+			name: "Logout",
+			icon: "",
 		},
 	];
+	const dispatch = useAppDispatch();
+	const router = useRouter();
+	const handleLogout = () => {
+		dispatch(logoutSuccess());
+		router.push("/");
+	};
 	return (
-		<div className="flex justify-between">
+		<Style className="px-4 flex justify-between">
 			<div className="flex">
 				<div className="px-3 py-2 bg-gray-200">Logo</div>
 				<form>
@@ -87,75 +122,83 @@ function TopNav({}: Props) {
 					</div>
 				</Link>
 
-				<div className="h-10 w-10 hover:ring-4 user cursor-pointer relative ring-blue-700/30 rounded-full bg-cover bg-center bg-[url('https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80')]">
-					<div className="drop-down  w-48 overflow-hidden bg-white rounded-md shadow absolute top-12 right-3">
-						<ul>
-							<li className="px-3 py-3 text-sm font-medium flex items-center space-x-2 hover:bg-slate-400">
-								<span>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										className="h-5 w-5"
-										fill="none"
-										viewBox="0 0 24 24"
-										stroke="currentColor"
-									>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth="2"
-											d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-										/>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth="2"
-											d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-										/>
-									</svg>
-								</span>
-								<span> Setting </span>
-							</li>
-							<li className="px-3  py-3  text-sm font-medium flex items-center space-x-2 hover:bg-slate-400">
-								<span>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										className="h-6 w-6"
-										fill="none"
-										viewBox="0 0 24 24"
-										stroke="currentColor"
-									>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth="2"
-											d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-										/>
-									</svg>
-								</span>
-								<span> Wishlist </span>
-							</li>
-							<li className="px-3  py-3 text-sm font-medium flex items-center space-x-2 hover:bg-slate-400">
-								<span>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										className="h-6 w-6"
-										fill="none"
-										viewBox="0 0 24 24"
-										stroke="currentColor"
-									>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth="2"
-											d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-										/>
-									</svg>
-								</span>
-								<span> Logout </span>
-							</li>
-						</ul>
+				{authenReducer.isLoggedIn ? (
+					<div className="h-10 avatar w-10 hover:ring-4 user cursor-pointer relative ring-blue-700/30 rounded-full bg-cover bg-center bg-[url('https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80')]">
+						<div className="avatar-options drop-down w-48 overflow-hidden bg-white rounded-md shadow absolute top-12 right-1">
+							<ul>
+								<li className="px-3 py-3 text-sm font-medium flex items-center space-x-2 hover:bg-slate-400">
+									<span>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											className="h-5 w-5"
+											fill="none"
+											viewBox="0 0 24 24"
+											stroke="currentColor"
+										>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												strokeWidth="2"
+												d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+											/>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												strokeWidth="2"
+												d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+											/>
+										</svg>
+									</span>
+									<span> Setting </span>
+								</li>
+								<li className="px-3  py-3  text-sm font-medium flex items-center space-x-2 hover:bg-slate-400">
+									<span>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											className="h-6 w-6"
+											fill="none"
+											viewBox="0 0 24 24"
+											stroke="currentColor"
+										>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												strokeWidth="2"
+												d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+											/>
+										</svg>
+									</span>
+									<span> Wishlist </span>
+								</li>
+								<li
+									onClick={handleLogout}
+									className="px-3  py-3 text-sm font-medium flex items-center space-x-2 hover:bg-slate-400"
+								>
+									<span>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											className="h-6 w-6"
+											fill="none"
+											viewBox="0 0 24 24"
+											stroke="currentColor"
+										>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												strokeWidth="2"
+												d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+											/>
+										</svg>
+									</span>
+									<span> Logout </span>
+								</li>
+							</ul>
+						</div>
 					</div>
-				</div>
+				) : (
+					<Link href="/authen/SignIn">Đăng nhập</Link>
+				)}
+
 				<div className="sm:hidden cursor-pointer" id="mobile-toggle">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -174,7 +217,7 @@ function TopNav({}: Props) {
 					</svg>
 				</div>
 			</div>
-		</div>
+		</Style>
 	);
 }
 

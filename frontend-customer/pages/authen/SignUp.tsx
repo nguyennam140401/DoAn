@@ -1,10 +1,20 @@
 import { Formik } from "formik";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
+import { useDispatch } from "react-redux";
 import * as yup from "yup";
+import { Status } from "../../common/enum";
 import Input from "../../components/Input";
+import Loading from "../../components/Loading";
+import { addNotification } from "../../features/application/applicationSlice";
+import { useSignUpMutation } from "../../features/authen/authenApi";
 type Props = {};
 
 export default function SignUp({}: Props) {
+	const [signUp, { isLoading, isError, isSuccess, error }] =
+		useSignUpMutation();
+	const router = useRouter();
 	const formSchema = yup.object().shape({
 		name: yup.string().required("Tên đăng nhập không được để trống"),
 		email: yup
@@ -28,130 +38,155 @@ export default function SignUp({}: Props) {
 		password: "",
 		confirmPassword: "",
 	};
-	const submit = (data: any) => {
-		console.log(data);
+	const dispatch = useDispatch();
+	const submit = async ({ confirmPassword, ...payload }: any) => {
+		const res: any = await signUp(payload);
+		if (!res.error) {
+			router.push("/authen/SignIn");
+			dispatch(
+				addNotification({
+					title: "Thành công",
+					description: res?.error?.data?.message || "Đăng ký thành công",
+					status: Status.Success,
+				})
+			);
+		} else {
+			dispatch(
+				addNotification({
+					title: "Thất bại",
+					description: res?.error?.data?.message || "Đăng ký thất bại",
+					status: Status.Danger,
+				})
+			);
+		}
 	};
 	return (
-		<div className="bg-gray-200 w-full min-h-screen flex items-center justify-center">
-			<div className="w-full py-8">
-				<div className="flex items-center justify-center space-x-2">
-					<svg
-						className="h-16 w-16 text-blue-600"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke="currentColor"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"
-						></path>
-					</svg>
-					<h1 className="text-3xl font-bold text-blue-600 tracking-wider">
-						Template
-					</h1>
-				</div>
-				<div className="bg-white w-5/6 md:w-3/4 lg:w-2/3 xl:w-[500px] 2xl:w-[550px] mt-8 mx-auto px-16 py-8 rounded-lg shadow-2xl">
-					<h2 className="text-center text-2xl font-bold tracking-wide text-gray-800">
-						Sign Up
-					</h2>
-					<p className="text-center text-sm text-gray-600 mt-2">
-						Already have an account?{" "}
-						<a
-							href="#"
-							className="text-blue-600 hover:text-blue-700 hover:underline"
-							title="Sign In"
+		<>
+			<div className="bg-gray-200 w-full min-h-screen flex items-center justify-center">
+				{isLoading && <Loading />}
+				<div className="w-full py-8">
+					<div className="flex items-center justify-center space-x-2">
+						<svg
+							className="h-16 w-16 text-blue-600"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
 						>
-							Sign in here
-						</a>
-					</p>
-
-					<Formik
-						initialValues={initalValue}
-						onSubmit={submit}
-						validationSchema={formSchema}
-					>
-						{({
-							values,
-							touched,
-							errors,
-							handleChange,
-							handleBlur,
-							handleSubmit,
-						}) => (
-							<>
-								<Input
-									label="Tên người dùng"
-									placeholder="Tên người dùng"
-									name="name"
-									onChange={handleChange}
-									onBlur={handleBlur}
-									value={values.name}
-									helperText={touched.name && errors.name ? errors.name : null}
-									error={errors.name !== "" && touched.name}
-								></Input>
-								<Input
-									label="Email"
-									placeholder="Email"
-									name="email"
-									onChange={handleChange}
-									onBlur={handleBlur}
-									value={values.email}
-									helperText={
-										touched.email && errors.email ? errors.email : null
-									}
-									error={errors.email !== "" && touched.email}
-								></Input>
-								<Input
-									type={"password"}
-									label="Mật khẩu"
-									placeholder="Mật khẩu"
-									name="password"
-									onChange={handleChange}
-									onBlur={handleBlur}
-									value={values.password}
-									helperText={
-										touched.password && errors.password ? errors.password : null
-									}
-									error={errors.password !== "" && touched.password}
-								></Input>
-								<Input
-									type={"password"}
-									label="Xác nhận mật khẩu"
-									placeholder="Xác nhận mật khẩu"
-									name="confirmPassword"
-									onChange={handleChange}
-									onBlur={handleBlur}
-									value={values.confirmPassword}
-									helperText={
-										touched.confirmPassword && errors.confirmPassword
-											? errors.confirmPassword
-											: null
-									}
-									error={
-										errors.confirmPassword !== "" && touched.confirmPassword
-									}
-								></Input>
-								<div className="my-4 flex items-center justify-end space-x-4">
-									<button
-										type="submit"
-										onClick={() => handleSubmit()}
-										className="bg-blue-600 hover:bg-blue-700 rounded-lg px-8 py-2 text-gray-100 hover:shadow-xl transition duration-150 uppercase"
-									>
-										Sign Up
-									</button>
-								</div>
-							</>
-						)}
-					</Formik>
-					<div className="flex items-center justify-between">
-						<div className="w-full h-[1px] bg-gray-300"></div>
-						<span className="text-sm uppercase mx-6 text-gray-400">Or</span>
-						<div className="w-full h-[1px] bg-gray-300"></div>
+							<path
+								strokeLinecap="round"
+								stroke-linejoin="round"
+								strokeWidth="2"
+								d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"
+							></path>
+						</svg>
+						<h1 className="text-3xl font-bold text-blue-600 tracking-wider">
+							Template
+						</h1>
 					</div>
+					<div className="bg-white w-5/6 md:w-3/4 lg:w-2/3 xl:w-[500px] 2xl:w-[550px] mt-8 mx-auto px-16 py-8 rounded-lg shadow-2xl">
+						<h2 className="text-center text-2xl font-bold tracking-wide text-gray-800">
+							Đăng Ký
+						</h2>
+						<p className="text-center text-sm text-gray-600 mt-2">
+							Bạn đã có tài khoản?{" "}
+							<Link
+								href="/authen/SignIn"
+								className="text-blue-600 hover:text-blue-700 hover:underline"
+								title="Đăng nhập"
+							>
+								Đăng nhập ngay
+							</Link>
+						</p>
 
-					{/* <div className="text-sm">
+						<Formik
+							initialValues={initalValue}
+							onSubmit={submit}
+							validationSchema={formSchema}
+						>
+							{({
+								values,
+								touched,
+								errors,
+								handleChange,
+								handleBlur,
+								handleSubmit,
+							}) => (
+								<>
+									<Input
+										label="Tên người dùng"
+										placeholder="Tên người dùng"
+										name="name"
+										onChange={handleChange}
+										onBlur={handleBlur}
+										value={values.name}
+										helpertext={
+											touched.name && errors.name ? errors.name : null
+										}
+										error={errors.name !== "" && touched.name}
+									></Input>
+									<Input
+										label="Email"
+										placeholder="Email"
+										name="email"
+										onChange={handleChange}
+										onBlur={handleBlur}
+										value={values.email}
+										helpertext={
+											touched.email && errors.email ? errors.email : null
+										}
+										error={errors.email !== "" && touched.email}
+									></Input>
+									<Input
+										type={"password"}
+										label="Mật khẩu"
+										placeholder="Mật khẩu"
+										name="password"
+										onChange={handleChange}
+										onBlur={handleBlur}
+										value={values.password}
+										helpertext={
+											touched.password && errors.password
+												? errors.password
+												: null
+										}
+										error={errors.password !== "" && touched.password}
+									></Input>
+									<Input
+										type={"password"}
+										label="Xác nhận mật khẩu"
+										placeholder="Xác nhận mật khẩu"
+										name="confirmPassword"
+										onChange={handleChange}
+										onBlur={handleBlur}
+										value={values.confirmPassword}
+										helpertext={
+											touched.confirmPassword && errors.confirmPassword
+												? errors.confirmPassword
+												: null
+										}
+										error={
+											errors.confirmPassword !== "" && touched.confirmPassword
+										}
+									></Input>
+									<div className="my-4 flex items-center justify-end space-x-4">
+										<button
+											type="submit"
+											onClick={() => handleSubmit()}
+											className="bg-blue-600 hover:bg-blue-700 rounded-lg px-8 py-2 text-gray-100 hover:shadow-xl transition duration-150 uppercase"
+										>
+											Đăng ký
+										</button>
+									</div>
+								</>
+							)}
+						</Formik>
+						<div className="flex items-center justify-between">
+							<div className="w-full h-[1px] bg-gray-300"></div>
+							<span className="text-sm uppercase mx-6 text-gray-400">Hoặc</span>
+							<div className="w-full h-[1px] bg-gray-300"></div>
+						</div>
+
+						{/* <div className="text-sm">
                         <a href="#" className="flex items-center justify-center space-x-2 text-gray-600 my-2 py-2 bg-gray-100 hover:bg-gray-200 rounded">
                             <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 326667 333333" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd"><path d="M326667 170370c0-13704-1112-23704-3518-34074H166667v61851h91851c-1851 15371-11851 38519-34074 54074l-311 2071 49476 38329 3428 342c31481-29074 49630-71852 49630-122593m0 0z" fill="#4285f4"></path><path d="M166667 333333c44999 0 82776-14815 110370-40370l-52593-40742c-14074 9815-32963 16667-57777 16667-44074 0-81481-29073-94816-69258l-1954 166-51447 39815-673 1870c27407 54444 83704 91852 148890 91852z" fill="#34a853"></path><path d="M71851 199630c-3518-10370-5555-21482-5555-32963 0-11482 2036-22593 5370-32963l-93-2209-52091-40455-1704 811C6482 114444 1 139814 1 166666s6482 52221 17777 74814l54074-41851m0 0z" fill="#fbbc04"></path><path d="M166667 64444c31296 0 52406 13519 64444 24816l47037-45926C249260 16482 211666 1 166667 1 101481 1 45185 37408 17777 91852l53889 41853c13520-40185 50927-69260 95001-69260m0 0z" fill="#ea4335"></path></svg>
                             <span>Sign up with Google</span>
@@ -165,8 +200,9 @@ export default function SignUp({}: Props) {
                             <span>Sign up with LinkedIn</span>
                         </a>
                     </div> */}
+					</div>
 				</div>
 			</div>
-		</div>
+		</>
 	);
 }
