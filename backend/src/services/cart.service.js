@@ -16,16 +16,15 @@ const createCart = async (userId, cartBody) => {
   if (!cart) {
     cart = new Cart({
       userId,
-      items: [],
+      products: [],
     });
   }
-
-  const existingItem = cart.items.find((item) => item.productId._id.equals(productId));
+  const existingItem = cart.products.find((item) => item.productId._id.equals(productId));
 
   if (existingItem) {
     existingItem.quantity += quantity;
   } else {
-    cart.items.push({
+    cart.products.push({
       productId,
       quantity,
     });
