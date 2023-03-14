@@ -10,6 +10,7 @@ import MainLayout from "../../layouts/MainLayout";
 import { addProduct } from "../../features/cart/cartSlice";
 import { ProductCart } from "../../features/cart/modal";
 import { useAppDispatch } from "../../hooks";
+import { useCreateCartMutation } from "../../features/cart/cartAPI";
 
 type ProductDetailPageProps = {
 	product: ProductItemDetailModel;
@@ -19,7 +20,13 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 	const [quantity, setQuantity] = useState(1);
 	const [isFavorite, setIsFavorite] = useState(false);
 	const dispatch = useAppDispatch();
-	const handleAddCart = () => {};
+	const [
+		saveCart, // This is the mutation trigger
+		{ isLoading: isSaveCart }, // This is the destructured mutation result
+	] = useCreateCartMutation();
+	const handleAddCart = async (data: any) => {
+		const res = saveCart(data);
+	};
 	const handleAddFavorite = () => {};
 	return (
 		<MainLayout>
@@ -62,13 +69,11 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 					<button
 						className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
 						onClick={() => {
-							const payload: ProductCart = {
-								id: product.id,
-								name: product.name,
-								price: product.price,
+							const payload = {
+								productId: product.id,
 								quantity: quantity,
 							};
-							dispatch(addProduct(payload));
+							handleAddCart(payload);
 						}}
 					>
 						Thêm vào giỏ hàng

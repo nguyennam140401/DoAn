@@ -1,4 +1,3 @@
-import { useSelector } from "react-redux";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppState } from "../../store";
 import { ProductCart } from "./modal";

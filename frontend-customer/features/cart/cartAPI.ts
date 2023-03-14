@@ -1,7 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { refreshToken } from "../../common/refreshToken";
 import { cartPath } from "../../constant/apiPath";
-export const CartAPI = createApi({
-	reducerPath: "CartApi",
+export const cartAPI = createApi({
+	reducerPath: "cartApi",
 	baseQuery: fetchBaseQuery({
 		baseUrl: process.env.API_URL + "/" + cartPath,
 		prepareHeaders: (headers, { getState }) => {
@@ -17,13 +18,47 @@ export const CartAPI = createApi({
 			query: (id) => `/${id}`,
 		}),
 		createCart: builder.mutation({
-			query: ({ name, email }) => ({
+			query: (payload) => ({
 				url: "",
 				method: "POST",
-				body: { name, email },
+				body: payload,
+			}),
+		}),
+		getCart: builder.query({
+			query: () => ({
+				url: "",
+				method: "GET",
+			}),
+		}),
+		removeItem: builder.query({
+			query: (idProduct) => ({
+				url: "/" + idProduct,
+				method: "DELETE",
 			}),
 		}),
 	}),
 });
 
-export const { useGetCartByIdQuery, useCreateCartMutation } = CartAPI;
+const responseHandler = async (response, retry) => {
+	if (response.status === 401) {
+		const newAccessToken = await refreshToken(); // Gọi hàm refresh token để lấy token mới
+		if (newAccessToken) {
+			// Thêm Authorization header vào request mới
+			const newHeaders = new Headers(response.headers);
+			newHeaders.set("Authorization", `Bearer ${newAccessToken}`);
+			// Thực hiện lại request với token mới
+			const { headers, ...init } = response;
+			const newRequest = new Request(response.url, {
+				...init,
+				headers: newHeaders,
+			});
+			return retry(newRequest, init);
+		}
+	}
+};
+export const {
+	useGetCartByIdQuery,
+	useCreateCartMutation,
+	useGetCartQuery,
+	useRemoveItemQuery,
+} = cartAPI;
