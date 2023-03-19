@@ -13,8 +13,11 @@ const authSlice = createSlice({
 			state.isLoggedIn = true;
 			state.user = action.payload;
 			localStorage.setItem("user", JSON.stringify(action.payload.user));
-			localStorage.setItem("jwt", action.payload.tokens.access.token);
-			localStorage.setItem("refreshtoken", action.payload.tokens.refresh.token);
+			localStorage.setItem("jwt", JSON.stringify(action.payload.tokens.access));
+			localStorage.setItem(
+				"refreshtoken",
+				JSON.stringify(action.payload.tokens.refresh)
+			);
 		},
 		logoutSuccess: (state) => {
 			state.isLoggedIn = false;

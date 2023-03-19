@@ -4,10 +4,12 @@ import { API_URL_BASE } from "../../constant/apiPath";
 import {
 	useCreateCartMutation,
 	useGetCartQuery,
+	useRemoveItemMutation,
 	useRemoveItemQuery,
 } from "../../features/cart/cartAPI";
 import { formatPrice } from "../../common/commonFunction";
 import MainLayout from "../../layouts/MainLayout";
+import FormPayment from "../../components/FormPayment";
 
 type Props = {};
 
@@ -17,13 +19,52 @@ export default function Cart({}: Props) {
 		saveCart, // This is the mutation trigger
 		{ isLoading: isSaveCart, isSuccess: isSuccesSave }, // This is the destructured mutation result
 	] = useCreateCartMutation();
-	const [listProductInCart, setListProductInCart] = useState([]);
-	const handleRemoveProduct = async (productId) => {
-		const res = await handleRemove(productId);
+	const [removeCart] = useRemoveItemMutation();
+	const [listProductInCart, setListProductInCart] = useState<Array<any>>([]);
+	const [listOldProductInCart, setListOldProductInCart] = useState<Array<any>>(
+		[]
+	);
+	const [isOpenPayment, setIsOpenPayment] = useState(false);
+	const handleRemoveProduct = async (productId: any) => {
+		const res = await removeCart(productId);
 	};
 	useEffect(() => {
-		setListProductInCart(data?.products || []);
+		if (data && data.products) {
+			setListProductInCart([...data?.products] || []);
+			setListOldProductInCart([...data?.products] || []);
+		}
 	}, [data]);
+	useEffect(() => {
+		let timeOut: any;
+		if (data) {
+			timeOut = setTimeout(() => {
+				var newProductWithQuantity = listProductInCart.find(
+					(item) =>
+						item.quantity !=
+						listOldProductInCart.find((x: any) => x._id == item._id).quantity
+				);
+				if (newProductWithQuantity) {
+					var oldProductWithQuantity = listOldProductInCart.find(
+						(x: any) => x.productId.id == newProductWithQuantity.productId.id
+					);
+					console.log(
+						listOldProductInCart,
+						newProductWithQuantity,
+						oldProductWithQuantity
+					);
+					if (oldProductWithQuantity !== -1)
+						handleChangeProduct(
+							oldProductWithQuantity,
+							newProductWithQuantity.quantity
+						);
+				}
+			}, 400);
+		}
+
+		return () => {
+			clearTimeout(timeOut);
+		};
+	}, [listProductInCart]);
 
 	const handleChangeProduct = async (product: any, quantity: number) => {
 		const payload = {
@@ -31,8 +72,21 @@ export default function Cart({}: Props) {
 			quantity: quantity - product.quantity,
 		};
 		const res = await saveCart(payload);
-		if (isSuccesSave) {
+		console.log(res);
+		if (res.data) {
+			const newCart = listProductInCart.map((item) =>
+				item.productId != product.productId
+					? item
+					: { ...product, quantity: quantity }
+			);
+			setListOldProductInCart(newCart);
 		}
+	};
+	const handleClose = () => {
+		setIsOpenPayment(false);
+	};
+	const handleOpen = () => {
+		setIsOpenPayment(true);
 	};
 	return (
 		<MainLayout>
@@ -72,7 +126,7 @@ export default function Cart({}: Props) {
 																	: productItem
 														);
 														setListProductInCart(updatedCartItems);
-														//handleChangeProduct(item, item.quantity - 1);
+														//handleUpdateCart(item, item.quantity - 1);
 													}}
 													className="cursor-pointer rounded-l bg-gray-100 py-1 px-3.5 duration-100 hover:bg-blue-500 hover:text-blue-50"
 												>
@@ -82,9 +136,18 @@ export default function Cart({}: Props) {
 													className="h-8 w-16 border bg-white text-center text-xs outline-none"
 													type="number"
 													value={item.quantity}
-													onChange={debounce((e) => {
-														handleChangeProduct(item, e.target.value);
-													}, 500)}
+													onChange={(e) => {
+														const updatedCartItems = listProductInCart.map(
+															(productItem) =>
+																productItem._id === item._id
+																	? {
+																			...productItem,
+																			quantity: e.target.value,
+																	  }
+																	: productItem
+														);
+														setListProductInCart(updatedCartItems);
+													}}
 													name="quantity"
 													min="1"
 												/>
@@ -95,7 +158,8 @@ export default function Cart({}: Props) {
 																productItem._id === item._id
 																	? {
 																			...productItem,
-																			quantity: productItem.quantity + 1,
+																			quantity:
+																				parseInt(productItem.quantity) + 1,
 																	  }
 																	: productItem
 														);
@@ -169,11 +233,21 @@ export default function Cart({}: Props) {
 								<p className="text-sm text-gray-700">(Đã bao gồm thuế VAT)</p>
 							</div>
 						</div>
-						<button className="mt-6 w-full rounded-md bg-blue-500 py-1.5 font-medium text-blue-50 hover:bg-blue-600">
+						<button
+							onClick={handleOpen}
+							className="mt-6 w-full rounded-md bg-blue-500 py-1.5 font-medium text-blue-50 hover:bg-blue-600"
+						>
 							Thanh toán
 						</button>
 					</div>
 				</div>
+				{isOpenPayment && (
+					<FormPayment
+						isOpen={isOpenPayment}
+						listProduct={listProductInCart}
+						handleClose={handleClose}
+					/>
+				)}
 			</div>
 		</MainLayout>
 	);

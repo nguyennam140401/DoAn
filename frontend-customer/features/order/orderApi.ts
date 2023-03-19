@@ -2,44 +2,47 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { isExpired } from "../../common/commonFunction";
 import { TokenModel } from "../../common/model";
 import { refreshToken } from "../../common/refreshToken";
-import { cartPath } from "../../constant/apiPath";
-export const cartAPI = createApi({
-	reducerPath: "cartApi",
+import { orderPath } from "../../constant/apiPath";
+export const orderAPI = createApi({
+	reducerPath: "orderApi",
 	baseQuery: fetchBaseQuery({
-		baseUrl: process.env.API_URL + "/" + cartPath,
+		baseUrl: process.env.API_URL + "/" + orderPath,
 		prepareHeaders: async (headers, { getState }) => {
 			const tokenData: TokenModel = JSON.parse(
 				localStorage.getItem("jwt") || ""
 			);
 			let token = tokenData.token;
+			console.log(tokenData);
 			// kiểm tra xem token có hết hạn hay không
 			const isTokenExpired = isExpired(token);
 			// nếu token đã hết hạn, gọi hàm refresh token để lấy token mới
 			if (isTokenExpired) {
+				console.log("Het han");
 				token = await refreshToken(); // Gọi hàm refresh token để lấy token mới
 			}
+			console.log(token);
 			headers.set("Authorization", `Bearer ${token}`);
 			return headers;
 		},
 	}),
 	endpoints: (builder) => ({
-		getCartById: builder.query({
-			query: (id) => `/${id}`,
+		getOrderById: builder.query({
+			query: () => `/`,
 		}),
-		createCart: builder.mutation({
+		createOrder: builder.mutation({
 			query: (payload) => ({
 				url: "",
 				method: "POST",
 				body: payload,
 			}),
 		}),
-		getCart: builder.query({
+		getOrder: builder.query({
 			query: () => ({
 				url: "",
 				method: "GET",
 			}),
 		}),
-		removeItem: builder.mutation({
+		removeItem: builder.query({
 			query: (idProduct) => ({
 				url: "/" + idProduct,
 				method: "DELETE",
@@ -66,8 +69,8 @@ const responseHandler = async (response, retry) => {
 	}
 };
 export const {
-	useGetCartByIdQuery,
-	useCreateCartMutation,
-	useGetCartQuery,
-	useRemoveItemMutation,
-} = cartAPI;
+	useGetOrderByIdQuery,
+	useCreateOrderMutation,
+	useGetOrderQuery,
+	useRemoveItemQuery,
+} = orderAPI;
