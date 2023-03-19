@@ -18,11 +18,7 @@ import queryString from "query-string";
 import DetailParamInfo from "component/DetailParamInfo";
 const FormDetailCategory = ({
 	isOpen,
-	detailCategory = {
-		name: "",
-		parentId: "",
-		specs: [],
-	},
+	detailCategory,
 	isEdit = true,
 	handleClose,
 }) => {
@@ -37,33 +33,57 @@ const FormDetailCategory = ({
 	const formSchema = yup.object({
 		name: yup.string().required("Bạn phải điền tên sản phẩm"),
 	});
-	const initialData = detailCategory;
+	const initialData = {
+		name: "",
+		parentId: "",
+		specs: [],
+	};
+
 	const handleSubmit = (data) => {
 		const formData = new FormData();
 		Object.entries(data).forEach(([key, value]) => {
 			formData.append(key, value);
 		});
-		dispatch(
-			categoryActions.createCategory(removeEmpty(data), {
-				success: (data) => {
-					handleClose();
-					dispatch(
-						categoryActions.getCategories(
-							queryString.stringify({ populate: "childrentIds" })
-						)
-					);
-				},
-				failed: (err) => {
-					console.log(err);
-				},
-			})
-		);
+		if (!detailCategory) {
+			dispatch(
+				categoryActions.createCategory(removeEmpty(data), {
+					success: (data) => {
+						handleClose();
+						dispatch(
+							categoryActions.getCategories(
+								queryString.stringify({ populate: "childrentIds" })
+							)
+						);
+					},
+					failed: (err) => {
+						console.log(err);
+					},
+				})
+			);
+		} else {
+			const { id, ...payload } = data;
+			dispatch(
+				categoryActions.updateCategory(id, removeEmpty(payload), {
+					success: (data) => {
+						handleClose();
+						dispatch(
+							categoryActions.getCategories(
+								queryString.stringify({ populate: "childrentIds" })
+							)
+						);
+					},
+					failed: (err) => {
+						console.log(err);
+					},
+				})
+			);
+		}
 	};
 	return (
 		<Dialog open={isOpen} onClose={handleClose} fullWidth>
 			<Box p={3}>
 				<Formik
-					initialValues={initialData}
+					initialValues={detailCategory || initialData}
 					onSubmit={handleSubmit}
 					validationSchema={formSchema}
 				>
@@ -139,7 +159,7 @@ const FormDetailCategory = ({
 								</Box>
 							</Box>
 							<Button onClick={handleSubmit} variant="contained">
-								Thêm
+								{detailCategory ? "Cập nhật" : "Thêm"}
 							</Button>
 						</>
 					)}

@@ -13,7 +13,6 @@ import {
 	InputBase,
 	Paper,
 	Toolbar,
-	Typography,
 } from "@mui/material";
 import routes from "routes";
 import DropdownMenu from "component/DropdownMenu";
@@ -23,35 +22,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { accountActions } from "Redux/Actions";
 import { checkRole } from "common";
 import * as _ from "lodash";
-import { AccountCircle, Search } from "@mui/icons-material";
-import MenuIcon from "@mui/icons-material/Menu";
-import SearchIcon from "@mui/icons-material/Search";
+import { AccountCircle } from "@mui/icons-material";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
-import styled from "@emotion/styled";
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-	padding: theme.spacing(0, 2),
-	height: "100%",
-	position: "absolute",
-	pointerEvents: "none",
-	display: "flex",
-	alignItems: "center",
-	justifyContent: "center",
-}));
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-	color: "inherit",
-	"& .MuiInputBase-input": {
-		padding: theme.spacing(1, 1, 1, 0),
-		// vertical padding + font size from searchIcon
-		paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-		transition: theme.transitions.create("width"),
-		width: "100%",
-		[theme.breakpoints.up("md")]: {
-			width: "20ch",
-		},
-	},
-}));
 const menuId = "primary-search-account-menu";
 const mobileMenuId = "primary-search-account-menu-mobile";
 export default function LayoutAdmin({ children }) {

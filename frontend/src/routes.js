@@ -2,6 +2,7 @@ import SendIcon from "@mui/icons-material/Send";
 import Account from "page/Account";
 import Category from "page/Category";
 import Dashboard from "page/Dashboard";
+import Order from "page/Order";
 import Product from "page/Product";
 import Role from "page/Role";
 
@@ -39,7 +40,7 @@ const routes = [
 		name: "Quản lý đơn hàng",
 		icon: <SendIcon />,
 		path: "/orders",
-		component: () => <p>Quản lý đơn hàng</p>,
+		component: <Order />,
 	},
 	{
 		collapse: false,

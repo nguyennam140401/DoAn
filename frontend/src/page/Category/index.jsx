@@ -48,8 +48,8 @@ const Category = () => {
 	const handleRemove = (id) => {
 		console.log(id, "oke");
 		showConfirm(
-			"Xác nhận xóa phân quyền",
-			"Bạn có chắc chắn muốn xóa phân quyền này không?",
+			"Xác nhận xóa danh mục",
+			"Bạn có chắc chắn muốn xóa danh mục này không?",
 			() => {
 				dispatch(
 					categoryActions.deleteCategory(id, {
