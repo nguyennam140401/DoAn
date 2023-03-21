@@ -1,8 +1,9 @@
 const express = require('express');
-const { cartController, categoryController } = require('../../controllers');
+const { cartController } = require('../../controllers');
 const auth = require('../../middlewares/auth');
 
 const router = express.Router();
 
-router.route('/').post(auth(), cartController.createCart).get(auth, categoryController.getCategories);
+router.route('/').get(auth(), cartController.getCartByUser).post(auth(), cartController.createCart);
+router.route('/:id').get(auth(), cartController.removeCartItem);
 module.exports = router;

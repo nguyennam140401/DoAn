@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const { orderService } = require('../services');
 const catchAsync = require('../utils/catchAsync');
+const pick = require('../utils/pick');
 
 const createOrder = catchAsync(async (req, res) => {
   const order = await orderService.createOrder(req.user.id, req.body);
@@ -13,7 +14,9 @@ const getOrdersByUserId = catchAsync(async (req, res) => {
 });
 
 const getOrdersByAdmin = catchAsync(async (req, res) => {
-  const orders = await orderService.getOrdersByAdmin(req.user.id);
+  const filter = pick(req.query, ['name', 'role']);
+  const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);
+  const orders = await orderService.getOrdersByAdmin(filter, options);
   return res.status(httpStatus.OK).send(orders);
 });
 

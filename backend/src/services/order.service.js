@@ -3,11 +3,9 @@ const { Order } = require('../models');
 const ApiError = require('../utils/ApiError');
 
 const createOrder = async (userId, orderBody) => {
-  const { products } = orderBody;
-
   const order = await Order.create({
     userId,
-    products,
+    ...orderBody,
     status: 'pending',
   });
   return order;
@@ -19,8 +17,8 @@ const getOrdersByUserId = async (userId) => {
   return orders;
 };
 
-const getOrdersByAdmin = async () => {
-  const orders = await Order.find({ status: 'pending' }).populate('userId', 'username');
+const getOrdersByAdmin = async (filter, options) => {
+  const orders = await Order.paginate(filter, options);
   return orders;
 };
 

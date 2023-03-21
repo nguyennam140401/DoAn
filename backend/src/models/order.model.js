@@ -8,11 +8,6 @@ const OrderScheam = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'User',
     },
-
-    cartId: {
-      type: Schema.Types.ObjectId,
-      ref: 'Cart',
-    },
     shipping: Object,
     products: [
       {
@@ -27,6 +22,26 @@ const OrderScheam = new Schema(
       type: String,
       enum: ['pending', 'approved', 'shipping', 'success', 'reject'],
       default: 'pending',
+    },
+    paymentMethod: {
+      type: String,
+      enum: ['transfer', 'cart'],
+      require,
+    },
+    address: {
+      type: String,
+      required: true,
+    },
+    phoneNumber: {
+      type: String,
+      required: true,
+    },
+    buyerName: {
+      type: String,
+      required: true,
+    },
+    note: {
+      type: String,
     },
   },
   { collection: 'orders', timestamps: true }

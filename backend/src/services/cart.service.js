@@ -19,7 +19,9 @@ const createCart = async (userId, cartBody) => {
       products: [],
     });
   }
-  const existingItem = cart.products.find((item) => item.productId._id.equals(productId));
+  const existingItem = cart.products.find(
+    (item) => item.productId?._id.equals(productId) || item.productId?.id.equals(productId)
+  );
 
   if (existingItem) {
     existingItem.quantity += quantity;
@@ -34,6 +36,20 @@ const createCart = async (userId, cartBody) => {
   return cart;
 };
 
+const removeCartItem = async (userId, productID) => {
+  let cart = await Cart.findOne({ userId }).populate('products.productId');
+  const existingItem = cart.products.find(
+    (item) => item.productId?._id.equals(productId) || item.productId?.id.equals(productId)
+  );
+  if (existingItem) {
+    cart.products = cart.products.filter((item) => item.id !== productID);
+  } else {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Không tìm thấy sản phẩm');
+  }
+
+  await cart.save();
+  return cart;
+};
 /**
  * Query for carts
  * @param {Object} filter - Mongo filter
@@ -54,7 +70,7 @@ const queryCarts = async (filter, options) => {
  * @returns {Promise<Cart>}
  */
 const getCartById = async (userId) => {
-  const cart = await Cart.findOne({ userId }).populate('product.productId');
+  const cart = await Cart.findOne({ userId }).populate('products.productId');
   return cart;
 };
 
@@ -95,4 +111,5 @@ module.exports = {
   getCartById,
   updateCartById,
   deleteCartById,
+  removeCartItem,
 };
