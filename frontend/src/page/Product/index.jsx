@@ -10,7 +10,6 @@ import ListActionButtonInTable from "component/ListActionButtonInTable";
 import { ConfirmContext } from "context/ConfirmContext";
 import { AlertContext } from "context/AlertContext";
 import "react-quill/dist/quill.snow.css";
-import ReactQuill from "react-quill";
 import { BASE_API } from "Services/ServiceURL";
 const Product = () => {
 	const dispatch = useDispatch();

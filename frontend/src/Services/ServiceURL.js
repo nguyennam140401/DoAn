@@ -9,6 +9,7 @@ export const accounts = "users";
 export const changePassword = "change-password";
 export const configPasswordAccount = "set-password";
 export const roles = "role";
+export const orders = "order/admin";
 
 export const products = "product";
 export const category = "category";
@@ -24,4 +25,5 @@ export default {
 	roles,
 	products,
 	category,
+	orders,
 };

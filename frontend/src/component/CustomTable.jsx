@@ -16,7 +16,7 @@ export default function CustomTable({
 	isPending,
 	totalResults,
 	currentPage,
-	handleGetData,
+	handleGetData = () => {},
 	populate,
 	...props
 }) {
@@ -55,7 +55,7 @@ export default function CustomTable({
 
 	return isPending ? (
 		<TablePending />
-	) : data.length > 0 ? (
+	) : data?.length > 0 ? (
 		<Paper sx={{ width: "100%", overflow: "hidden" }}>
 			<TableContainer sx={{ maxHeight: 440 }} {...props}>
 				<Table stickyHeader aria-label="sticky table">

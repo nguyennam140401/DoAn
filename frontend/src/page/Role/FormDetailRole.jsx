@@ -16,7 +16,7 @@ import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import { roleActions } from "Redux/Actions";
 import { AlertContext } from "context/AlertContext";
-import { StatusEnum } from "enum/StatusEnum";
+import { StatusColorEnum } from "enum/StatusEnum";
 import queryString from "query-string";
 import { initialQuery } from "utils/initData";
 
@@ -37,12 +37,12 @@ const FormDetailRole = ({
 			dispatch(
 				roleActions.createRole(data, {
 					success: () => {
-						showAlert(StatusEnum.Success, "Thêm quyền thành công");
+						showAlert(StatusColorEnum.Success, "Thêm quyền thành công");
 						dispatch(roleActions.getRoles(queryString.stringify(initialQuery)));
 						handleClose();
 					},
 					failed: (err) => {
-						showAlert(StatusEnum.Failed, "Thêm quyền thất bại : " + err);
+						showAlert(StatusColorEnum.Failed, "Thêm quyền thất bại : " + err);
 					},
 				})
 			);
@@ -51,12 +51,15 @@ const FormDetailRole = ({
 			dispatch(
 				roleActions.updateRole(id, payload, {
 					success: () => {
-						showAlert(StatusEnum.Success, "Cập nhật quyền thành công");
+						showAlert(StatusColorEnum.Success, "Cập nhật quyền thành công");
 						dispatch(roleActions.getRoles(queryString.stringify(initialQuery)));
 						handleClose();
 					},
 					failed: (err) => {
-						showAlert(StatusEnum.Failed, "Cập nhật quyền thất bại : " + err);
+						showAlert(
+							StatusColorEnum.Failed,
+							"Cập nhật quyền thất bại : " + err
+						);
 					},
 				})
 			);

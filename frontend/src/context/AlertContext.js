@@ -1,4 +1,4 @@
-import StatusEnum from "enum/StatusEnum";
+import StatusColorEnum from "enum/StatusEnum";
 
 const { createContext, useState, useEffect } = require("react");
 
@@ -6,7 +6,7 @@ export const AlertContext = createContext();
 
 const initialAlert = {
 	isOpen: false,
-	status: StatusEnum.Success,
+	status: StatusColorEnum.Success,
 	message: "",
 };
 const AlertContextProvider = ({ children }) => {

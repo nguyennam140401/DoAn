@@ -46,7 +46,6 @@ const Category = () => {
 		setCurrentCategory(null);
 	};
 	const handleRemove = (id) => {
-		console.log(id, "oke");
 		showConfirm(
 			"Xác nhận xóa danh mục",
 			"Bạn có chắc chắn muốn xóa danh mục này không?",

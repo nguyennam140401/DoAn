@@ -242,7 +242,6 @@ const FormDetailProduct = ({ isOpen, detailProduct, isEdit, handleClose }) => {
 									theme="snow"
 									value={values.description}
 									onChange={(event) => {
-										console.log(event);
 										setFieldValue("description", event);
 									}}
 								/>
@@ -283,7 +282,6 @@ const FormDetailProduct = ({ isOpen, detailProduct, isEdit, handleClose }) => {
 								<Button
 									variant="contained"
 									onClick={() => {
-										console.log(values, errors);
 										handleSubmit();
 									}}
 								>
