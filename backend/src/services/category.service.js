@@ -77,6 +77,19 @@ const deleteCategoryById = async (categoryId) => {
   if (!category) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Category not found');
   }
+
+  /**
+   * danh mục xóa là cha
+   */
+  if (category.childrentIds.length > 0) {
+    category.childrentIds.forEach(async (item) => {
+      deleteCategoryById(item);
+    });
+  }
+
+  /**
+   * Xóa trong danh mục cha
+   */
   if (category.parentId) {
     const { _id, ...categoryParent } = await getCategoryById(category.parentId);
     const parentData = categoryParent._doc;

@@ -9,6 +9,11 @@ const ProductScheam = new Schema(
       required: true,
       unique: true,
     },
+    code: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     brand: {
       type: String,
     },
