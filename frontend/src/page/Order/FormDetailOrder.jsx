@@ -6,7 +6,13 @@ import { useDispatch } from "react-redux";
 import { orderActions } from "Redux/Actions";
 import { BASE_API } from "Services/ServiceURL";
 
-const FormDetailOrder = ({ isOpen, detailOrder, isEdit, handleClose }) => {
+const FormDetailOrder = ({
+	isOpen,
+	detailOrder,
+	isEdit,
+	handleClose,
+	handleReload,
+}) => {
 	const dispatch = useDispatch();
 	const configColumns = [
 		{ label: "Tên sản phẩm", id: "name" },
@@ -32,6 +38,8 @@ const FormDetailOrder = ({ isOpen, detailOrder, isEdit, handleClose }) => {
 			orderActions.updateOrder("", body, {
 				success: (res) => {
 					console.log(res);
+					handleReload();
+					handleClose();
 				},
 				failed: (err) => {
 					console.log(err);

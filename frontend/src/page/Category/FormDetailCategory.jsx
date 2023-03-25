@@ -16,42 +16,43 @@ import { categoryActions } from "Redux/Actions";
 import * as yup from "yup";
 import queryString from "query-string";
 import DetailParamInfo from "component/DetailParamInfo";
+import { FormStateEnum } from "enum/StatusEnum";
 const FormDetailCategory = ({
 	isOpen,
 	detailCategory,
-	isEdit = true,
+	formState,
 	handleClose,
 }) => {
 	const dispatch = useDispatch();
-	var { categories } = useSelector((state) => state.categoryReducer);
-	const [options, setOptions] = useState([]);
-	useEffect(() => {
-		setOptions(
-			categories.results.map((item) => ({ value: item.id, label: item.name }))
-		);
-	}, [categories]);
+
+	console.log(detailCategory);
+	const dataDetail =
+		formState !== FormStateEnum.Add
+			? detailCategory
+			: detailCategory
+			? { parentId: detailCategory.id, specs: detailCategory.specs }
+			: {
+					name: "",
+					parentId: "",
+					specs: [],
+			  };
 	const formSchema = yup.object({
 		name: yup.string().required("Bạn phải điền tên sản phẩm"),
 	});
-	const initialData = {
-		name: "",
-		parentId: "",
-		specs: [],
-	};
 
 	const handleSubmit = (data) => {
 		const formData = new FormData();
 		Object.entries(data).forEach(([key, value]) => {
 			formData.append(key, value);
 		});
-		if (!detailCategory) {
+		if (formState === FormStateEnum.Add) {
 			dispatch(
 				categoryActions.createCategory(removeEmpty(data), {
 					success: (data) => {
 						handleClose();
 						dispatch(
 							categoryActions.getCategories(
-								queryString.stringify({ populate: "childrentIds" })
+								queryString.stringify({ populate: "childrentIds", level: 0 })
 							)
 						);
 					},
@@ -68,7 +69,7 @@ const FormDetailCategory = ({
 						handleClose();
 						dispatch(
 							categoryActions.getCategories(
-								queryString.stringify({ populate: "childrentIds" })
+								queryString.stringify({ populate: "childrentIds", level: 0 })
 							)
 						);
 					},
@@ -83,7 +84,7 @@ const FormDetailCategory = ({
 		<Dialog open={isOpen} onClose={handleClose} fullWidth>
 			<Box p={3}>
 				<Formik
-					initialValues={detailCategory || initialData}
+					initialValues={dataDetail}
 					onSubmit={handleSubmit}
 					validationSchema={formSchema}
 				>
@@ -95,74 +96,58 @@ const FormDetailCategory = ({
 						handleBlur,
 						handleSubmit,
 						setFieldValue,
-					}) => (
-						<>
-							<Box mb={2}>
-								<Select
-									theme={(theme) => ({
-										...theme,
-										borderRadius: 0,
-										colors: {
-											...theme.colors,
-											primary25: "hotpink",
-											primary: "black",
-										},
-										zIndex: 10,
-									})}
-									options={options}
-									onChange={(data) => {
-										setFieldValue("parentId", data.value);
-									}}
-								/>
-							</Box>
-							<Box mb={2}>
-								<TextField
-									fullWidth
-									variant="outlined"
-									label="Tên danh mục"
-									name="name"
-									value={values.name}
-									onChange={handleChange}
-									onBlur={handleBlur}
-									error={errors.name && touched.name}
-									helperText={errors.name && touched.name}
-								></TextField>
-							</Box>
-							<Box mb={2}>
-								<Typography variant="h5">Các trường sản phẩm</Typography>
-								{values?.specs?.length > 0 &&
-									values.specs.map((item, idx) => (
-										<DetailParamInfo
-											key={idx}
-											idx={idx}
-											optionsData={values.specs}
-											data={item}
-											fieldSet={"specs"}
-											setFieldValue={setFieldValue}
-										></DetailParamInfo>
-									))}
-							</Box>
-							<Box position={"relative"} mb={2} minHeight={30}>
-								<Box position={"absolute"} bottom={0} right={0}>
-									<IconButton
-										onClick={() => {
-											setFieldValue(
-												"specs",
-												values?.specs
-													? [...values?.specs, { name: "", unit: "" }]
-													: [{ name: "", unit: "" }]
-											);
-										}}
-									>
-										<AddCircleIcon />
-									</IconButton>
+					}) => {
+						return (
+							<>
+								<Box mb={2}>
+									<TextField
+										fullWidth
+										variant="outlined"
+										label="Tên danh mục"
+										name="name"
+										value={values.name}
+										onChange={handleChange}
+										onBlur={handleBlur}
+										error={errors.name && touched.name}
+										helperText={errors.name && touched.name}
+									></TextField>
 								</Box>
-							</Box>
-							<Button onClick={handleSubmit} variant="contained">
-								{detailCategory ? "Cập nhật" : "Thêm"}
-							</Button>
-						</>
-					)}
+								<Box mb={2}>
+									<Typography variant="h5">Các trường sản phẩm</Typography>
+									{values?.specs?.length > 0 &&
+										values.specs.map((item, idx) => (
+											<DetailParamInfo
+												key={idx}
+												idx={idx}
+												optionsData={values.specs}
+												data={item}
+												fieldSet={"specs"}
+												setFieldValue={setFieldValue}
+											></DetailParamInfo>
+										))}
+								</Box>
+								<Box position={"relative"} mb={2} minHeight={30}>
+									<Box position={"absolute"} bottom={0} right={0}>
+										<IconButton
+											onClick={() => {
+												setFieldValue(
+													"specs",
+													values?.specs
+														? [...values?.specs, { name: "", unit: "" }]
+														: [{ name: "", unit: "" }]
+												);
+											}}
+										>
+											<AddCircleIcon />
+										</IconButton>
+									</Box>
+								</Box>
+								<Button onClick={handleSubmit} variant="contained">
+									{formState === FormStateEnum.Add ? "Thêm" : "Cập nhật"}
+								</Button>
+							</>
+						);
+					}}
 				</Formik>
 			</Box>
 		</Dialog>

@@ -64,6 +64,7 @@ const Product = () => {
 			),
 		},
 		{ label: "Danh mục", id: "category.name" },
+		{ label: "Đơn giá", id: "price" },
 		{
 			label: "Hành động",
 			Cell: ({ data }) => (

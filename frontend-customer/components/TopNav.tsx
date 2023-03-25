@@ -6,6 +6,7 @@ import { AppState } from "../store";
 import Input from "./Input";
 import { useRouter } from "next/router";
 import { logoutSuccess } from "../features/authen/authenSlice";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 type Props = {};
 const Style = styled.div`
 	.avatar {
@@ -64,16 +65,75 @@ function TopNav({}: Props) {
 	];
 	const arrMenuAuthen = [
 		{
-			name: "Setting",
-			icon: "",
+			name: "Order",
+			icon: (
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					strokeWidth={1.5}
+					stroke="currentColor"
+					className="w-6 h-6"
+				>
+					<path
+						strokeLinecap="round"
+						strokeLinejoin="round"
+						d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"
+					/>
+				</svg>
+			),
+			handle: () => {
+				router.push("/user/orders");
+			},
 		},
+
 		{
 			name: "Wishlist",
-			icon: "",
+			icon: (
+				<span>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						className="h-6 w-6"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							strokeWidth="2"
+							d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+						/>
+					</svg>
+				</span>
+			),
+			handle: () => {
+				router.push("/user/wishlist");
+			},
 		},
 		{
 			name: "Logout",
-			icon: "",
+			icon: (
+				<span>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						className="h-6 w-6"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							strokeWidth="2"
+							d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+						/>
+					</svg>
+				</span>
+			),
+			handle: () => {
+				handleLogout();
+			},
 		},
 	];
 	const dispatch = useAppDispatch();
@@ -126,72 +186,17 @@ function TopNav({}: Props) {
 					<div className="h-10 avatar w-10 hover:ring-4 user cursor-pointer relative ring-blue-700/30 rounded-full bg-cover bg-center bg-[url('https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80')]">
 						<div className="avatar-options drop-down w-48 overflow-hidden bg-white rounded-md shadow absolute top-12 right-1">
 							<ul>
-								<li className="px-3 py-3 text-sm font-medium flex items-center space-x-2 hover:bg-slate-400">
-									<span>
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											className="h-5 w-5"
-											fill="none"
-											viewBox="0 0 24 24"
-											stroke="currentColor"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth="2"
-												d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-											/>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth="2"
-												d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-											/>
-										</svg>
-									</span>
-									<span> Setting </span>
-								</li>
-								<li className="px-3  py-3  text-sm font-medium flex items-center space-x-2 hover:bg-slate-400">
-									<span>
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											className="h-6 w-6"
-											fill="none"
-											viewBox="0 0 24 24"
-											stroke="currentColor"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth="2"
-												d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-											/>
-										</svg>
-									</span>
-									<span> Wishlist </span>
-								</li>
-								<li
-									onClick={handleLogout}
-									className="px-3  py-3 text-sm font-medium flex items-center space-x-2 hover:bg-slate-400"
-								>
-									<span>
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											className="h-6 w-6"
-											fill="none"
-											viewBox="0 0 24 24"
-											stroke="currentColor"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth="2"
-												d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-											/>
-										</svg>
-									</span>
-									<span> Logout </span>
-								</li>
+								{arrMenuAuthen.map((item, idx) => (
+									<li
+										onClick={item.handle}
+										key={idx}
+										className="px-3 py-3 text-sm font-medium flex items-center space-x-2 hover:bg-slate-400"
+									>
+										{item.icon}
+
+										<span>{item.name}</span>
+									</li>
+								))}
 							</ul>
 						</div>
 					</div>

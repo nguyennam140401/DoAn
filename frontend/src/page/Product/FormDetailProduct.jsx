@@ -1,8 +1,10 @@
 import {
+	Autocomplete,
 	Box,
 	Button,
 	Dialog,
 	FormControl,
+	Grid,
 	IconButton,
 	InputAdornment,
 	InputLabel,
@@ -17,7 +19,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { categoryActions } from "Redux/Actions";
 import * as yup from "yup";
-import Select from "react-select";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import BoxAddImage from "component/BoxAddImage";
 import { getBase64 } from "common";
@@ -27,6 +28,7 @@ import { productActions } from "Redux/Actions";
 import { BASE_API } from "Services/ServiceURL";
 import { AlertContext } from "context/AlertContext";
 import ReactQuill from "react-quill";
+import DeleteIcon from "@mui/icons-material/Delete";
 import "react-quill/dist/quill.snow.css";
 const FormDetailProduct = ({ isOpen, detailProduct, isEdit, handleClose }) => {
 	const { showAlert } = useContext(AlertContext);
@@ -37,15 +39,22 @@ const FormDetailProduct = ({ isOpen, detailProduct, isEdit, handleClose }) => {
 	const [strNameCategory, setStrNameCategory] = useState("");
 	const formSchema = yup.object({
 		name: yup.string().required("Tên sản phẩm không được để trống"),
+		code: yup.string().required("Mã sản phẩm không được để trống"),
 		brand: yup.string(),
 		description: yup.string().required("Mô tả sản phẩm không được để trống"),
-		price: yup.number().required("Giá sản phẩm"),
+		price: yup.number(),
 		release_date: yup.string(),
 		specs: yup.array(),
 		star: yup.number().default(0),
 		review: yup.array().default([]),
 		images: yup.array().required("Sản phẩm phải có ít nhất 1 hình ảnh"),
 		category: yup.object().required("Loại sản phẩm không được để trống"),
+		options: yup.array(),
+		priceOrOptions: yup.mixed().when(["price", "options"], {
+			is: (price, options) =>
+				!price && options.filter((item) => item.price && item.name) === 0,
+			then: yup.string().required("Bạn phải nhập giá cho sản phẩm"),
+		}),
 	});
 	const initData = detailProduct
 		? detailProduct
@@ -54,6 +63,7 @@ const FormDetailProduct = ({ isOpen, detailProduct, isEdit, handleClose }) => {
 				description: "",
 				images: [],
 				category: "",
+				options: [],
 		  };
 	useDebounce(
 		() => {
@@ -153,29 +163,101 @@ const FormDetailProduct = ({ isOpen, detailProduct, isEdit, handleClose }) => {
 									onChange={handleChange}
 									onBlur={handleBlur}
 									error={errors.name && touched.name}
-									helperText={errors.name && touched.name}
+									helperText={touched.name && errors.name}
 								/>
 							</Box>
 							<Box mb={2}>
-								<FormControl fullWidth sx={{ m: 1 }}>
-									<InputLabel htmlFor="outlined-adornment-amount">
-										Giá
-									</InputLabel>
-									<OutlinedInput
-										id="outlined-adornment-amount"
-										startAdornment={
-											<InputAdornment position="start">$</InputAdornment>
-										}
-										type="number"
-										label="Giá"
-										name="price"
-										value={values.price}
-										onChange={handleChange}
-										onBlur={handleBlur}
-										error={errors.price && touched.price}
-										//helperText={errors.price && touched.price}
-									/>
-								</FormControl>
+								<TextField
+									fullWidth
+									variant="outlined"
+									label="Mã sản phẩm"
+									name="code"
+									value={values.code}
+									onChange={handleChange}
+									onBlur={handleBlur}
+									error={errors.code && touched.code}
+									helperText={touched.code && errors.code}
+								/>
+							</Box>
+							<Box mb={2}>
+								{values.options && values.options.length > 0 ? (
+									<Grid container rowGap={3}>
+										{values.options.map((item, idx) => (
+											<Grid item xs={4} key={idx}>
+												<Box display={"flex"} alignItems="center">
+													<Typography>Lựa chọn {idx + 1}</Typography>
+													<IconButton
+														onClick={() => {
+															const newOptions = [...values.options];
+															newOptions.splice(idx, 1);
+															setFieldValue("options", newOptions);
+														}}
+													>
+														<DeleteIcon />
+													</IconButton>
+												</Box>
+												<TextField
+													sx={{ marginBottom: 1 }}
+													size="small"
+													label="Tên lựa chọn"
+													value={item.name}
+													onChange={(e) => {
+														const newOptions = [...values.options];
+														const newVal = item;
+														newVal.name = e.target.value;
+														newOptions.splice(idx, 1, newVal);
+														setFieldValue("options", newOptions);
+													}}
+												></TextField>
+
+												<TextField
+													size="small"
+													label="Giá"
+													value={item.price}
+													onChange={(e) => {
+														const newOptions = values.options;
+														const newVal = item;
+														newVal.price = e.target.value;
+														newOptions.splice(idx, 1, newVal);
+														setFieldValue("options", newOptions);
+													}}
+												></TextField>
+											</Grid>
+										))}
+									</Grid>
+								) : (
+									<FormControl fullWidth sx={{ m: 1 }}>
+										<InputLabel htmlFor="outlined-adornment-amount">
+											Giá
+										</InputLabel>
+										<OutlinedInput
+											id="outlined-adornment-amount"
+											startAdornment={
+												<InputAdornment position="start">$</InputAdornment>
+											}
+											type="number"
+											label="Giá"
+											name="price"
+											value={values.price}
+											onChange={handleChange}
+											onBlur={handleBlur}
+											error={errors.price && touched.price}
+											helperText={errors.price && touched.price}
+										/>
+									</FormControl>
+								)}
+								<Button
+									variant="outlined"
+									sx={{ marginTop: 2 }}
+									color="primary"
+									onClick={() => {
+										const arr = values.options;
+										arr.push({ name: "", value: "" });
+										setFieldValue("options", arr);
+									}}
+								>
+									Thêm lựa chọn
+								</Button>
 							</Box>
 							<Box mb={2} display="flex" gap={2} flexWrap="wrap">
 								{arrImage?.map((image, index) => (
@@ -215,19 +297,12 @@ const FormDetailProduct = ({ isOpen, detailProduct, isEdit, handleClose }) => {
 								/>
 							</Box>
 							<Box mb={2}>
-								<Select
+								<Autocomplete
+									disablePortal
 									options={options}
-									defaultValue={
-										detailProduct
-											? options.find(
-													(item) => item.value === detailProduct?.category?.id
-											  )
-											: null
-									}
-									onInputChange={(data) => {
-										setStrNameCategory(data);
-									}}
-									onChange={(data) => {
+									sx={{ width: 300 }}
+									defaultValue={values.category.name}
+									onChange={(e, data) => {
 										setFieldValue("category", data);
 										setFieldValue(
 											"specs",
@@ -235,6 +310,9 @@ const FormDetailProduct = ({ isOpen, detailProduct, isEdit, handleClose }) => {
 												.specs
 										);
 									}}
+									renderInput={(params) => (
+										<TextField {...params} label="Loại sản phẩm" />
+									)}
 								/>
 							</Box>
 							<Box mb={2}>
@@ -247,7 +325,7 @@ const FormDetailProduct = ({ isOpen, detailProduct, isEdit, handleClose }) => {
 								/>
 							</Box>
 							<Box mb={2}>
-								<Typography variant="h5">Các trường sản phẩm</Typography>
+								<Typography variant="h5">Thông tin sản phẩm</Typography>
 								{values?.specs?.length > 0 &&
 									values.specs.map((option, idx) => (
 										<DetailParamInfo
@@ -282,6 +360,7 @@ const FormDetailProduct = ({ isOpen, detailProduct, isEdit, handleClose }) => {
 								<Button
 									variant="contained"
 									onClick={() => {
+										console.log(errors, values);
 										handleSubmit();
 									}}
 								>

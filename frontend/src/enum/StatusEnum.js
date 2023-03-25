@@ -13,7 +13,14 @@ export const StatusEnum = {
 	Shipping: "shipping",
 };
 
+export const FormStateEnum = {
+	Add: 1,
+	Edit: 2,
+	View: 3,
+};
+
 export default {
 	StatusColorEnum,
 	StatusEnum,
+	FormStateEnum,
 };

@@ -11,6 +11,8 @@ import { orderActions } from "Redux/Actions";
 import { BASE_API } from "Services/ServiceURL";
 import FormDetailOrder from "./FormDetailOrder";
 import CircleIcon from "@mui/icons-material/Circle";
+import i18next from "i18next";
+import { StatusColorEnum } from "enum/StatusEnum";
 
 const Order = () => {
 	const dispatch = useDispatch();
@@ -56,8 +58,18 @@ const Order = () => {
 			id: "status",
 			Cell: (rowData) => (
 				<>
-					<CircleIcon color="success" fontSize="small" scale="0.5" />
-					{rowData.data.status}
+					<CircleIcon
+						color={
+							rowData.data.status === "pending"
+								? StatusColorEnum.Pending
+								: rowData.data.status === "reject"
+								? StatusColorEnum.Failed
+								: StatusColorEnum.Success
+						}
+						fontSize="small"
+						scale="0.5"
+					/>
+					{i18next.t("CommonI18n.StatusConfirm." + rowData.data.status)}
 				</>
 			),
 		},
@@ -108,6 +120,7 @@ const Order = () => {
 				isOpen={isOpenModal}
 				detailOrder={currentOrder}
 				handleClose={closeFormDetail}
+				handleReload={handleGetOrders}
 			/>
 		</LayoutAdmin>
 	);

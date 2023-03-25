@@ -18,6 +18,7 @@ import FormDetailCategory from "./FormDetailCategory";
 import { Add, Delete, ExpandLess, ExpandMore } from "@mui/icons-material";
 import { AlertContext } from "context/AlertContext";
 import { ConfirmContext } from "context/ConfirmContext";
+import { FormStateEnum } from "enum/StatusEnum";
 const Category = () => {
 	const { showAlert } = useContext(AlertContext);
 	const { showConfirm } = useContext(ConfirmContext);
@@ -27,6 +28,7 @@ const Category = () => {
 	);
 	const [currentCategory, setCurrentCategory] = useState(null);
 	const [isOpenModal, setIsOpenModal] = useState(false);
+	const [formState, setFormState] = useState(FormStateEnum.Add);
 	const query = {
 		populate: "childrentIds.childrentIds.childrentIds",
 		level: 0,
@@ -37,9 +39,13 @@ const Category = () => {
 	const handleGetCategories = (params = query) => {
 		dispatch(categoryActions.getCategories(queryString.stringify(params)));
 	};
-	const openFormDetail = (category = undefined) => {
+	const openFormDetail = (
+		category = undefined,
+		formState = FormStateEnum.Add
+	) => {
 		setIsOpenModal(true);
 		setCurrentCategory(category);
+		setFormState(formState);
 	};
 	const closeFormDetail = () => {
 		setIsOpenModal(false);
@@ -64,7 +70,9 @@ const Category = () => {
 			}
 		);
 	};
-	const handleAdd = () => {};
+	const handleAdd = (category) => {
+		openFormDetail(category, FormStateEnum.Add);
+	};
 	return (
 		<LayoutAdmin>
 			<Typography variant="h4">Danh mục sản phẩm</Typography>
@@ -100,6 +108,7 @@ const Category = () => {
 				isOpen={isOpenModal}
 				detailCategory={currentCategory}
 				handleClose={closeFormDetail}
+				formState={formState}
 			></FormDetailCategory>
 		</LayoutAdmin>
 	);
@@ -138,11 +147,15 @@ const RowCategory = ({ data, openDetail, removeAction, addAction }) => {
 				)}
 				<ListItemText
 					onDoubleClick={() => {
-						openDetail(data);
+						openDetail(data, FormStateEnum.Edit);
 					}}
 					primary={data?.name}
 				/>
-				<IconButton onClick={addAction}>
+				<IconButton
+					onClick={() => {
+						addAction(data, FormStateEnum.Add);
+					}}
+				>
 					<Add />
 				</IconButton>
 				<IconButton
