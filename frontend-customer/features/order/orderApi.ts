@@ -27,7 +27,13 @@ export const orderAPI = createApi({
 	}),
 	endpoints: (builder) => ({
 		getOrderById: builder.query({
-			query: () => `/`,
+			query: ({ status }) => ({
+				url: `/`,
+				method: "GET",
+				params: {
+					status: status,
+				},
+			}),
 		}),
 		createOrder: builder.mutation({
 			query: (payload) => ({

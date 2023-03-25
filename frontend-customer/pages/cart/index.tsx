@@ -30,8 +30,12 @@ export default function Cart({}: Props) {
 	};
 	useEffect(() => {
 		if (data && data.products) {
-			setListProductInCart([...data?.products] || []);
-			setListOldProductInCart([...data?.products] || []);
+			setListProductInCart(
+				[...data?.products.filter((item) => item.productId != null)] || []
+			);
+			setListOldProductInCart(
+				[...data?.products.filter((item) => item.productId != null)] || []
+			);
 		}
 	}, [data]);
 	useEffect(() => {

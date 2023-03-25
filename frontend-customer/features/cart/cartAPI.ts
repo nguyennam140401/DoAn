@@ -12,10 +12,8 @@ export const cartAPI = createApi({
 				localStorage.getItem("jwt") || ""
 			);
 			let token = tokenData.token;
-			// kiểm tra xem token có hết hạn hay không
 			const isTokenExpired = isExpired(token);
-			// nếu token đã hết hạn, gọi hàm refresh token để lấy token mới
-			if (isTokenExpired) {
+			if (!isTokenExpired) {
 				token = await refreshToken(); // Gọi hàm refresh token để lấy token mới
 			}
 			headers.set("Authorization", `Bearer ${token}`);

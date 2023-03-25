@@ -12,4 +12,10 @@ export interface ProductItemDetailModel {
 	description: string;
 	price: number;
 	images: Array<string>;
+	options: Array<ProductItemOptions>;
+}
+
+export interface ProductItemOptions {
+	name: "";
+	price: "";
 }

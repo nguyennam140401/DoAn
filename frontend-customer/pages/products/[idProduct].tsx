@@ -11,6 +11,7 @@ import { addProduct } from "../../features/cart/cartSlice";
 import { ProductCart } from "../../features/cart/modal";
 import { useAppDispatch } from "../../hooks";
 import { useCreateCartMutation } from "../../features/cart/cartAPI";
+import { formatPrice } from "../../common/commonFunction";
 
 type ProductDetailPageProps = {
 	product: ProductItemDetailModel;
@@ -18,6 +19,7 @@ type ProductDetailPageProps = {
 
 const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 	const [quantity, setQuantity] = useState(1);
+	const [optionIndex, setOptionIndex] = useState(0);
 	const [isFavorite, setIsFavorite] = useState(false);
 	const dispatch = useAppDispatch();
 	const [
@@ -40,7 +42,25 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 				</div>
 				<div className="w-full md:w-1/2 p-4">
 					<h2 className="text-2xl font-bold mb-2">{product.name}</h2>
-					<p className="text-gray-700 font-bold mb-2">{product.price}</p>
+
+					{product.options &&
+						product.options.length > 0 &&
+						product.options.map((item, idx) => (
+							<span
+								onClick={() => {
+									setOptionIndex(idx);
+								}}
+								key={idx}
+								className={`bg-gray-${
+									optionIndex === idx ? "500" : "200"
+								} mr-2 px-1 py-0.5 cursor-pointer`}
+							>
+								{item.name}
+							</span>
+						))}
+					<p className="text-gray-700 font-bold my-2 text-2xl price">
+						{formatPrice(product?.options[optionIndex].price || product.price)}
+					</p>
 					<div className="flex items-center mb-4">
 						<span className="mr-2">Số lượng:</span>
 						<div className="flex">

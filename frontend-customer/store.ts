@@ -7,6 +7,7 @@ import applicationReducer from "./features/application/applicationSlice";
 import { productSlice } from "./features/product/productSlice";
 import { authenApi } from "./features/authen/authenApi";
 import { cartAPI } from "./features/cart/cartAPI";
+import { orderAPI } from "./features/order/orderApi";
 
 export function makeStore() {
 	return configureStore({
@@ -16,6 +17,7 @@ export function makeStore() {
 			[productSlice.reducerPath]: productSlice.reducer,
 			[authenApi.reducerPath]: authenApi.reducer,
 			[cartAPI.reducerPath]: cartAPI.reducer,
+			[orderAPI.reducerPath]: orderAPI.reducer,
 			authenReducer: authenReducer,
 			application: applicationReducer,
 		},
@@ -23,7 +25,8 @@ export function makeStore() {
 			getDefaultMiddleware()
 				.concat(productSlice.middleware)
 				.concat(authenApi.middleware)
-				.concat(cartAPI.middleware),
+				.concat(cartAPI.middleware)
+				.concat(orderAPI.middleware),
 	});
 }
 

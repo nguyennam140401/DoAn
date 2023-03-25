@@ -5,14 +5,14 @@ export async function refreshToken() {
 	const url = API_URL + "/auth/refresh-tokens";
 	const res = await axios
 		.post(url, {
-			refreshToken: localStorage.getItem("refreshtoken"),
+			refreshToken: JSON.parse(localStorage.getItem("refreshtoken")).token,
 		})
 		.catch((err) => {
 			window.history.pushState("", "", "/authen/SignIn");
 			window.location.reload(false);
 		});
-	localStorage.setItem("refreshtoken", res.data.refresh.token);
-	localStorage.setItem("jwt", res.data.access.token);
+	localStorage.setItem("refreshtoken", JSON.stringify(res.data.refresh));
+	localStorage.setItem("jwt", JSON.stringify(res.data.access));
 	return res.data.access.token;
 }
 
