@@ -13,7 +13,7 @@ const createProduct = {
     review: Joi.array().default([]),
     images: Joi.array(),
     category: Joi.string().required(),
-    price: Joi.number().required(),
+    price: Joi.number(),
     options: Joi.array(),
   }),
 };
@@ -49,7 +49,7 @@ const updateProduct = {
     review: Joi.array().default([]),
     images: Joi.array(),
     category: Joi.string().required(),
-    price: Joi.number().required(),
+    price: Joi.number(),
     options: Joi.array(),
   }),
 };

@@ -20,6 +20,7 @@ const CartScheam = new Schema(
           ref: 'Product',
         },
         quantity: Number,
+        option: Object,
       },
     ],
   },

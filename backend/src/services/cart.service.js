@@ -12,15 +12,16 @@ const ApiError = require('../utils/ApiError');
  */
 const createCart = async (userId, cartBody) => {
   let cart = await Cart.findOne({ userId }).populate('products.productId');
-  const { productId, quantity } = cartBody;
+  const { productId, quantity, option } = cartBody;
   if (!cart) {
     cart = new Cart({
       userId,
       products: [],
     });
   }
+
   const existingItem = cart.products.find(
-    (item) => item.productId?._id.equals(productId) || item.productId?.id.equals(productId)
+    (item) => item.productId._id.equals(productId) && JSON.stringify(item.option) == JSON.stringify(option)
   );
 
   if (existingItem) {
@@ -29,6 +30,7 @@ const createCart = async (userId, cartBody) => {
     cart.products.push({
       productId,
       quantity,
+      option,
     });
   }
 
@@ -36,13 +38,13 @@ const createCart = async (userId, cartBody) => {
   return cart;
 };
 
-const removeCartItem = async (userId, productID) => {
-  let cart = await Cart.findOne({ userId }).populate('products.productId');
-  const existingItem = cart.products.find(
-    (item) => item.productId?._id.equals(productId) || item.productId?.id.equals(productId)
-  );
+const removeCartItem = async (userId, productId) => {
+  let cart = await Cart.findOne({ userId });
+  const existingItem = cart.products.find((item) => item.productId?._id.equals(productId));
   if (existingItem) {
-    cart.products = cart.products.filter((item) => item.id !== productID);
+    cart.products = cart.products.filter(
+      (item) => item.productId._id != productId && JSON.stringify(item.option) == JSON.stringify(option)
+    );
   } else {
     throw new ApiError(httpStatus.NOT_FOUND, 'Không tìm thấy sản phẩm');
   }
