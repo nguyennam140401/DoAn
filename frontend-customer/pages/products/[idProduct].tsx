@@ -12,12 +12,15 @@ import { ProductCart } from "../../features/cart/modal";
 import { useAppDispatch } from "../../hooks";
 import { useCreateCartMutation } from "../../features/cart/cartAPI";
 import { formatPrice } from "../../common/commonFunction";
+import { Status } from "../../common/enum";
+import { addNotification } from "../../features/application/applicationSlice";
 
 type ProductDetailPageProps = {
 	product: ProductItemDetailModel;
 };
 
 const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
+	console.log(product);
 	const [quantity, setQuantity] = useState(1);
 	const [optionIndex, setOptionIndex] = useState(0);
 	const [isFavorite, setIsFavorite] = useState(false);
@@ -27,7 +30,27 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 		{ isLoading: isSaveCart }, // This is the destructured mutation result
 	] = useCreateCartMutation();
 	const handleAddCart = async (data: any) => {
-		const res = saveCart(data);
+		if (product.options.length > 0) {
+			data.option = product.options[optionIndex];
+		}
+		const res: any = await saveCart(data);
+		if (res.data) {
+			dispatch(
+				addNotification({
+					title: "Thành công",
+					description: "Thêm vào giỏ hàng thành công",
+					status: Status.Success,
+				})
+			);
+		} else {
+			dispatch(
+				addNotification({
+					title: "Thất bại",
+					description: res?.error?.data?.message || "Có lỗi xảy ra",
+					status: Status.Danger,
+				})
+			);
+		}
 	};
 	const handleAddFavorite = () => {};
 	return (
@@ -59,7 +82,7 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 							</span>
 						))}
 					<p className="text-gray-700 font-bold my-2 text-2xl price">
-						{formatPrice(product?.options[optionIndex].price || product.price)}
+						{formatPrice(product?.options[optionIndex]?.price || product.price)}
 					</p>
 					<div className="flex items-center mb-4">
 						<span className="mr-2">Số lượng:</span>

@@ -39,7 +39,7 @@ export default function SignIn({}: Props) {
 			dispatch(
 				addNotification({
 					title: "Thành công",
-					description: res?.error?.data?.message || "Đăng nhập thành công",
+					description: "Đăng nhập thành công",
 					status: Status.Success,
 				})
 			);

@@ -5,11 +5,13 @@ import {
 	useCreateCartMutation,
 	useGetCartQuery,
 	useRemoveItemMutation,
-	useRemoveItemQuery,
 } from "../../features/cart/cartAPI";
 import { formatPrice } from "../../common/commonFunction";
 import MainLayout from "../../layouts/MainLayout";
 import FormPayment from "../../components/FormPayment";
+import { addNotification } from "../../features/application/applicationSlice";
+import { useAppDispatch } from "../../hooks";
+import { Status } from "../../common/enum";
 
 type Props = {};
 
@@ -19,14 +21,38 @@ export default function Cart({}: Props) {
 		saveCart, // This is the mutation trigger
 		{ isLoading: isSaveCart, isSuccess: isSuccesSave }, // This is the destructured mutation result
 	] = useCreateCartMutation();
-	const [removeCart] = useRemoveItemMutation();
+	const [
+		removeCart,
+		{ isLoading: isRemovingItemCart, isSuccess: isSuccessDeleteCartItem },
+	] = useRemoveItemMutation();
 	const [listProductInCart, setListProductInCart] = useState<Array<any>>([]);
 	const [listOldProductInCart, setListOldProductInCart] = useState<Array<any>>(
 		[]
 	);
+	const dispatch = useAppDispatch();
 	const [isOpenPayment, setIsOpenPayment] = useState(false);
-	const handleRemoveProduct = async (productId: any) => {
-		const res = await removeCart(productId);
+	const handleRemoveProduct = async (productId: any, option) => {
+		const res: any = await removeCart(productId);
+		console.log(res);
+		if (res.data) {
+			dispatch(
+				addNotification({
+					title: "Thành công",
+					description: "Xóa thành công",
+					status: Status.Success,
+				})
+			);
+			setListProductInCart([...res.data?.products]);
+			setListOldProductInCart([...res.data?.products]);
+		} else {
+			dispatch(
+				addNotification({
+					title: "Thất bại",
+					description: res?.error?.data?.message || "Có lỗi xảy ra",
+					status: Status.Danger,
+				})
+			);
+		}
 	};
 	useEffect(() => {
 		if (data && data.products) {
@@ -76,7 +102,6 @@ export default function Cart({}: Props) {
 			quantity: quantity - product.quantity,
 		};
 		const res = await saveCart(payload);
-		console.log(res);
 		if (res.data) {
 			const newCart = listProductInCart.map((item) =>
 				item.productId != product.productId
@@ -114,7 +139,14 @@ export default function Cart({}: Props) {
 											<h2 className="text-lg font-bold text-gray-900">
 												{item.productId.name}
 											</h2>
-											<p className="mt-1 text-xs text-gray-700">36EU - 4US</p>
+											{item.option && (
+												<span
+													key={idx}
+													className={`bg-gray-500 mr-2 px-1 py-0.5 cursor-pointer`}
+												>
+													{item.option.name}
+												</span>
+											)}
 										</div>
 										<div className="mt-4 flex justify-between sm:space-y-6 sm:mt-0 sm:block sm:space-x-6">
 											<div className="flex items-center border-gray-100">
@@ -181,7 +213,7 @@ export default function Cart({}: Props) {
 												</p>
 												<svg
 													onClick={() => {
-														handleRemoveProduct(item.productId.id);
+														handleRemoveProduct(item.productId.id, item.option);
 													}}
 													xmlns="http://www.w3.org/2000/svg"
 													fill="none"
