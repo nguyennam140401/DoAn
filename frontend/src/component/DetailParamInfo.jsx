@@ -7,6 +7,7 @@ const DetailParamInfo = ({
 	setFieldValue,
 	fieldSet = "options",
 	isSetValueProduct,
+	isView = false,
 }) => {
 	return (
 		<>
@@ -15,6 +16,7 @@ const DetailParamInfo = ({
 					{isSetValueProduct ? (
 						<TextField
 							variant="outlined"
+							disabled={isView}
 							label={optionsData[idx].name}
 							value={optionsData[idx].value}
 							onChange={(e) => {
@@ -56,18 +58,20 @@ const DetailParamInfo = ({
 								...optionsData.slice(idx + 1),
 							]);
 						}}
-						disabled={isSetValueProduct}
+						disabled={isSetValueProduct || isView}
 					></TextField>
 				</Box>
 				<Box>
-					<IconButton
-						onClick={() => {
-							optionsData.splice(idx, 1);
-							setFieldValue(fieldSet, optionsData);
-						}}
-					>
-						<DeleteIcon />
-					</IconButton>
+					{!isView && (
+						<IconButton
+							onClick={() => {
+								optionsData.splice(idx, 1);
+								setFieldValue(fieldSet, optionsData);
+							}}
+						>
+							<DeleteIcon />
+						</IconButton>
+					)}
 				</Box>
 			</Box>
 		</>

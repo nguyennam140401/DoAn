@@ -5,12 +5,12 @@ export const StatusColorEnum = {
 };
 
 export const StatusEnum = {
-	Pending: "pending",
-	Approved: "approved",
-	Reject: "reject",
-	Accept: "accept",
-	Done: "done",
-	Shipping: "shipping",
+	Pending: 0,
+	Approved: 1,
+	Shipping: 2,
+	Success: 3,
+	Reject: 4,
+	Cancel: 5,
 };
 
 export const FormStateEnum = {

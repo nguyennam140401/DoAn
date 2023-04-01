@@ -11,6 +11,7 @@ import { ConfirmContext } from "context/ConfirmContext";
 import { AlertContext } from "context/AlertContext";
 import "react-quill/dist/quill.snow.css";
 import { BASE_API } from "Services/ServiceURL";
+import { FormStateEnum } from "enum/StatusEnum";
 const Product = () => {
 	const dispatch = useDispatch();
 	const { products, isGetProducts } = useSelector(
@@ -20,14 +21,19 @@ const Product = () => {
 	const { showAlert } = useContext(AlertContext);
 	const [isOpenModal, setIsOpenModal] = useState(false);
 	const [currentProduct, setCurrentProduct] = useState(null);
-	const viewAction = (e, data) => {
-		setCurrentProduct(data);
+	const [formState, setFormState] = useState(FormStateEnum.View);
+	const openForm = (formData, formState) => {
 		setIsOpenModal(true);
+		setCurrentProduct(formData);
+		setFormState(formState);
+	};
+	const viewAction = (data) => {
+		openForm(data, FormStateEnum.View);
 	};
 	const editAction = (data) => {
-		setCurrentProduct(data);
-		setIsOpenModal(true);
+		openForm(data, FormStateEnum.Edit);
 	};
+
 	const removeAction = (data) => {
 		showConfirm(
 			"Xác nhận xóa sản phẩm",
@@ -65,6 +71,7 @@ const Product = () => {
 		},
 		{ label: "Danh mục", id: "category.name" },
 		{ label: "Đơn giá", id: "price" },
+		{ label: "Tồn kho", id: "inventory" },
 		{
 			label: "Hành động",
 			Cell: ({ data }) => (
@@ -102,7 +109,7 @@ const Product = () => {
 				<Button
 					variant="contained"
 					onClick={() => {
-						setIsOpenModal(true);
+						openForm(null, FormStateEnum.Add);
 					}}
 				>
 					Thêm mới
@@ -122,6 +129,7 @@ const Product = () => {
 				isOpen={isOpenModal}
 				detailProduct={currentProduct}
 				handleClose={closeFormDetail}
+				formState={formState}
 			/>
 		</LayoutAdmin>
 	);

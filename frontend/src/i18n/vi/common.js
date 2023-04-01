@@ -9,11 +9,11 @@ export const CommonI18n = {
 		FillPassword: "Điền mật khẩu",
 	},
 	StatusConfirm: {
-		pending: "Chờ duyệt",
-		approved: "Đồng ý",
-		accept: "Xác nhận",
-		done: "Hoàn thành",
-		reject: "Từ chối",
-		shipping: "Đang giao hàng",
+		0: "Chờ duyệt",
+		1: "Đồng ý",
+		2: "Xác nhận",
+		3: "Hoàn thành",
+		4: "Từ chối",
+		5: "Đang giao hàng",
 	},
 };

@@ -60,9 +60,9 @@ const Order = () => {
 				<>
 					<CircleIcon
 						color={
-							rowData.data.status === "pending"
+							rowData.data.status === 0
 								? StatusColorEnum.Pending
-								: rowData.data.status === "reject"
+								: rowData.data.status === 1
 								? StatusColorEnum.Failed
 								: StatusColorEnum.Success
 						}

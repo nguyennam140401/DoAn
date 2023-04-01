@@ -43,20 +43,26 @@ const Styled = styled.div`
 		right: 0;
 	}
 `;
-const BoxAddImage = ({ image, src, handleRemove, ...props }) => {
+const BoxAddImage = ({
+	image,
+	src,
+	handleRemove,
+	isView = false,
+	...props
+}) => {
 	return (
 		<Styled>
 			{src ? (
 				<>
 					<img {...props} src={src} alt="ảnh sản phẩm" />
-					{handleRemove && (
+					{handleRemove && !isView && (
 						<IconButton className="remove" onClick={handleRemove}>
 							<Cancel></Cancel>
 						</IconButton>
 					)}
 				</>
 			) : (
-				<div className="boxAdd" {...props}></div>
+				<div hidden={!isView} className="boxAdd" {...props}></div>
 			)}
 		</Styled>
 	);

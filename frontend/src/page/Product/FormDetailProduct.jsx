@@ -30,7 +30,14 @@ import { AlertContext } from "context/AlertContext";
 import ReactQuill from "react-quill";
 import DeleteIcon from "@mui/icons-material/Delete";
 import "react-quill/dist/quill.snow.css";
-const FormDetailProduct = ({ isOpen, detailProduct, isEdit, handleClose }) => {
+import { FormStateEnum } from "enum/StatusEnum";
+const FormDetailProduct = ({
+	isOpen,
+	detailProduct,
+	formState,
+	handleClose,
+}) => {
+	console.log(formState);
 	const { showAlert } = useContext(AlertContext);
 	const dispatch = useDispatch();
 	const { categories } = useSelector((state) => state.categoryReducer);
@@ -49,6 +56,9 @@ const FormDetailProduct = ({ isOpen, detailProduct, isEdit, handleClose }) => {
 		review: yup.array().default([]),
 		images: yup.array().required("Sản phẩm phải có ít nhất 1 hình ảnh"),
 		category: yup.object().required("Loại sản phẩm không được để trống"),
+		inventory: yup
+			.number()
+			.required("Bạn phải nhập số lượng tồn kho của sản phẩm"),
 		options: yup.array(),
 		priceOrOptions: yup.mixed().when(["price", "options"], {
 			is: (price, options) =>
@@ -79,6 +89,8 @@ const FormDetailProduct = ({ isOpen, detailProduct, isEdit, handleClose }) => {
 	useEffect(() => {
 		if (detailProduct) {
 			setArrImage(detailProduct.images);
+		} else {
+			setArrImage([]);
 		}
 	}, [detailProduct, isOpen]);
 
@@ -155,6 +167,7 @@ const FormDetailProduct = ({ isOpen, detailProduct, isEdit, handleClose }) => {
 						<>
 							<Box mb={2}>
 								<TextField
+									disabled={formState === FormStateEnum.View}
 									fullWidth
 									variant="outlined"
 									label="Tên sản phẩm"
@@ -168,6 +181,7 @@ const FormDetailProduct = ({ isOpen, detailProduct, isEdit, handleClose }) => {
 							</Box>
 							<Box mb={2}>
 								<TextField
+									disabled={formState === FormStateEnum.View}
 									fullWidth
 									variant="outlined"
 									label="Mã sản phẩm"
@@ -186,17 +200,20 @@ const FormDetailProduct = ({ isOpen, detailProduct, isEdit, handleClose }) => {
 											<Grid item xs={4} key={idx}>
 												<Box display={"flex"} alignItems="center">
 													<Typography>Lựa chọn {idx + 1}</Typography>
-													<IconButton
-														onClick={() => {
-															const newOptions = [...values.options];
-															newOptions.splice(idx, 1);
-															setFieldValue("options", newOptions);
-														}}
-													>
-														<DeleteIcon />
-													</IconButton>
+													{formState !== FormStateEnum.View && (
+														<IconButton
+															onClick={() => {
+																const newOptions = [...values.options];
+																newOptions.splice(idx, 1);
+																setFieldValue("options", newOptions);
+															}}
+														>
+															<DeleteIcon />
+														</IconButton>
+													)}
 												</Box>
 												<TextField
+													disabled={formState === FormStateEnum.View}
 													sx={{ marginBottom: 1 }}
 													size="small"
 													label="Tên lựa chọn"
@@ -211,6 +228,8 @@ const FormDetailProduct = ({ isOpen, detailProduct, isEdit, handleClose }) => {
 												></TextField>
 
 												<TextField
+													disabled={formState === FormStateEnum.View}
+													sx={{ marginBottom: 1 }}
 													size="small"
 													label="Giá"
 													value={item.price}
@@ -222,46 +241,76 @@ const FormDetailProduct = ({ isOpen, detailProduct, isEdit, handleClose }) => {
 														setFieldValue("options", newOptions);
 													}}
 												></TextField>
+
+												<TextField
+													disabled={formState === FormStateEnum.View}
+													size="small"
+													label="Số lượng hàng "
+													value={item.inventory}
+													onChange={(e) => {
+														const newOptions = values.options;
+														const newVal = item;
+														newVal.inventory = e.target.value;
+														newOptions.splice(idx, 1, newVal);
+														setFieldValue("options", newOptions);
+													}}
+												></TextField>
 											</Grid>
 										))}
 									</Grid>
 								) : (
-									<FormControl fullWidth sx={{ m: 1 }}>
-										<InputLabel htmlFor="outlined-adornment-amount">
-											Giá
-										</InputLabel>
-										<OutlinedInput
-											id="outlined-adornment-amount"
-											startAdornment={
-												<InputAdornment position="start">$</InputAdornment>
-											}
-											type="number"
-											label="Giá"
-											name="price"
-											value={values.price}
-											onChange={handleChange}
+									<>
+										<FormControl fullWidth sx={{ m: 1 }}>
+											<InputLabel htmlFor="outlined-adornment-amount">
+												Giá
+											</InputLabel>
+											<OutlinedInput
+												id="outlined-adornment-amount"
+												startAdornment={
+													<InputAdornment position="start">$</InputAdornment>
+												}
+												disabled={formState === FormStateEnum.View}
+												type="number"
+												label="Giá"
+												name="price"
+												value={values.price}
+												onChange={handleChange}
+												onBlur={handleBlur}
+												error={errors.price && touched.price}
+												helperText={errors.price && touched.price}
+											/>
+										</FormControl>
+										<TextField
+											disabled={formState === FormStateEnum.View}
+											fullWidth
+											variant="outlined"
+											label="Số lượng hàng"
+											value={values.inventory}
+											name="inventory"
 											onBlur={handleBlur}
-											error={errors.price && touched.price}
-											helperText={errors.price && touched.price}
-										/>
-									</FormControl>
+											onChange={handleChange}
+										></TextField>
+									</>
 								)}
-								<Button
-									variant="outlined"
-									sx={{ marginTop: 2 }}
-									color="primary"
-									onClick={() => {
-										const arr = values.options;
-										arr.push({ name: "", value: "" });
-										setFieldValue("options", arr);
-									}}
-								>
-									Thêm lựa chọn
-								</Button>
+								{formState !== FormStateEnum.View && (
+									<Button
+										variant="outlined"
+										sx={{ marginTop: 2 }}
+										color="primary"
+										onClick={() => {
+											const arr = values.options;
+											arr.push({ name: "", value: "" });
+											setFieldValue("options", arr);
+										}}
+									>
+										Thêm lựa chọn
+									</Button>
+								)}
 							</Box>
 							<Box mb={2} display="flex" gap={2} flexWrap="wrap">
 								{arrImage?.map((image, index) => (
 									<BoxAddImage
+										isView={formState === FormStateEnum.View}
 										handleRemove={() => {
 											arrImage.splice(index, 1);
 											setFieldValue("images", arrImage);
@@ -274,7 +323,9 @@ const FormDetailProduct = ({ isOpen, detailProduct, isEdit, handleClose }) => {
 									/>
 								))}
 								<label htmlFor="imageProduct">
-									<BoxAddImage title="Thêm ảnh"></BoxAddImage>
+									{formState !== FormStateEnum.View && (
+										<BoxAddImage title="Thêm ảnh"></BoxAddImage>
+									)}
 								</label>
 								<input
 									type={"file"}
@@ -298,6 +349,7 @@ const FormDetailProduct = ({ isOpen, detailProduct, isEdit, handleClose }) => {
 							</Box>
 							<Box mb={2}>
 								<Autocomplete
+									disabled={formState === FormStateEnum.View}
 									disablePortal
 									options={options}
 									sx={{ width: 300 }}
@@ -311,12 +363,17 @@ const FormDetailProduct = ({ isOpen, detailProduct, isEdit, handleClose }) => {
 										);
 									}}
 									renderInput={(params) => (
-										<TextField {...params} label="Loại sản phẩm" />
+										<TextField
+											disabled={formState === FormStateEnum.View}
+											{...params}
+											label="Loại sản phẩm"
+										/>
 									)}
 								/>
 							</Box>
 							<Box mb={2}>
 								<ReactQuill
+									readOnly={formState === FormStateEnum.View}
 									theme="snow"
 									value={values.description}
 									onChange={(event) => {
@@ -329,6 +386,7 @@ const FormDetailProduct = ({ isOpen, detailProduct, isEdit, handleClose }) => {
 								{values?.specs?.length > 0 &&
 									values.specs.map((option, idx) => (
 										<DetailParamInfo
+											isView={formState === FormStateEnum.View}
 											key={idx}
 											isSetValueProduct={true}
 											idx={idx}
@@ -339,32 +397,37 @@ const FormDetailProduct = ({ isOpen, detailProduct, isEdit, handleClose }) => {
 										></DetailParamInfo>
 									))}
 							</Box>
-							<Box position={"relative"} mb={2} minHeight={30}>
-								<Box position={"absolute"} bottom={0} right={0}>
-									<IconButton
-										onClick={() => {
-											setFieldValue(
-												"specs",
-												values?.specs
-													? [...values?.specs, { name: "", unit: "" }]
-													: [{ name: "", unit: "" }]
-											);
-										}}
-									>
-										<AddCircleIcon />
-									</IconButton>
+							{formState !== FormStateEnum.View && (
+								<Box position={"relative"} mb={2} minHeight={30}>
+									<Box position={"absolute"} bottom={0} right={0}>
+										<IconButton
+											onClick={() => {
+												setFieldValue(
+													"specs",
+													values?.specs
+														? [...values?.specs, { name: "", unit: "" }]
+														: [{ name: "", unit: "" }]
+												);
+											}}
+										>
+											<AddCircleIcon />
+										</IconButton>
+									</Box>
 								</Box>
-							</Box>
-
+							)}
 							<Box mb={2} textAlign="center">
 								<Button
 									variant="contained"
 									onClick={() => {
-										console.log(errors, values);
-										handleSubmit();
+										if (formState !== FormStateEnum.View) handleSubmit();
+										else handleClose();
 									}}
 								>
-									{detailProduct ? "Cập nhật" : "Thêm"}
+									{formState === FormStateEnum.Edit
+										? "Cập nhật"
+										: formState === FormStateEnum.Add
+										? "Thêm"
+										: "Đóng"}
 								</Button>
 							</Box>
 						</>
