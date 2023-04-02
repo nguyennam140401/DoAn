@@ -38,13 +38,16 @@ const createCart = async (userId, cartBody) => {
   return cart;
 };
 
-const removeCartItem = async (userId, productId) => {
-  let cart = await Cart.findOne({ userId });
-  const existingItem = cart.products.find((item) => item.productId?._id.equals(productId));
+const removeCartItem = async (userId, productId, optionName) => {
+  const cart = await Cart.findOne({ userId });
+  const existingItem = cart.products.find((item) => item.productId.equals(productId));
   if (existingItem) {
-    cart.products = cart.products.filter(
-      (item) => item.productId._id != productId && JSON.stringify(item.option) == JSON.stringify(option)
-    );
+    cart.products = cart.products.filter((item) => {
+      if (optionName && item.option) {
+        return !(item.productId.toString() === productId.toString() && item.option.name === optionName);
+      }
+      return item.productId.toString() !== productId.toString();
+    });
   } else {
     throw new ApiError(httpStatus.NOT_FOUND, 'Không tìm thấy sản phẩm');
   }

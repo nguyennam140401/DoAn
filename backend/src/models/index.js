@@ -6,3 +6,4 @@ module.exports.Invetory = require('./invetory.model');
 module.exports.Order = require('./order.model');
 module.exports.Product = require('./product.model');
 module.exports.Role = require('./role.model');
+module.exports.Brand = require('./brand.model');

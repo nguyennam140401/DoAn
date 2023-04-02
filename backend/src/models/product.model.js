@@ -15,7 +15,9 @@ const ProductScheam = new Schema(
       unique: true,
     },
     brand: {
-      type: String,
+      type: Types.ObjectId,
+      ref: 'Brand',
+      required: true,
     },
     price: {
       type: Number,
@@ -44,6 +46,18 @@ const ProductScheam = new Schema(
     options: {
       type: Array,
       default: [],
+    },
+    inventory: {
+      type: Number,
+      default: 0,
+    },
+    soldQuantity: {
+      type: Number,
+      default: 0,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
     },
   },
   { collection: 'products', timestamps: true }

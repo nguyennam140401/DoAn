@@ -5,16 +5,17 @@ const createProduct = {
   body: Joi.object().keys({
     name: Joi.string().required(),
     code: Joi.string().required(),
-    brand: Joi.string(),
+    brand: Joi.string().required(),
     description: Joi.string().required(),
     release_date: Joi.string(),
     specs: Joi.array(),
-    star: Joi.number().default(0),
+    star: Joi.number().default(0).min(0),
     review: Joi.array().default([]),
     images: Joi.array(),
     category: Joi.string().required(),
-    price: Joi.number(),
+    price: Joi.number().allow(null).default(0).min(0),
     options: Joi.array(),
+    inventory: Joi.number().allow(null).default(0).min(0),
   }),
 };
 
@@ -41,16 +42,18 @@ const updateProduct = {
   body: Joi.object().keys({
     name: Joi.string().required(),
     code: Joi.string().required(),
-    brand: Joi.string(),
+    brand: Joi.string().required(),
     description: Joi.string().required(),
     release_date: Joi.string(),
     specs: Joi.array(),
-    star: Joi.number().default(0),
+    star: Joi.number().default(0).min(0),
     review: Joi.array().default([]),
     images: Joi.array(),
     category: Joi.string().required(),
-    price: Joi.number(),
+    price: Joi.number().default(0).min(0),
     options: Joi.array(),
+    inventory: Joi.number().default(0).min(0),
+    isActive: Joi.boolean(),
   }),
 };
 

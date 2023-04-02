@@ -3,6 +3,7 @@ const rimraf = require('rimraf');
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
+const { toNonAccentVietnamese } = require('../common/commonFunction');
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -51,7 +52,7 @@ const uploadImage = (arrImage, folder) => {
 };
 
 const uploadImageTest = (req, res, next) => {
-  const destination = `uploads/${req.body.name.trim()}/`;
+  const destination = `uploads/${toNonAccentVietnamese(req.body.name.trim())}/`;
   let arrFile = [];
   fs.access(destination, fs.constants.F_OK, (err) => {
     if (err) {
@@ -66,7 +67,7 @@ const uploadImageTest = (req, res, next) => {
     req?.files?.forEach((file) => {
       const source = file.path;
       const target = path.join(destination, file.originalname);
-      arrFile = [...arrFile, req.body.name + '/' + file.originalname];
+      arrFile = [...arrFile, toNonAccentVietnamese(req.body.name) + '/' + file.originalname];
       fs.rename(source, target, (e) => {
         if (e) {
           console.error(e);

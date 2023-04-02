@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const { EnumStatusOrder } = require('../common/enummeric');
 const { toJSON, paginate } = require('./plugins');
 const findByIdAndPopulate = require('./plugins/findByIdAndPopulate.plugin');
 
@@ -16,12 +17,13 @@ const OrderScheam = new Schema(
           ref: 'Product',
         },
         quantity: Number,
+        option: Object,
       },
     ],
     status: {
       type: String,
-      enum: ['pending', 'approved', 'shipping', 'success', 'reject'],
-      default: 'pending',
+      enum: EnumStatusOrder,
+      default: EnumStatusOrder.Pending,
     },
     paymentMethod: {
       type: String,

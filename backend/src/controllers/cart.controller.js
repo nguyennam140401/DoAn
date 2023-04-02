@@ -13,8 +13,8 @@ const getCartByUser = catchAsync(async (req, res) => {
 });
 const removeCartItem = catchAsync(async (req, res) => {
   const { id: userId } = req.user;
-  const { id: productId } = req.params;
-  const cart = await cartService.removeCartItem(userId, productId);
+  const { id: productId, optionName } = req.query;
+  const cart = await cartService.removeCartItem(userId, productId, optionName);
   return res.status(httpStatus.OK).send(cart);
 });
 module.exports = {
