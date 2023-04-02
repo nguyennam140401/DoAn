@@ -1,5 +1,6 @@
 import SendIcon from "@mui/icons-material/Send";
 import Account from "page/Account";
+import Brand from "page/Brand";
 import Category from "page/Category";
 import Dashboard from "page/Dashboard";
 import Order from "page/Order";
@@ -51,15 +52,15 @@ const routes = [
 	},
 	{
 		collapse: true,
-		name: "Có child menu",
+		name: "Quản lý chung",
 		icon: <SendIcon />,
-		path: "hasChild",
+		path: "common",
 		views: [
 			{
-				path: "/child1",
-				name: "Child 1 nè",
+				path: "/brand",
+				name: "Quản lý nhà sản xuất",
 				icon: <SendIcon />,
-				component: () => <p>Child 1 nè</p>,
+				component: <Brand />,
 			},
 			{
 				path: "/child2",

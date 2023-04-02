@@ -31,34 +31,34 @@ import ReactQuill from "react-quill";
 import DeleteIcon from "@mui/icons-material/Delete";
 import "react-quill/dist/quill.snow.css";
 import { FormStateEnum } from "enum/StatusEnum";
+import { brandActions } from "Redux/Actions";
 const FormDetailProduct = ({
 	isOpen,
 	detailProduct,
 	formState,
 	handleClose,
 }) => {
-	console.log(formState);
+	console.log(detailProduct);
 	const { showAlert } = useContext(AlertContext);
 	const dispatch = useDispatch();
 	const { categories } = useSelector((state) => state.categoryReducer);
+	const { brands } = useSelector((state) => state.brandReducer);
 	const [options, setOptions] = useState([]);
 	const [arrImage, setArrImage] = useState([]);
 	const [strNameCategory, setStrNameCategory] = useState("");
 	const formSchema = yup.object({
 		name: yup.string().required("Tên sản phẩm không được để trống"),
 		code: yup.string().required("Mã sản phẩm không được để trống"),
-		brand: yup.string(),
+		brand: yup.object().required("Hãng sản xuất không được để trống"),
 		description: yup.string().required("Mô tả sản phẩm không được để trống"),
-		price: yup.number(),
+		price: yup.number().default(0),
 		release_date: yup.string(),
 		specs: yup.array(),
 		star: yup.number().default(0),
 		review: yup.array().default([]),
 		images: yup.array().required("Sản phẩm phải có ít nhất 1 hình ảnh"),
 		category: yup.object().required("Loại sản phẩm không được để trống"),
-		inventory: yup
-			.number()
-			.required("Bạn phải nhập số lượng tồn kho của sản phẩm"),
+		inventory: yup.number().default(0),
 		options: yup.array(),
 		priceOrOptions: yup.mixed().when(["price", "options"], {
 			is: (price, options) =>
@@ -74,6 +74,7 @@ const FormDetailProduct = ({
 				images: [],
 				category: "",
 				options: [],
+				brand: "",
 		  };
 	useDebounce(
 		() => {
@@ -84,6 +85,7 @@ const FormDetailProduct = ({
 	);
 	useEffect(() => {
 		handleGetCategories();
+		handleGetBrands();
 	}, []);
 
 	useEffect(() => {
@@ -104,7 +106,8 @@ const FormDetailProduct = ({
 	}, [categories]);
 	const submit = (data) => {
 		data.category = data?.category?.id || data?.category?.value;
-		const { id, ...payload } = data;
+		data.brand = data?.brand?.id || data?.brand?.value;
+		const { id, soldQuantity, ...payload } = data;
 		!detailProduct
 			? dispatch(
 					productActions.createProduct(payload, {
@@ -129,7 +132,12 @@ const FormDetailProduct = ({
 					})
 			  );
 	};
-
+	const stopSold = async () => {
+		submit({
+			...detailProduct,
+			isActive: false,
+		});
+	};
 	const handleGetCategories = (name) => {
 		const payload = {
 			name: name,
@@ -138,6 +146,9 @@ const FormDetailProduct = ({
 		dispatch(
 			categoryActions.getCategories(queryString.stringify(removeEmpty(payload)))
 		);
+	};
+	const handleGetBrands = (name) => {
+		dispatch(brandActions.getBrands());
 	};
 	return (
 		<Dialog
@@ -347,7 +358,7 @@ const FormDetailProduct = ({
 									}}
 								/>
 							</Box>
-							<Box mb={2}>
+							<Box mb={2} display="flex" columnGap={2}>
 								<Autocomplete
 									disabled={formState === FormStateEnum.View}
 									disablePortal
@@ -367,6 +378,26 @@ const FormDetailProduct = ({
 											disabled={formState === FormStateEnum.View}
 											{...params}
 											label="Loại sản phẩm"
+										/>
+									)}
+								/>
+								<Autocomplete
+									disabled={formState === FormStateEnum.View}
+									disablePortal
+									options={brands.results.map((item) => ({
+										label: item.name,
+										value: item.id,
+									}))}
+									sx={{ width: 300 }}
+									defaultValue={values.brand.name}
+									onChange={(e, data) => {
+										setFieldValue("brand", data);
+									}}
+									renderInput={(params) => (
+										<TextField
+											disabled={formState === FormStateEnum.View}
+											{...params}
+											label="Hãng sản xuất"
 										/>
 									)}
 								/>
@@ -415,10 +446,22 @@ const FormDetailProduct = ({
 									</Box>
 								</Box>
 							)}
-							<Box mb={2} textAlign="center">
+							<Box
+								mb={2}
+								textAlign="center"
+								columnGap={2}
+								display={"flex"}
+								justifyContent={"center"}
+							>
+								{formState !== FormStateEnum.Add && (
+									<Button variant="contained" color="error" onClick={stopSold}>
+										Ngừng kinh doanh
+									</Button>
+								)}
 								<Button
 									variant="contained"
 									onClick={() => {
+										console.log(errors);
 										if (formState !== FormStateEnum.View) handleSubmit();
 										else handleClose();
 									}}

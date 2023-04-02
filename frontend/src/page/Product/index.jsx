@@ -73,6 +73,13 @@ const Product = () => {
 		{ label: "Đơn giá", id: "price" },
 		{ label: "Tồn kho", id: "inventory" },
 		{
+			label: "Trạng thái",
+			id: "isActive",
+			Cell: ({ data }) => (
+				<p>{data.isActive ? "Đang kinh doanh" : "Ngừng kinh doanh"}</p>
+			),
+		},
+		{
 			label: "Hành động",
 			Cell: ({ data }) => (
 				<ListActionButtonInTable
@@ -86,7 +93,7 @@ const Product = () => {
 	];
 	const [query, setQuery] = useState({
 		page: 1,
-		populate: "category",
+		populate: "category,brand",
 	});
 	const closeFormDetail = (isSubmit = false) => {
 		setCurrentProduct(undefined);
