@@ -7,8 +7,6 @@ import { ReviewItemList } from "../../features/review/model";
 import { axiosClient } from "../../common/axiosClient";
 import { API_URL_BASE, productPath } from "../../constant/apiPath";
 import MainLayout from "../../layouts/MainLayout";
-import { addProduct } from "../../features/cart/cartSlice";
-import { ProductCart } from "../../features/cart/modal";
 import { useAppDispatch } from "../../hooks";
 import { useCreateCartMutation } from "../../features/cart/cartAPI";
 import { formatPrice } from "../../common/commonFunction";
@@ -20,7 +18,6 @@ type ProductDetailPageProps = {
 };
 
 const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
-	console.log(product);
 	const [quantity, setQuantity] = useState(1);
 	const [optionIndex, setOptionIndex] = useState(0);
 	const [isFavorite, setIsFavorite] = useState(false);
@@ -86,7 +83,7 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 					</p>
 					<div className="flex items-center mb-4">
 						<span className="mr-2">Số lượng:</span>
-						<div className="flex">
+						<div className="flex mx-2">
 							<button
 								className="border border-gray-400 w-8 h-8"
 								onClick={() => setQuantity((state) => --state)}
@@ -108,6 +105,11 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 								+
 							</button>
 						</div>
+						<p>
+							Có sẵn{" "}
+							{product.inventory || product.options[optionIndex].inventory} sản
+							phẩm
+						</p>
 					</div>
 					<button
 						className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"

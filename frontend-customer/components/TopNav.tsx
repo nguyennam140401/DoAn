@@ -1,13 +1,20 @@
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { AppState } from "../store";
 import Input from "./Input";
 import { useRouter } from "next/router";
 import { logoutSuccess } from "../features/authen/authenSlice";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-type Props = {};
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { axiosClient } from "../common/axiosClient";
+import { categoryPath } from "../constant/apiPath";
+import { useGetCategoriesQuery } from "../features/category/categoryApi";
+import { useGetCartQuery } from "../features/cart/cartAPI";
+import { setQuantity } from "../features/cart/cartSlice";
+type Props = {
+	category?: any;
+};
 const Style = styled.div`
 	.avatar {
 		position: relative;
@@ -29,40 +36,75 @@ const Style = styled.div`
 			top: 100%;
 		}
 	}
+	.nav-item {
+		position: relative;
+		::after {
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			content: "";
+			height: 2px;
+			width: 0px;
+			background-color: #1950e6;
+		}
+		.child-menu {
+			position: absolute;
+			display: none;
+			top: 100%;
+			left: 0;
+			background-color: #fff;
+			padding: 20px;
+			width: 300px;
+			z-index: 1000;
+		}
+		:hover {
+			.child-menu {
+				display: block;
+			}
+			::after {
+				width: 50%;
+				transition: 0.2s;
+			}
+		}
+	}
 `;
-function TopNav({}: Props) {
-	const quantityProductInCart = useAppSelector((state: AppState) =>
-		state.cart.reduce((pre, current) => (pre += current.quantity), 0)
+function TopNav({ category }: Props) {
+	const quantityProductInCart = useAppSelector(
+		(state: AppState) => state.cart.quantity
 	);
+	const {
+		data: dataCart,
+		error: errCart,
+		isLoading: loadingCart,
+		isSuccess: successLoadCart,
+	} = useGetCartQuery({});
+	useEffect(() => {
+		if (successLoadCart)
+			dispatch(
+				setQuantity(
+					dataCart?.products?.reduce((pre, curr) => pre + curr.quantity, 0) || 0
+				)
+			);
+	}, [successLoadCart]);
+
+	const {
+		data: listCategory,
+		error,
+		isLoading,
+	} = useGetCategoriesQuery({
+		populate: "childrentIds.childrentIds.childrentIds",
+	});
 	const authenReducer = useAppSelector(
 		(state: AppState) => state.authenReducer
 	);
-	const arrItemInNav = [
-		{
-			name: "Home",
-			url: "/",
-		},
-		{
-			name: "Danh mục 1",
-			url: "/",
-		},
-		{
-			name: "Danh mục 2",
-			url: "/",
-		},
-		{
-			name: "Danh mục 3",
-			url: "/",
-		},
-		{
-			name: "About",
-			url: "/",
-		},
-		{
-			name: "Liên hệ",
-			url: "/",
-		},
-	];
+	const arrItemInNav = listCategory
+		? [
+				...listCategory?.results?.map((item: any) => ({
+					...item,
+					url: "/category/" + item.id,
+				})),
+		  ]
+		: [];
 	const arrMenuAuthen = [
 		{
 			name: "Order",
@@ -151,13 +193,29 @@ function TopNav({}: Props) {
 				</form>
 			</div>
 			<ul className="flex gap-2 flex-end justify-end items-end">
-				{arrItemInNav.map((item, idx) => {
-					return (
-						<li key={idx} className="p-3">
-							<Link href={item.url}>{item.name}</Link>
-						</li>
-					);
-				})}
+				<li className="p-3 nav-item">
+					<Link href="/">Trang chủ</Link>
+				</li>
+				{arrItemInNav
+					.filter((item) => item.level === 0)
+					.map((item, idx) => {
+						return (
+							<li key={idx} className="p-3 relative nav-item">
+								<Link href={item.url}>{item.name}</Link>
+								{item.childrentIds.length > 0 && (
+									<ul className="child-menu">
+										{item.childrentIds.map((childMenu: any, i: number) => (
+											<li className="nav-item w-max" key={i}>
+												<Link href={"/category/" + childMenu.id}>
+													{childMenu.name}
+												</Link>
+											</li>
+										))}
+									</ul>
+								)}
+							</li>
+						);
+					})}
 			</ul>
 			<div className="flex gap-3 items-center">
 				<Link href="/cart">
@@ -226,4 +284,20 @@ function TopNav({}: Props) {
 	);
 }
 
+const NavMenu = (item: any) => {
+	return (
+		<>
+			<li className="p-3 relative">
+				<Link href={item.url}>{item.name}</Link>
+				{item.childrentIds.length > 0 && (
+					<ul>
+						{item.childrentIds.map((item: any, idx: number) => (
+							<NavMenu item></NavMenu>
+						))}
+					</ul>
+				)}
+			</li>
+		</>
+	);
+};
 export default TopNav;

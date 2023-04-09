@@ -1,6 +1,7 @@
 import React from "react";
 import { API_URL_BASE } from "../constant/apiPath";
 import { ProductItemListModel } from "../features/product/model";
+import { formatPrice } from "../common/commonFunction";
 
 type Props = {
 	data: ProductItemListModel;
@@ -23,7 +24,9 @@ export default function ProductItemList({ data }: Props) {
 					<p className="mt-1 text-sm text-slate-400">Lisbon, Portugal</p>
 
 					<div className="mt-3 flex items-end justify-between">
-						<p className="text-lg font-bold text-blue-500">{data.price}</p>
+						<p className="text-lg font-bold text-blue-500 price">
+							{formatPrice(data.price || data.options[0].price)}
+						</p>
 
 						<div className="flex items-center space-x-1.5 rounded-lg bg-blue-500 px-4 py-1.5 text-white duration-100 hover:bg-blue-600">
 							<svg

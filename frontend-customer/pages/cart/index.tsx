@@ -10,13 +10,21 @@ import { formatPrice } from "../../common/commonFunction";
 import MainLayout from "../../layouts/MainLayout";
 import FormPayment from "../../components/FormPayment";
 import { addNotification } from "../../features/application/applicationSlice";
-import { useAppDispatch } from "../../hooks";
+import { useAppDispatch, useAppSelector } from "../../hooks";
 import { Status } from "../../common/enum";
+import { setQuantity } from "../../features/cart/cartSlice";
+import { AppState } from "../../store";
 
 type Props = {};
 
 export default function Cart({}: Props) {
-	const { data, error, isLoading } = useGetCartQuery();
+	const quantityProductInCart = useAppSelector(
+		(state: AppState) => state.cart.quantity
+	);
+	const payload = {
+		populate: "productId",
+	};
+	const { data, error, isLoading } = useGetCartQuery(payload);
 	const [
 		saveCart, // This is the mutation trigger
 		{ isLoading: isSaveCart, isSuccess: isSuccesSave }, // This is the destructured mutation result
@@ -31,9 +39,8 @@ export default function Cart({}: Props) {
 	);
 	const dispatch = useAppDispatch();
 	const [isOpenPayment, setIsOpenPayment] = useState(false);
-	const handleRemoveProduct = async (productId: any, option) => {
-		const res: any = await removeCart(productId);
-		console.log(res);
+	const handleRemoveProduct = async (productId: any, optionName: string) => {
+		const res: any = await removeCart({ id: productId, optionName });
 		if (res.data) {
 			dispatch(
 				addNotification({
@@ -42,8 +49,15 @@ export default function Cart({}: Props) {
 					status: Status.Success,
 				})
 			);
-			setListProductInCart([...res.data?.products]);
-			setListOldProductInCart([...res.data?.products]);
+			setListProductInCart((state) =>
+				state.filter((item) => {
+					if (optionName && item.option)
+						return !(
+							item.productId.id === productId && item.option.name === optionName
+						);
+					return item.productId.id !== productId;
+				})
+			);
 		} else {
 			dispatch(
 				addNotification({
@@ -77,15 +91,11 @@ export default function Cart({}: Props) {
 					var oldProductWithQuantity = listOldProductInCart.find(
 						(x: any) => x.productId.id == newProductWithQuantity.productId.id
 					);
-					console.log(
-						listOldProductInCart,
-						newProductWithQuantity,
-						oldProductWithQuantity
-					);
 					if (oldProductWithQuantity !== -1)
 						handleChangeProduct(
 							oldProductWithQuantity,
-							newProductWithQuantity.quantity
+							newProductWithQuantity.quantity,
+							newProductWithQuantity.option
 						);
 				}
 			}, 400);
@@ -96,10 +106,15 @@ export default function Cart({}: Props) {
 		};
 	}, [listProductInCart]);
 
-	const handleChangeProduct = async (product: any, quantity: number) => {
+	const handleChangeProduct = async (
+		product: any,
+		quantity: number,
+		option: any
+	) => {
 		const payload = {
 			productId: product.productId.id,
 			quantity: quantity - product.quantity,
+			option,
 		};
 		const res = await saveCart(payload);
 		if (res.data) {
@@ -109,6 +124,9 @@ export default function Cart({}: Props) {
 					: { ...product, quantity: quantity }
 			);
 			setListOldProductInCart(newCart);
+			dispatch(
+				setQuantity(quantityProductInCart + quantity - product.quantity)
+			);
 		}
 	};
 	const handleClose = () => {
@@ -119,8 +137,8 @@ export default function Cart({}: Props) {
 	};
 	return (
 		<MainLayout>
-			<div className="h-screen bg-gray-100 pt-20">
-				<h1 className="mb-10 text-center text-2xl font-bold">Cart Items</h1>
+			<div className="bg-gray-100 pt-20">
+				<h1 className="mb-10 text-center text-2xl font-bold">Giỏ hàng</h1>
 				<div className="mx-auto max-w-5xl justify-center px-6 md:flex md:space-x-6 xl:px-0">
 					<div className="rounded-lg md:w-2/3">
 						{!isLoading && !error && listProductInCart.length > 0 ? (
@@ -208,12 +226,18 @@ export default function Cart({}: Props) {
 											</div>
 											<div className="flex items-center space-x-4">
 												<p className="text-sm">
-													{formatPrice(item.productId.price * item.quantity)}{" "}
+													{formatPrice(
+														(item?.productId?.price || item?.option?.price) *
+															item.quantity
+													)}{" "}
 													VND
 												</p>
 												<svg
 													onClick={() => {
-														handleRemoveProduct(item.productId.id, item.option);
+														handleRemoveProduct(
+															item.productId.id,
+															item?.option?.name
+														);
 													}}
 													xmlns="http://www.w3.org/2000/svg"
 													fill="none"
@@ -243,7 +267,10 @@ export default function Cart({}: Props) {
 							<p className="text-gray-700">
 								{formatPrice(
 									listProductInCart.reduce(
-										(pre, curr) => pre + curr.quantity * curr.productId.price,
+										(pre, curr) =>
+											pre +
+											curr.quantity *
+												(curr?.option?.price || curr?.productId?.price),
 										0
 									)
 								)}
@@ -260,7 +287,10 @@ export default function Cart({}: Props) {
 								<p className="mb-1 text-lg font-bold">
 									{formatPrice(
 										listProductInCart.reduce(
-											(pre, curr) => pre + curr.quantity * curr.productId.price,
+											(pre, curr) =>
+												pre +
+												curr.quantity *
+													(curr?.option?.price || curr?.productId?.price),
 											0
 										)
 									)}{" "}

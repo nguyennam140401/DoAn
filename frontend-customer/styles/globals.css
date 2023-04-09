@@ -1,5 +1,6 @@
 @import url("https://demos.creative-tim.com/notus-js/assets/styles/tailwind.css");
 @import url("https://demos.creative-tim.com/notus-js/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css");
+@import url("https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

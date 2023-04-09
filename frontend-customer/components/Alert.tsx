@@ -13,6 +13,7 @@ const Style = styled.div`
 	position: fixed;
 	bottom: 50px;
 	left: 10px;
+	z-index: 1000;
 `;
 type Props = {};
 

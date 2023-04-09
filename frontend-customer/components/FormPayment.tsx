@@ -49,21 +49,25 @@ export default function FormPayment({
 				productId: item.productId.id,
 			})),
 		});
-		console.log(res);
 		if (res.data) {
 			dispatch(
 				addNotification({
-					title: "Đơn hàng đã được tạo thành công",
-					description: res?.error?.data?.message || "Đăng nhập thành công",
+					title: "Thành công",
+					description:
+						res?.error?.data?.message || "Đơn hàng đã được tạo thành công",
 					status: Status.Success,
 				})
 			);
+			handleClose();
 		} else {
-			addNotification({
-				title: res?.error?.message || "Có lỗi xảy ra",
-				description: res?.error?.data?.message || "Đăng nhập thành công",
-				status: Status.Danger,
-			});
+			dispatch(
+				addNotification({
+					title: res?.error?.message || "Thất bại",
+					description: res?.error?.data?.message || "Có lỗi xảy ra",
+					status: Status.Danger,
+				})
+			);
+			handleClose();
 		}
 	};
 	return (

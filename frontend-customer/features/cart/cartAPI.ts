@@ -32,37 +32,22 @@ export const cartAPI = createApi({
 			}),
 		}),
 		getCart: builder.query({
-			query: () => ({
+			query: (params) => ({
 				url: "",
 				method: "GET",
+				params,
 			}),
 		}),
 		removeItem: builder.mutation({
-			query: (idProduct) => ({
-				url: "/" + idProduct,
+			query: (params) => ({
+				url: "/",
+				params: params,
 				method: "DELETE",
 			}),
 		}),
 	}),
 });
 
-const responseHandler = async (response, retry) => {
-	if (response.status === 401) {
-		const newAccessToken = await refreshToken(); // Gọi hàm refresh token để lấy token mới
-		if (newAccessToken) {
-			// Thêm Authorization header vào request mới
-			const newHeaders = new Headers(response.headers);
-			newHeaders.set("Authorization", `Bearer ${newAccessToken}`);
-			// Thực hiện lại request với token mới
-			const { headers, ...init } = response;
-			const newRequest = new Request(response.url, {
-				...init,
-				headers: newHeaders,
-			});
-			return retry(newRequest, init);
-		}
-	}
-};
 export const {
 	useGetCartByIdQuery,
 	useCreateCartMutation,

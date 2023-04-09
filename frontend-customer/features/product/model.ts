@@ -3,7 +3,8 @@ export interface ProductItemListModel {
 	price: number;
 	name: string;
 	id: string;
-	review: string;
+	review: Array<any>;
+	options: Array<ProductItemOptions>;
 }
 
 export interface ProductItemDetailModel {
@@ -13,9 +14,11 @@ export interface ProductItemDetailModel {
 	price: number;
 	images: Array<string>;
 	options: Array<ProductItemOptions>;
+	inventory: number;
 }
 
 export interface ProductItemOptions {
-	name: "";
-	price: "";
+	name: string;
+	price: number;
+	inventory: number;
 }

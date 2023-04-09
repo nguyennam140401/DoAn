@@ -12,7 +12,6 @@ export const orderAPI = createApi({
 				localStorage.getItem("jwt") || ""
 			);
 			let token = tokenData.token;
-			console.log(tokenData);
 			// kiểm tra xem token có hết hạn hay không
 			const isTokenExpired = isExpired(token);
 			// nếu token đã hết hạn, gọi hàm refresh token để lấy token mới
@@ -27,13 +26,15 @@ export const orderAPI = createApi({
 	}),
 	endpoints: (builder) => ({
 		getOrderById: builder.query({
-			query: ({ status }) => ({
+			query: ({ status, ...params }) => ({
 				url: `/`,
 				method: "GET",
 				params: {
 					status: status,
+					...params,
 				},
 			}),
+			skip: () => true,
 		}),
 		createOrder: builder.mutation({
 			query: (payload) => ({
