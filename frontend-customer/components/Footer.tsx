@@ -10,10 +10,10 @@ export default function Footer({}: Props) {
 				<div className="flex flex-wrap text-left lg:text-left">
 					<div className="w-full lg:w-6/12 px-4">
 						<h4 className="text-3xl fonat-semibold text-blueGray-700">
-							Let's keep in touch!
+							Liên kết với chúng tôi
 						</h4>
 						<h5 className="text-lg mt-0 mb-2 text-blueGray-600">
-							Find us on any of these platforms, we respond 1-2 business days.
+							Liên kết tài khoản giúp bạn thuận tiện hơn
 						</h5>
 						<div className="mt-6 lg:mb-0 mb-6">
 							<button
@@ -46,21 +46,21 @@ export default function Footer({}: Props) {
 						<div className="flex flex-wrap items-top mb-6">
 							<div className="w-full lg:w-4/12 px-4 ml-auto">
 								<span className="block uppercase text-blueGray-500 text-sm font-semibold mb-2">
-									Useful Links
+									Các liên kết
 								</span>
 								<ul className="list-unstyled">
 									<li>
 										<a
 											className="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm"
-											href="https://www.creative-tim.com/presentation?ref=njs-profile"
+											href="#"
 										>
-											About Us
+											Về chúng tôi
 										</a>
 									</li>
 									<li>
 										<a
 											className="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm"
-											href="https://blog.creative-tim.com?ref=njs-profile"
+											href="#"
 										>
 											Blog
 										</a>
@@ -68,56 +68,48 @@ export default function Footer({}: Props) {
 									<li>
 										<a
 											className="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm"
-											href="https://www.github.com/creativetimofficial?ref=njs-profile"
+											href="#"
 										>
 											Github
-										</a>
-									</li>
-									<li>
-										<a
-											className="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm"
-											href="https://www.creative-tim.com/bootstrap-themes/free?ref=njs-profile"
-										>
-											Free Products
 										</a>
 									</li>
 								</ul>
 							</div>
 							<div className="w-full lg:w-4/12 px-4">
 								<span className="block uppercase text-blueGray-500 text-sm font-semibold mb-2">
-									Other Resources
+									Điều khoản và chính sách
 								</span>
 								<ul className="list-unstyled">
 									<li>
 										<a
 											className="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm"
-											href="https://github.com/creativetimofficial/notus-js/blob/main/LICENSE.md?ref=njs-profile"
+											href="#"
 										>
-											MIT License
+											Điều khoản 1
 										</a>
 									</li>
 									<li>
 										<a
 											className="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm"
-											href="https://creative-tim.com/terms?ref=njs-profile"
+											href="#"
 										>
-											Terms &amp; Conditions
+											Điều khoản 2
 										</a>
 									</li>
 									<li>
 										<a
 											className="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm"
-											href="https://creative-tim.com/privacy?ref=njs-profile"
+											href="#"
 										>
-											Privacy Policy
+											Chính sách 1
 										</a>
 									</li>
 									<li>
 										<a
 											className="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm"
-											href="https://creative-tim.com/contact-us?ref=njs-profile"
+											href="#"
 										>
-											Contact Us
+											Chính sách 2
 										</a>
 									</li>
 								</ul>
@@ -129,21 +121,8 @@ export default function Footer({}: Props) {
 				<div className="flex flex-wrap items-center md:justify-between justify-center">
 					<div className="w-full md:w-4/12 px-4 mx-auto text-center">
 						<div className="text-sm text-blueGray-500 font-semibold py-1">
-							Copyright © <span id="get-current-year">2021</span>
-							<Link
-								href="https://www.creative-tim.com/product/notus-js"
-								className="text-blueGray-500 hover:text-gray-800"
-								target="_blank"
-							>
-								Notus JS by
-							</Link>
-							<Link
-								href="https://www.creative-tim.com?ref=njs-profile"
-								className="text-blueGray-500 hover:text-blueGray-800"
-							>
-								Creative Tim
-							</Link>
-							.
+							Copyright © <span id="get-current-year">2023 </span>- Nguyễn Văn
+							Nam - 2019605470 .
 						</div>
 					</div>
 				</div>

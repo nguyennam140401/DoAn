@@ -107,7 +107,7 @@ function TopNav({ category }: Props) {
 		: [];
 	const arrMenuAuthen = [
 		{
-			name: "Order",
+			name: "Đơn hàng",
 			icon: (
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -130,7 +130,7 @@ function TopNav({ category }: Props) {
 		},
 
 		{
-			name: "Wishlist",
+			name: "Yêu thích",
 			icon: (
 				<span>
 					<svg
@@ -154,7 +154,7 @@ function TopNav({ category }: Props) {
 			},
 		},
 		{
-			name: "Logout",
+			name: "Đăng xuất",
 			icon: (
 				<span>
 					<svg

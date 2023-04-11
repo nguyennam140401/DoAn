@@ -7,17 +7,21 @@ import { ReviewItemList } from "../../features/review/model";
 import { axiosClient } from "../../common/axiosClient";
 import { API_URL_BASE, productPath } from "../../constant/apiPath";
 import MainLayout from "../../layouts/MainLayout";
-import { useAppDispatch } from "../../hooks";
+import { useAppDispatch, useAppSelector } from "../../hooks";
 import { useCreateCartMutation } from "../../features/cart/cartAPI";
 import { formatPrice } from "../../common/commonFunction";
 import { Status } from "../../common/enum";
 import { addNotification } from "../../features/application/applicationSlice";
-
+import { setQuantity as setQuantityStore } from "../../features/cart/cartSlice";
+import { AppState } from "../../store";
 type ProductDetailPageProps = {
 	product: ProductItemDetailModel;
 };
 
 const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
+	const quantityProductInCart = useAppSelector(
+		(state: AppState) => state.cart.quantity
+	);
 	const [quantity, setQuantity] = useState(1);
 	const [optionIndex, setOptionIndex] = useState(0);
 	const [isFavorite, setIsFavorite] = useState(false);
@@ -39,6 +43,8 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 					status: Status.Success,
 				})
 			);
+			console.log(data);
+			dispatch(setQuantityStore(quantityProductInCart + data.quantity));
 		} else {
 			dispatch(
 				addNotification({

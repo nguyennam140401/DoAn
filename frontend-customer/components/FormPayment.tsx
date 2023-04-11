@@ -58,7 +58,7 @@ export default function FormPayment({
 					status: Status.Success,
 				})
 			);
-			handleClose();
+			handleClose(true);
 		} else {
 			dispatch(
 				addNotification({

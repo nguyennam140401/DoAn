@@ -129,8 +129,14 @@ export default function Cart({}: Props) {
 			);
 		}
 	};
-	const handleClose = () => {
+	const handleClose = (isSubmitDone = true) => {
 		setIsOpenPayment(false);
+		if (isSubmitDone) {
+			const newArr = listProductInCart.filter((item) => item.isBuy);
+			newArr.map((item) => {
+				handleRemoveProduct(item.productId.id, item?.option?.name);
+			});
+		}
 	};
 	const handleOpen = () => {
 		setIsOpenPayment(true);
@@ -145,14 +151,30 @@ export default function Cart({}: Props) {
 							listProductInCart.map((item: any, idx: number) => (
 								<div
 									key={idx}
-									className="justify-between mb-6 rounded-lg bg-white p-6 shadow-md sm:flex sm:justify-start"
+									className="gap-3 justify-between mb-6 rounded-lg bg-white p-6 shadow-md sm:flex sm:justify-start "
 								>
+									<input
+										type="checkbox"
+										className="self-center"
+										onClick={(e) => {
+											const updatedCartItems = listProductInCart.map(
+												(productItem) =>
+													productItem._id === item._id
+														? {
+																...productItem,
+																isBuy: e.target.checked,
+														  }
+														: productItem
+											);
+											setListProductInCart(updatedCartItems);
+										}}
+									/>
 									<img
 										src={API_URL_BASE + "/" + item.productId.images[0]}
 										alt="product-image"
 										className="w-full rounded-lg sm:w-40"
 									/>
-									<div className="sm:ml-4 sm:flex sm:w-full sm:justify-between">
+									<div className="sm:flex sm:w-full sm:justify-between">
 										<div className="mt-5 sm:mt-0">
 											<h2 className="text-lg font-bold text-gray-900">
 												{item.productId.name}
@@ -311,7 +333,7 @@ export default function Cart({}: Props) {
 				{isOpenPayment && (
 					<FormPayment
 						isOpen={isOpenPayment}
-						listProduct={listProductInCart}
+						listProduct={listProductInCart.filter((item) => item.isBuy)}
 						handleClose={handleClose}
 					/>
 				)}
