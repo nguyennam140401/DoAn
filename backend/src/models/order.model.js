@@ -21,7 +21,7 @@ const OrderScheam = new Schema(
       },
     ],
     status: {
-      type: String,
+      type: Number,
       enum: EnumStatusOrder,
       default: EnumStatusOrder.Pending,
     },

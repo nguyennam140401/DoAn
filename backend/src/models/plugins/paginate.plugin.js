@@ -17,6 +17,7 @@ const paginate = (schema) => {
    * @param {string} [options.populate] - Populate data fields. Hierarchy of fields should be separated by (.). Multiple populating criteria should be separated by commas (,)
    * @param {number} [options.limit] - Maximum number of results per page (default = 10)
    * @param {number} [options.page] - Current page (default = 1)
+   * @param {number} [options.range] - Lấy giá trị trong 1 khoảng a-b (rage:a-b)
    * @returns {Promise<QueryResult>}
    */
   schema.statics.paginate = async function (filter, options) {
@@ -37,9 +38,14 @@ const paginate = (schema) => {
     const skip = (page - 1) * limit;
 
     filter = Object.keys(filter).reduce((now, current) => {
-      return { ...now, [current]: current !== 'level' ? { $regex: filter[current] } : filter[current] };
+      return {
+        ...now,
+        [current]:
+          current !== 'price'
+            ? filter[current]
+            : { $gte: parseInt(filter[current].split('_')[0], 10), $lte: parseInt(filter[current].split('_')[1], 10) },
+      };
     }, {});
-
     const countPromise = this.countDocuments(filter).exec();
     let docsPromise = this.find(filter).sort(sort).skip(skip).limit(limit);
 

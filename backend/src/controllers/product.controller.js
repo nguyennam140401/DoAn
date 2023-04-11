@@ -5,7 +5,7 @@ const catchAsync = require('../utils/catchAsync');
 const pick = require('../utils/pick');
 
 const getProducts = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ['name', 'role']);
+  const filter = pick(req.query, ['name', 'range', 'price', 'category', 'brand']);
   const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);
   const result = await productService.getProducts(filter, options);
   res.send(result);
