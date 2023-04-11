@@ -105,11 +105,11 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 								+
 							</button>
 						</div>
-						<p>
+						{/* <p>
 							Có sẵn{" "}
 							{product.inventory || product.options[optionIndex].inventory} sản
 							phẩm
-						</p>
+						</p> */}
 					</div>
 					<button
 						className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"

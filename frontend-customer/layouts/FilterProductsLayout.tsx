@@ -3,7 +3,9 @@ import { Product, ProductItemListModel } from "../features/product/model";
 import { useGetProductsQuery } from "../features/product/productSlice";
 import ProductItemList from "../components/ProductItemList";
 import MainLayout from "./MainLayout";
+import * as queryString from "querystring";
 import { useGetBrandsQuery } from "../features/brand/brandAPI";
+import { useRouter } from "next/router";
 
 interface ProductListProps {
 	products: Array<Product>;
@@ -15,12 +17,18 @@ export default function FilterProductsLayout({ products }: ProductListProps) {
 		error: errGetProduct,
 		isLoading: loadingProduct,
 	} = useGetProductsQuery({});
+	const router = useRouter();
 	const {
 		data: dataBrand,
 		error: errorBrand,
 		isLoading: loadingBrand,
 	} = useGetBrandsQuery({});
-
+	const addOrder = (item: any) => {
+		const currentPath = router.asPath;
+		const query: any = queryString.parse(currentPath.split("?")[1]);
+		query.sortBy = item;
+		router.push(currentPath.split("?")[0] + "?" + queryString.stringify(query));
+	};
 	const listPriceOptions = [
 		{ min: 0, max: 1000000 },
 		{ min: 1000000, max: 5000000 },
@@ -70,6 +78,38 @@ export default function FilterProductsLayout({ products }: ProductListProps) {
 					</form>
 				</div>
 				<div className="md:col-span-9">
+					<div className="flex py-3 items-center gap-3">
+						<p className="uppercase font-bold">Sắp xếp theo</p>
+						<div
+							className="bg-white  cursor-pointer px-2 py-1"
+							onClick={() => {
+								addOrder("name");
+							}}
+						>
+							Mới nhất
+						</div>
+						<div className="bg-white  cursor-pointer px-2 py-1 w-44 relative price-filter">
+							<div className="absolute price-child">
+								<div
+									className="bg-white hover:text-blue-600 cursor-pointer px-2 py-1"
+									onClick={() => {
+										addOrder("price:desc");
+									}}
+								>
+									Từ thấp đến cao
+								</div>
+								<div
+									className="bg-white hover:text-blue-600 cursor-pointer px-2 py-1"
+									onClick={() => {
+										addOrder("price:esc");
+									}}
+								>
+									Từ cao đến thấp
+								</div>
+							</div>
+							Giá
+						</div>
+					</div>
 					<div className="grid max-w-6xl grid-cols-1 gap-6  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 						{dataProduct?.results &&
 							dataProduct.results.map(

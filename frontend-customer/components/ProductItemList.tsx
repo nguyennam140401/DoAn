@@ -10,7 +10,7 @@ type Props = {
 export default function ProductItemList({ data }: Props) {
 	return (
 		<article className="rounded-xl bg-white p-3 shadow-lg hover:shadow-xl hover:transform hover:scale-105 duration-300 ">
-			<a href={"products/" + data.id}>
+			<a href={"/products/" + data.id}>
 				<div className="relative flex items-end overflow-hidden rounded-xl w-full h-44">
 					<img
 						className="w-full h-full object-cover"

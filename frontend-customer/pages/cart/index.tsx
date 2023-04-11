@@ -170,6 +170,7 @@ export default function Cart({}: Props) {
 											<div className="flex items-center border-gray-100">
 												<span
 													onClick={() => {
+														if (item.quantity === 1) return;
 														const updatedCartItems = listProductInCart.map(
 															(productItem) =>
 																productItem._id === item._id
