@@ -44,7 +44,19 @@ function toNonAccentVietnamese(str) {
   return str;
 }
 
+function toggleArrayItem(array, value) {
+  const index = array.indexOf(value);
+
+  if (index === -1) {
+    array.push(value);
+  } else {
+    array.splice(index, 1);
+  }
+  return index === -1;
+}
+
 module.exports = {
   toLowerCaseNonAccentVietnamese,
   toNonAccentVietnamese,
+  toggleArrayItem,
 };

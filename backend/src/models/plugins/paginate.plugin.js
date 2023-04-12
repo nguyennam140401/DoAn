@@ -18,6 +18,7 @@ const paginate = (schema) => {
    * @param {number} [options.limit] - Maximum number of results per page (default = 10)
    * @param {number} [options.page] - Current page (default = 1)
    * @param {number} [options.range] - Lấy giá trị trong 1 khoảng a-b (rage:a-b)
+   *
    * @returns {Promise<QueryResult>}
    */
   schema.statics.paginate = async function (filter, options) {

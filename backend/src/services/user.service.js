@@ -1,7 +1,8 @@
 const httpStatus = require('http-status');
 const { User } = require('../models');
 const ApiError = require('../utils/ApiError');
-
+const { getProductById } = require('./product.service');
+const { toggleArrayItem } = require('../common/commonFunction');
 /**
  * Create a user
  * @param {Object} userBody
@@ -55,7 +56,7 @@ const getUserByEmail = async (email) => {
 const updateUserById = async (userId, updateBody) => {
   const user = await getUserById(userId);
   if (!user) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Không tìm thấy khách hàng');
   }
   if (updateBody.email && (await User.isEmailTaken(updateBody.email, userId))) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
@@ -73,12 +74,46 @@ const updateUserById = async (userId, updateBody) => {
 const deleteUserById = async (userId) => {
   const user = await getUserById(userId);
   if (!user) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Không tìm thấy khách hàng');
   }
   await user.remove();
   return user;
 };
 
+/**
+ * Thêm sản phẩm vào danh sách sản phẩm yêu thích của khách hàng
+ * @param {String} userId ID khách hàng
+ * @param {String} productId ID sản phẩm
+ * @returns user
+ */
+const addFavoriteProduct = async (userId, productId) => {
+  const user = await getUserById(userId);
+  const product = await getProductById(productId);
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Không tìm thấy khách hàng');
+  }
+  if (!product) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Không tìm thấy sản phẩm');
+  }
+  if (!user.favorite) {
+    user.favorite = [];
+  }
+  const res = toggleArrayItem(user.favorite, productId);
+  await user.save();
+  return res;
+};
+
+const checkProductIsFavorite = async (userId, productId) => {
+  const user = await getUserById(userId);
+  if (!user.favorite) return false;
+  return user.favorite.findIndex((item) => item === productId) !== -1;
+};
+
+// const getProductsFavorite = async (userId) => {
+//   const user = await getUserById(userId);
+//   if (!user.favorite) return [];
+//   return user.favorite.findIndex((item) => item === productId) !== -1;
+// };
 module.exports = {
   createUser,
   queryUsers,
@@ -86,4 +121,6 @@ module.exports = {
   getUserByEmail,
   updateUserById,
   deleteUserById,
+  addFavoriteProduct,
+  checkProductIsFavorite,
 };

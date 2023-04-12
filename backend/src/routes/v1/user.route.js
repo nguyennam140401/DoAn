@@ -12,6 +12,10 @@ router
   .get(auth('get_user'), validate(userValidation.getUsers), userController.getUsers);
 
 router
+  .route('/favorite')
+  .patch(auth(), userController.addFavoriteProduct)
+  .post(auth(), userController.checkProductIsFavorite);
+router
   .route('/:userId')
   .get(auth('get_user'), validate(userValidation.getUser), userController.getUser)
   .patch(auth('manage_user'), validate(userValidation.updateUser), userController.updateUser)

@@ -45,6 +45,10 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    favorite: {
+      type: Array,
+      default: [],
+    },
   },
   {
     timestamps: true,

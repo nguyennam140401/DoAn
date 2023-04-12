@@ -34,10 +34,20 @@ const deleteUser = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const addFavoriteProduct = catchAsync(async (req, res) => {
+  const isAdd = await userService.addFavoriteProduct(req.user._id, req.body.productId);
+  res.send(isAdd);
+});
+const checkProductIsFavorite = catchAsync(async (req, res) => {
+  const isFavorite = await userService.checkProductIsFavorite(req.user._id, req.body.productId);
+  res.send(isFavorite);
+});
 module.exports = {
   createUser,
   getUsers,
   getUser,
   updateUser,
   deleteUser,
+  addFavoriteProduct,
+  checkProductIsFavorite,
 };

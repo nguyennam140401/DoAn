@@ -44,7 +44,6 @@ const updateProduct = async (productId, productBody) => {
   const product = await getProductById(productId);
   if (!product) throw new ApiError(httpStatus.NOT_FOUND, 'Không tim thấy sản phẩm này');
   Object.assign(product, productBody);
-  console.log(product);
   await product.save();
   return product;
 };

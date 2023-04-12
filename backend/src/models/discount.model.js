@@ -1,76 +1,47 @@
-const { Schema, model, Types } = require('mongoose');
+const { Schema, model } = require('mongoose');
 const { toJSON, paginate } = require('./plugins');
 const findByIdAndPopulate = require('./plugins/findByIdAndPopulate.plugin');
 
-const ProductScheam = new Schema(
+const DiscontScheam = new Schema(
   {
     name: {
       type: String,
       required: true,
       unique: true,
     },
-    code: {
-      type: String,
+    quantity: {
+      type: Number,
+      required: true,
+    },
+    amount: {
+      type: Number,
+      required: true,
+    },
+    type: {
+      type: Number, // Các loại giảm giá ( trực tiếp, %,...)
       required: true,
       unique: true,
     },
-    brand: {
-      type: Types.ObjectId,
-      ref: 'Brand',
+    fromDate: {
+      type: Date,
       required: true,
     },
-    price: {
-      type: Number,
-    },
-    description: {
-      type: String,
+    endDate: {
+      type: Date,
       required: true,
-    },
-    specs: {
-      type: Array,
-      default: [],
-    },
-    review: {
-      type: Array,
-      default: [],
-    },
-    images: {
-      type: Array,
-      default: [],
-    },
-    category: {
-      type: Types.ObjectId,
-      ref: 'Category',
-      required: true,
-    },
-    options: {
-      type: Array,
-      default: [],
-    },
-    inventory: {
-      type: Number,
-      default: 0,
-    },
-    soldQuantity: {
-      type: Number,
-      default: 0,
-    },
-    isActive: {
-      type: Boolean,
-      default: true,
     },
   },
-  { collection: 'products', timestamps: true }
+  { collection: 'disconts', timestamps: true }
 );
 
 // add plugin that converts mongoose to json
-ProductScheam.plugin(toJSON);
-ProductScheam.plugin(paginate);
-ProductScheam.plugin(findByIdAndPopulate);
+DiscontScheam.plugin(toJSON);
+DiscontScheam.plugin(paginate);
+DiscontScheam.plugin(findByIdAndPopulate);
 
 /**
- * @typedef Product
+ * @typedef Discont
  */
-const Product = model('Product', ProductScheam);
+const Discont = model('Discont', DiscontScheam);
 
-module.exports = Product;
+module.exports = Discont;
