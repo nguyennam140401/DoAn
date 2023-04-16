@@ -107,7 +107,14 @@ const FormDetailProduct = ({
 	const submit = (data) => {
 		data.category = data?.category?.id || data?.category?.value;
 		data.brand = data?.brand?.id || data?.brand?.value;
+
+		if (data.options.length > 0) {
+			data.price = data.options
+				.map((item) => item.price)
+				.reduce((a, b) => Math.max(a, b));
+		}
 		const { id, soldQuantity, ...payload } = data;
+
 		!detailProduct
 			? dispatch(
 					productActions.createProduct(payload, {

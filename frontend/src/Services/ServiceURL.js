@@ -10,6 +10,7 @@ export const changePassword = "change-password";
 export const configPasswordAccount = "set-password";
 export const roles = "role";
 export const brand = "brand";
+export const discount = "discount";
 export const orders = "order/admin";
 
 export const products = "product";
@@ -28,4 +29,5 @@ export default {
 	category,
 	orders,
 	brand,
+	discount,
 };

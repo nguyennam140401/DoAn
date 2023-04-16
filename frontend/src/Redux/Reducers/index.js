@@ -5,6 +5,7 @@ import categoryReducer from "./Category.reducer";
 import roleReducer from "./Role.reducer";
 import orderReducer from "./Order.reducer";
 import brandReducer from "./Brand.reducer";
+import discountReducer from "./Discount.reducer";
 const rootReducers = combineReducers({
 	accountReducer,
 	productReducer,
@@ -12,5 +13,6 @@ const rootReducers = combineReducers({
 	roleReducer,
 	orderReducer,
 	brandReducer,
+	discountReducer,
 });
 export default rootReducers;

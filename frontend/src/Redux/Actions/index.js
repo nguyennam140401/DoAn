@@ -4,6 +4,7 @@ import * as categoryActions from "./Category.actions";
 import * as roleActions from "./Role.actions";
 import * as orderActions from "./Order.actions";
 import * as brandActions from "./Brand.actions";
+import * as discountActions from "./Discount.actions";
 export {
 	accountActions,
 	productActions,
@@ -11,4 +12,5 @@ export {
 	roleActions,
 	orderActions,
 	brandActions,
+	discountActions,
 };

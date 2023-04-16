@@ -57,7 +57,7 @@ export default function CustomTable({
 		<TablePending />
 	) : data?.length > 0 ? (
 		<Paper sx={{ width: "100%", overflow: "hidden" }}>
-			<TableContainer sx={{ maxHeight: 440 }} {...props}>
+			<TableContainer sx={{ maxHeight: 600 }} {...props}>
 				<Table stickyHeader aria-label="sticky table">
 					<TableHead>
 						<TableRow>
@@ -108,6 +108,11 @@ export default function CustomTable({
 				page={page}
 				onPageChange={handleChangePage}
 				onRowsPerPageChange={handleChangeRowsPerPage}
+				labelDisplayedRows={({ from, to, count }) => {
+					return `${from}–${to} trên ${
+						count !== -1 ? count : `more than ${to}`
+					}`;
+				}}
 			/>
 		</Paper>
 	) : (

@@ -26,8 +26,14 @@ import { AccountCircle } from "@mui/icons-material";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
+import styled from "styled-components";
 const menuId = "primary-search-account-menu";
 const mobileMenuId = "primary-search-account-menu-mobile";
+
+const Styled = styled.div`
+	height: 100vh;
+	overflow-y: scroll;
+`;
 export default function LayoutAdmin({ children }) {
 	const dispatch = useDispatch();
 	const { currentAccount } = useSelector((state) => state.accountReducer);
@@ -77,7 +83,7 @@ export default function LayoutAdmin({ children }) {
 	}
 
 	return (
-		<>
+		<Styled>
 			<Grid container>
 				<Grid item xs={2}>
 					<List
@@ -87,7 +93,7 @@ export default function LayoutAdmin({ children }) {
 						aria-labelledby="nested-list-subheader"
 						subheader={
 							<ListSubheader component="div" id="nested-list-subheader">
-								Admin Dasboard
+								Quản lý cửa hàng
 							</ListSubheader>
 						}
 					>
@@ -157,6 +163,6 @@ export default function LayoutAdmin({ children }) {
 					</Paper>
 				</Grid>
 			</Grid>
-		</>
+		</Styled>
 	);
 }

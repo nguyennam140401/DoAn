@@ -1,6 +1,5 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import CustomTable from "component/CustomTable";
-import ListActionButtonInTable from "component/ListActionButtonInTable";
 import { AlertContext } from "context/AlertContext";
 import { ConfirmContext } from "context/ConfirmContext";
 import LayoutAdmin from "page/LayoutAdmin";
@@ -8,15 +7,23 @@ import queryString from "query-string";
 import React, { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { orderActions } from "Redux/Actions";
-import { BASE_API } from "Services/ServiceURL";
 import FormDetailOrder from "./FormDetailOrder";
 import CircleIcon from "@mui/icons-material/Circle";
 import i18next from "i18next";
-import { StatusColorEnum } from "enum/StatusEnum";
+import { StatusColorEnum, StatusEnum } from "enum/StatusEnum";
+import BlockIcon from "@mui/icons-material/Block";
+import DoneIcon from "@mui/icons-material/Done";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 
 const Order = () => {
 	const dispatch = useDispatch();
 	const { orders, isGetOrders } = useSelector((state) => state.orderReducer);
+	const [listOrder, setListOrder] = useState([]);
+	useEffect(() => {
+		setListOrder(orders.results);
+	}, [orders]);
+
 	const { showConfirm } = useContext(ConfirmContext);
 	const { showAlert } = useContext(AlertContext);
 	const [isOpenModal, setIsOpenModal] = useState(false);
@@ -25,26 +32,22 @@ const Order = () => {
 		setCurrentOrder(data);
 		setIsOpenModal(true);
 	};
-	const editAction = (data) => {
-		setCurrentOrder(data);
-		setIsOpenModal(true);
-	};
-	const removeAction = (data) => {
-		showConfirm(
-			"Xác nhận xóa đơn hàng",
-			"Bạn có chắc chắn muốn xóa đơn hàng này không?",
-			async () => handleRemove(data)
-		);
-	};
-	const handleRemove = (data) => {
+	const updateOrder = (order, status) => {
+		const body = { ...order, status: status };
 		dispatch(
-			orderActions.deleteOrder(data.id, {
-				success: () => {
-					handleGetOrders();
-					showAlert("success", "Xóa thành công");
+			orderActions.updateOrder("", body, {
+				success: (res) => {
+					const newListItem = listOrder.map((item) => {
+						if (item.id === res.id) {
+							item.status = res.status;
+						}
+						return item;
+					});
+					setListOrder(newListItem);
+					dispatch(showAlert("success", "Cập nhật trạng thái thành công"));
 				},
 				failed: (err) => {
-					showAlert("error", err ? err : "Có lỗi xảy ra");
+					console.log(err);
 				},
 			})
 		);
@@ -53,6 +56,17 @@ const Order = () => {
 		{ label: "Người nhận", id: "buyerName" },
 		{ label: "Điện thoại", id: "phoneNumber" },
 		{ label: "Số sản phẩm", id: "products.length" },
+		{
+			label: "Giá trị đơn hàng",
+			Cell: ({ data }) => (
+				<>
+					{data.products.reduce(
+						(pre, curr) => pre + curr.quantity * curr.productId.price,
+						0
+					)}
+				</>
+			),
+		},
 		{
 			label: "Trạng thái",
 			id: "status",
@@ -76,18 +90,47 @@ const Order = () => {
 		{
 			label: "Hành động",
 			Cell: ({ data }) => (
-				<ListActionButtonInTable
-					data={data}
-					viewAction={viewAction}
-					editAction={editAction}
-					removeAction={removeAction}
-				></ListActionButtonInTable>
+				<Box>
+					<IconButton onClick={() => viewAction(data)} title="Xem">
+						<RemoveRedEyeIcon />
+					</IconButton>
+					{data.status == StatusEnum.Pending && (
+						<>
+							<IconButton
+								onClick={() => {
+									updateOrder(data, StatusEnum.Reject);
+								}}
+							>
+								<BlockIcon color="error" />
+							</IconButton>
+							<IconButton
+								onClick={() => {
+									console.log(data);
+									updateOrder(data, StatusEnum.Approved);
+								}}
+							>
+								<DoneIcon color="success" />
+							</IconButton>
+						</>
+					)}
+					{data.status == StatusEnum.Approved && (
+						<>
+							<IconButton
+								onClick={() => {
+									updateOrder(data, StatusEnum.Shipping);
+								}}
+							>
+								<LocalShippingIcon color="info" />
+							</IconButton>
+						</>
+					)}
+				</Box>
 			),
 		},
 	];
 	const [query, setQuery] = useState({
 		page: 1,
-		populate: "products.productId",
+		populate: "products.productId.category,discountId",
 	});
 	const closeFormDetail = (isSubmit = false) => {
 		setCurrentOrder(undefined);
@@ -101,13 +144,13 @@ const Order = () => {
 	};
 	useEffect(() => {
 		handleGetOrders();
-	}, [dispatch]);
+	}, []);
 
 	return (
 		<LayoutAdmin>
 			<Typography variant="h4">Danh sách đơn hàng</Typography>
 			<CustomTable
-				data={orders.results}
+				data={listOrder}
 				totalResults={orders.totalResults}
 				columns={configColumns}
 				currentPage={orders.page}

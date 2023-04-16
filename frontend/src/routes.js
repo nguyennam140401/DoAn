@@ -3,6 +3,7 @@ import Account from "page/Account";
 import Brand from "page/Brand";
 import Category from "page/Category";
 import Dashboard from "page/Dashboard";
+import Discount from "page/Discount";
 import Order from "page/Order";
 import Product from "page/Product";
 import Role from "page/Role";
@@ -63,10 +64,10 @@ const routes = [
 				component: <Brand />,
 			},
 			{
-				path: "/child2",
-				name: "Child 2 nè",
+				path: "/discount",
+				name: "Quản lý phiếu giảm giá",
 				icon: <SendIcon />,
-				component: () => <p>Child 2 nè</p>,
+				component: <Discount />,
 			},
 			{
 				path: "/child3",

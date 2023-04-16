@@ -98,17 +98,18 @@ const FormDetailRole = ({
 							</Box>
 							<Box mb={2}>
 								{Object.keys(listRole).map((item, idx) => (
-									<RoleDetail
-										data={listRole[item]}
-										key={idx}
-										formData={values}
-										isEdit={isEdit}
-									></RoleDetail>
+									<Box key={idx}>
+										<RoleDetail
+											data={listRole[item]}
+											formData={values}
+											isEdit={isEdit}
+										></RoleDetail>
+									</Box>
 								))}
 							</Box>
 							<Box mb={2}>
 								{isEdit && (
-									<Button onClick={handleSubmit}>
+									<Button variant="contained" onClick={handleSubmit}>
 										{detailRole.id ? "Cập nhật" : "Thêm mới"}
 									</Button>
 								)}

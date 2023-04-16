@@ -81,11 +81,15 @@ const FormDetailOrder = ({
 							<Grid item md={6} xs={12}>
 								<Typography>
 									Trạng thái:{" "}
-									{detailOrder.status === "pending"
+									{detailOrder.status == StatusEnum.Pending
 										? "Đang chờ duyệt"
-										: detailOrder.status === "confifm"
+										: detailOrder.status == StatusEnum.Approved
 										? "Đã xác nhận"
-										: "Đang giao hàng"}{" "}
+										: detailOrder.status == StatusEnum.Shipping
+										? "Đang giao hàng"
+										: detailOrder.status == StatusEnum.Success
+										? "Giao hàng thành công"
+										: "Đơn hàng đã bị hủy"}
 								</Typography>
 							</Grid>
 
@@ -103,23 +107,39 @@ const FormDetailOrder = ({
 							</Grid>
 						</Grid>
 						<Box mt={4} gap={2} display={"flex"} justifyContent={"flex-end"}>
-							<Button
-								variant="contained"
-								onClick={() => {
-									updateOrder(StatusEnum.Approved);
-								}}
-							>
-								Nhận{" "}
-							</Button>
-							<Button
-								variant="contained"
-								onClick={() => {
-									updateOrder(StatusEnum.Reject);
-								}}
-								color="error"
-							>
-								Từ chối{" "}
-							</Button>
+							{detailOrder.status == StatusEnum.Pending && (
+								<>
+									<Button
+										variant="contained"
+										onClick={() => {
+											updateOrder(StatusEnum.Approved);
+										}}
+									>
+										Nhận{" "}
+									</Button>
+									<Button
+										variant="contained"
+										onClick={() => {
+											updateOrder(StatusEnum.Reject);
+										}}
+										color="error"
+									>
+										Từ chối{" "}
+									</Button>
+								</>
+							)}
+							{detailOrder.status == StatusEnum.Approved && (
+								<>
+									<Button
+										variant="contained"
+										onClick={() => {
+											updateOrder(StatusEnum.Shipping);
+										}}
+									>
+										Điều chuyển{" "}
+									</Button>
+								</>
+							)}
 						</Box>
 					</Box>
 				</Box>
