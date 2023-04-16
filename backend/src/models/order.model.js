@@ -9,6 +9,10 @@ const OrderScheam = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'User',
     },
+    discountId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Discont',
+    },
     shipping: Object,
     products: [
       {

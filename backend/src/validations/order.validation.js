@@ -12,9 +12,11 @@ const createOrder = {
         option: Joi.object(),
         productId: Joi.string().required(),
         quantity: Joi.number().min(1).required(),
+        isBuy: Joi.boolean(),
         _id: Joi.string(),
       })
     ),
+    discountId: Joi.string(),
   }),
 };
 

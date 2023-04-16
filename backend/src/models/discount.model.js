@@ -20,7 +20,6 @@ const DiscontScheam = new Schema(
     type: {
       type: Number, // Các loại giảm giá ( trực tiếp, %,...)
       required: true,
-      unique: true,
     },
     fromDate: {
       type: Date,

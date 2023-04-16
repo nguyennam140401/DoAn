@@ -1,5 +1,5 @@
 /**
- * QUản lý phân quyền
+ * QUản lý phiếu giảm giá
  */
 const httpStatus = require('http-status');
 const { Discount } = require('../models');
@@ -29,6 +29,15 @@ const queryDiscounts = async (filter, options) => {
   return discounts;
 };
 
+const getDiscountsInDay = async () => {
+  const currentDate = new Date();
+  const discounts = await Discount.find({
+    fromDate: { $lte: currentDate }, // Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày hiện tại
+    endDate: { $gte: currentDate }, // Ngày kết thúc phải lớn hơn hoặc bằng ngày hiện tại
+  });
+  return discounts;
+};
+
 /**
  * Get discount by id
  * @param {ObjectId} id
@@ -47,10 +56,7 @@ const getDiscountById = async (id) => {
 const updateDiscountById = async (discountId, updateBody) => {
   const discount = await getDiscountById(discountId);
   if (!discount) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'discount not found');
-  }
-  if (discount.name === 'admin' || discount.name === 'user') {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'admin or user discount cannot be update');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Không tìm thấy phiếu giảm giá');
   }
   Object.assign(discount, updateBody);
   await discount.save();
@@ -65,10 +71,7 @@ const updateDiscountById = async (discountId, updateBody) => {
 const deleteDiscountById = async (discountId) => {
   const discount = await getDiscountById(discountId);
   if (!discount) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'discount not found');
-  }
-  if (discount.name === 'admin' || discount.name === 'user') {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'admin or user discount cannot be delete');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Không tìm thấy phiếu giảm giá');
   }
   await discount.remove();
   return discount;
@@ -80,4 +83,5 @@ module.exports = {
   getDiscountById,
   updateDiscountById,
   deleteDiscountById,
+  getDiscountsInDay,
 };

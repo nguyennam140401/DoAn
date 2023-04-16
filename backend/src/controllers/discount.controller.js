@@ -18,6 +18,11 @@ const getDiscounts = catchAsync(async (req, res) => {
   res.send(result);
 });
 
+const getDiscountsInDay = catchAsync(async (req, res) => {
+  const result = await discountService.getDiscountsInDay();
+  res.send(result);
+});
+
 const getDiscount = catchAsync(async (req, res) => {
   const discount = await discountService.getDiscountById(req.params.discountId);
   if (!discount) {
@@ -47,4 +52,5 @@ module.exports = {
   updateDiscount,
   deleteDiscount,
   getPermission,
+  getDiscountsInDay,
 };

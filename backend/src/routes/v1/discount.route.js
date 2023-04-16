@@ -6,6 +6,8 @@ const router = express.Router();
 
 router.route('/').post(discountController.createDiscount).get(discountController.getDiscounts);
 
+router.route('/discountsInDay').get(discountController.getDiscountsInDay);
+
 router
   .route('/:discountId')
   .get(auth(), discountController.getDiscount)

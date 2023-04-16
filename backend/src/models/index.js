@@ -8,3 +8,4 @@ module.exports.Product = require('./product.model');
 module.exports.Role = require('./role.model');
 module.exports.Brand = require('./brand.model');
 module.exports.Discount = require('./discount.model');
+module.exports.Post = require('./post.model');

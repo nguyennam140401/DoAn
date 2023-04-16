@@ -9,3 +9,4 @@ module.exports.discountService = require('./discount.service');
 module.exports.orderService = require('./order.service');
 module.exports.cartService = require('./cart.service');
 module.exports.brandService = require('./brand.service');
+module.exports.postService = require('./post.service');
