@@ -13,12 +13,14 @@ type Props = {
 	listProduct: Array<any>;
 	handleClose: Function;
 	isOpen: Boolean;
+	discountVoucher: String;
 };
 
 export default function FormPayment({
 	listProduct,
 	handleClose,
 	isOpen,
+	discountVoucher,
 }: Props) {
 	const [createOrder, { isLoading, isError, isSuccess, error }] =
 		useCreateOrderMutation();
@@ -48,6 +50,7 @@ export default function FormPayment({
 				...item,
 				productId: item.productId.id,
 			})),
+			discountId: discountVoucher,
 		});
 		if (res.data) {
 			dispatch(
@@ -67,7 +70,6 @@ export default function FormPayment({
 					status: Status.Danger,
 				})
 			);
-			handleClose();
 		}
 	};
 	return (

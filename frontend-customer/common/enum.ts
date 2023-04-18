@@ -19,3 +19,8 @@ export enum EnumStatusOrder {
 	Reject = 4,
 	Cancel = 5,
 }
+
+export enum TypeDiscountVoucherEnum {
+	Percent = 0,
+	Price = 1,
+}

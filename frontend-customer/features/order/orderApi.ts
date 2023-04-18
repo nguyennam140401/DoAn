@@ -43,6 +43,13 @@ export const orderAPI = createApi({
 				body: payload,
 			}),
 		}),
+		patchOrder: builder.mutation({
+			query: (id, payload) => ({
+				url: "/id",
+				method: "PATCH",
+				body: payload,
+			}),
+		}),
 		getOrder: builder.query({
 			query: () => ({
 				url: "",

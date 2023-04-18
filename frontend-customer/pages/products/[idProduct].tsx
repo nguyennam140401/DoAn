@@ -1,11 +1,11 @@
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReviewItem from "../../components/ReviewItem";
 import { reviews } from "../../configData/reviews";
 import { ProductItemDetailModel } from "../../features/product/model";
 import { ReviewItemList } from "../../features/review/model";
 import { axiosClient } from "../../common/axiosClient";
-import { API_URL_BASE, productPath } from "../../constant/apiPath";
+import { API_URL_BASE, productPath, userPath } from "../../constant/apiPath";
 import MainLayout from "../../layouts/MainLayout";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { useCreateCartMutation } from "../../features/cart/cartAPI";
@@ -22,6 +22,7 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 	const quantityProductInCart = useAppSelector(
 		(state: AppState) => state.cart.quantity
 	);
+
 	const [quantity, setQuantity] = useState(1);
 	const [optionIndex, setOptionIndex] = useState(0);
 	const [isFavorite, setIsFavorite] = useState(false);
@@ -43,7 +44,6 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 					status: Status.Success,
 				})
 			);
-			console.log(data);
 			dispatch(setQuantityStore(quantityProductInCart + data.quantity));
 		} else {
 			dispatch(
@@ -55,7 +55,25 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 			);
 		}
 	};
-	const handleAddFavorite = () => {};
+	useEffect(() => {
+		axiosClient
+			.post(userPath + "/favorite", {
+				productId: product.id,
+			})
+			.then((res) => {
+				setIsFavorite(res.data);
+			});
+	}, [product]);
+
+	const toggleFavoriteProduct = async () => {
+		const user: string = localStorage.getItem("user") || "";
+		if (user) {
+			const res = await axiosClient.patch(userPath + "/favorite", {
+				productId: product.id,
+			});
+			setIsFavorite(res.data);
+		}
+	};
 	return (
 		<MainLayout>
 			<div className="flex flex-col md:flex-row">
@@ -133,7 +151,7 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 						className={`${
 							isFavorite ? "bg-red-500" : "bg-gray-500"
 						} hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-4`}
-						onClick={() => setIsFavorite(!isFavorite)}
+						onClick={toggleFavoriteProduct}
 					>
 						{isFavorite ? "Remove from favorites" : "Add to favorites"}
 					</button>
@@ -141,7 +159,7 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 			</div>
 			<div dangerouslySetInnerHTML={{ __html: product.description }}></div>
 			<div className="mt-8">
-				<h2 className="text-lg font-semibold mb-4">Reviews</h2>
+				<h2 className="text-lg font-semibold mb-4">Đánh giá của khách hàng</h2>
 				{reviews.map((review: ReviewItemList) => (
 					<ReviewItem key={review.id} data={review} />
 				))}

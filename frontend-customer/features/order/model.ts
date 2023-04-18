@@ -1,6 +1,7 @@
 import { EnumStatusOrder } from "../../common/enum";
 
 export interface OrderModel {
+	id?: string;
 	status: EnumStatusOrder;
 	userId: string;
 	buyerName: string;

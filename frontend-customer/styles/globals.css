@@ -268,3 +268,16 @@ input[type="number"].hidden-control::-webkit-outer-spin-button {
 	-webkit-appearance: none;
 	margin: 0;
 }
+
+.slick-dots {
+	bottom: 15px !important;
+}
+.slick-arrow {
+	z-index: 10 !important;
+}
+.slick-prev {
+	left: 15px !important;
+}
+.slick-next {
+	right: 15px !important;
+}

@@ -1,5 +1,6 @@
 export const formatPrice = (value) => {
 	let val = (value / 1).toFixed(0).replace(".", ",");
+	if (val < 0) val = 0;
 	return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
 
@@ -56,7 +57,17 @@ function toNonAccentVietnamese(str) {
 	str = str.replace(/\u02C6|\u0306|\u031B/g, ""); // Â, Ê, Ă, Ơ, Ư
 	return str;
 }
+
+export const formatDate = (value) => {
+	var date = new Date(value);
+	const day = date.getDate().toString().padStart(2, "0"); // lấy ngày, thêm số 0 đằng trước nếu chỉ có 1 chữ số
+	const month = (date.getMonth() + 1).toString().padStart(2, "0"); // lấy tháng (đánh số từ 0 đến 11), cộng thêm 1, thêm số 0 đằng trước nếu chỉ có 1 chữ số
+	const year = date.getFullYear(); // lấy năm
+	const formattedDate = `${day}/${month}/${year}`; // tạo chuỗi ngày tháng năm định dạng "dd/mm/yyyy"
+	return formattedDate;
+};
 export default {
+	formatDate,
 	formatPrice,
 	isExpired,
 	toLowerCaseNonAccentVietnamese,

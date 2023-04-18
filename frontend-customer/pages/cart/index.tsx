@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { debounce } from "../../common/refreshToken";
-import { API_URL_BASE } from "../../constant/apiPath";
+import { API_URL_BASE, discountPath } from "../../constant/apiPath";
 import {
 	useCreateCartMutation,
 	useGetCartQuery,
 	useRemoveItemMutation,
 } from "../../features/cart/cartAPI";
-import { formatPrice } from "../../common/commonFunction";
+import { formatDate, formatPrice } from "../../common/commonFunction";
 import MainLayout from "../../layouts/MainLayout";
 import FormPayment from "../../components/FormPayment";
 import { addNotification } from "../../features/application/applicationSlice";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import { Status } from "../../common/enum";
+import { Status, TypeDiscountVoucherEnum } from "../../common/enum";
 import { setQuantity } from "../../features/cart/cartSlice";
 import { AppState } from "../../store";
+import { axiosClient } from "../../common/axiosClient";
+import { DiscountVoucher } from "../../common/model";
 
 type Props = {};
 
@@ -37,6 +39,8 @@ export default function Cart({}: Props) {
 	const [listOldProductInCart, setListOldProductInCart] = useState<Array<any>>(
 		[]
 	);
+	const [listDiscount, setlistDiscount] = useState([]);
+	const [discountVoucher, setDiscountVoucher] = useState<DiscountVoucher>(null);
 	const dispatch = useAppDispatch();
 	const [isOpenPayment, setIsOpenPayment] = useState(false);
 	const handleRemoveProduct = async (productId: any, optionName: string) => {
@@ -67,6 +71,31 @@ export default function Cart({}: Props) {
 				})
 			);
 		}
+	};
+	const calcTotalPrice = () => {
+		return listProductInCart
+			.filter((item) => item.isBuy)
+			.reduce(
+				(pre, curr) =>
+					pre + curr.quantity * (curr?.option?.price || curr?.productId?.price),
+				0
+			);
+	};
+	const calcDiscountPrice = () => {
+		return !discountVoucher
+			? 0
+			: discountVoucher.type === TypeDiscountVoucherEnum.Price
+			? discountVoucher.amount
+			: discountVoucher.amount *
+			  0.01 *
+			  listProductInCart
+					.filter((item) => item.isBuy)
+					.reduce(
+						(pre, curr) =>
+							pre +
+							curr.quantity * (curr?.option?.price || curr?.productId?.price),
+						0
+					);
 	};
 	useEffect(() => {
 		if (data && data.products) {
@@ -129,18 +158,34 @@ export default function Cart({}: Props) {
 			);
 		}
 	};
-	const handleClose = (isSubmitDone = true) => {
+	const handleClose = (isSubmitDone = false) => {
 		setIsOpenPayment(false);
 		if (isSubmitDone) {
 			const newArr = listProductInCart.filter((item) => item.isBuy);
 			newArr.map((item) => {
 				handleRemoveProduct(item.productId.id, item?.option?.name);
 			});
+			setDiscountVoucher(null);
 		}
 	};
 	const handleOpen = () => {
+		if (listProductInCart.filter((item) => item.isBuy).length <= 0) {
+			dispatch(
+				addNotification({
+					title: "Vui lòng chọn sản phẩm muốn thanh toán",
+					status: Status.Danger,
+				})
+			);
+			return;
+		}
 		setIsOpenPayment(true);
 	};
+	useEffect(() => {
+		axiosClient.get(discountPath + "/discountsInDay").then((res) => {
+			setlistDiscount(res.data);
+		});
+	}, []);
+
 	return (
 		<MainLayout>
 			<div className="bg-gray-100 pt-20">
@@ -287,39 +332,59 @@ export default function Cart({}: Props) {
 					<div className="mt-6 h-full rounded-lg border bg-white p-6 shadow-md md:mt-0 md:w-1/3">
 						<div className="mb-2 flex justify-between">
 							<p className="text-gray-700">Tổng tiền</p>
-							<p className="text-gray-700">
-								{formatPrice(
-									listProductInCart.reduce(
-										(pre, curr) =>
-											pre +
-											curr.quantity *
-												(curr?.option?.price || curr?.productId?.price),
-										0
-									)
-								)}
-							</p>
+							<p className="text-gray-700">{formatPrice(calcTotalPrice())}</p>
 						</div>
 						<div className="flex justify-between">
 							<p className="text-gray-700">Giảm giá</p>
-							<p className="text-gray-700">{formatPrice(0)}</p>
+							<p className="text-gray-700">
+								{formatPrice(calcDiscountPrice())}
+							</p>
 						</div>
 						<hr className="my-4" />
 						<div className="flex justify-between">
 							<p className="text-lg font-bold">Tổng thanh toán</p>
 							<div className="">
 								<p className="mb-1 text-lg font-bold">
-									{formatPrice(
-										listProductInCart.reduce(
-											(pre, curr) =>
-												pre +
-												curr.quantity *
-													(curr?.option?.price || curr?.productId?.price),
-											0
-										)
-									)}{" "}
-									VND
+									{formatPrice(calcTotalPrice() - calcDiscountPrice())} VND
 								</p>
 								<p className="text-sm text-gray-700">(Đã bao gồm thuế VAT)</p>
+							</div>
+						</div>
+						<hr className="my-4" />
+						<div className="">
+							<p>Các mã giảm giá đang có</p>
+							<div className="overflow-y-auto h-52">
+								{listDiscount.map((item: DiscountVoucher, idx: number) => (
+									<>
+										<div
+											className="flex justify-between items-center"
+											key={idx}
+										>
+											<input
+												type="radio"
+												name="discount"
+												disabled={!listProductInCart.some((item) => item.isBuy)}
+												onClick={() => {
+													setDiscountVoucher(item);
+												}}
+											/>
+											<div style={{ flex: 1 }} className="mx-2">
+												<p>{item.name}</p>
+												<p>Hết hạn : {formatDate(item.endDate)}</p>
+											</div>
+											<div className="w-28">
+												<p>
+													Giá trị : {item.amount}
+													{item.type === TypeDiscountVoucherEnum.Percent
+														? "%"
+														: "đ"}
+												</p>
+												<p>Còn lại: {item.quantity}</p>
+											</div>
+										</div>
+										<hr className="mx-2" />
+									</>
+								))}
 							</div>
 						</div>
 						<button
@@ -335,6 +400,7 @@ export default function Cart({}: Props) {
 						isOpen={isOpenPayment}
 						listProduct={listProductInCart.filter((item) => item.isBuy)}
 						handleClose={handleClose}
+						discountVoucher={discountVoucher.id}
 					/>
 				)}
 			</div>

@@ -3,15 +3,17 @@ import { title } from "process";
 import React, { useState } from "react";
 import { formatPrice } from "../../common/commonFunction";
 import { EnumStatusOrder } from "../../common/enum";
-import { API_URL_BASE } from "../../constant/apiPath";
+import { API_URL_BASE, orderPath } from "../../constant/apiPath";
 import { useGetOrderByIdQuery } from "../../features/order/orderApi";
 import MainLayout from "../../layouts/MainLayout";
+import { OrderModel } from "../../features/order/model";
+import { axiosClient } from "../../common/axiosClient";
 
 type Props = {};
 
 const UserOrders = (props: Props) => {
 	const [tabActive, setTabActive] = useState(EnumStatusOrder.Pending);
-	const { data, isLoading, error } = useGetOrderByIdQuery({
+	const { data, isLoading, error, refetch } = useGetOrderByIdQuery({
 		status: tabActive,
 		populate: "userId,products.productId",
 	});
@@ -23,6 +25,14 @@ const UserOrders = (props: Props) => {
 		{ name: "Từ chối", index: EnumStatusOrder.Reject },
 		{ name: "Đơn hủy", index: EnumStatusOrder.Cancel },
 	];
+	const updateOrder = (order: OrderModel, status: EnumStatusOrder) => {
+		const body = { ...order, status: status };
+		axiosClient.patch(orderPath, body).then((res) => {
+			console.log(res);
+			refetch();
+		});
+	};
+	if (isLoading) return <p>Loading.....</p>;
 	return (
 		<MainLayout>
 			<div className="flex justify-center">
@@ -46,34 +56,55 @@ const UserOrders = (props: Props) => {
 						<div className="bg-white p-2 mb-4 relative">
 							<div className="button-action absolute top-3 right-3">
 								{tabActive === EnumStatusOrder.Pending && (
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										fill="none"
-										viewBox="0 0 24 24"
-										strokeWidth={1.5}
-										stroke="currentColor"
-										className="w-6 h-6 cursor-pointer"
+									<span
+										className="cursor-pointer"
+										title="Hủy đơn hàng"
+										onClick={() => updateOrder(item, EnumStatusOrder.Cancel)}
 									>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											d="M6 18L18 6M6 6l12 12"
-										/>
-									</svg>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 24 24"
+											strokeWidth={1.5}
+											stroke="currentColor"
+											className="w-6 h-6 cursor-pointer"
+										>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												d="M6 18L18 6M6 6l12 12"
+											/>
+										</svg>
+									</span>
 								)}
 								{tabActive === EnumStatusOrder.Shipping && (
-									<>
-										<p>Đã nhận được hàng</p>
-										<p>Trả hàng</p>
-									</>
+									<div className="flex gap-2">
+										<span
+											className="cursor-pointer"
+											onClick={() => updateOrder(item, EnumStatusOrder.Success)}
+										>
+											Đã nhận được hàng
+										</span>
+										<span
+											className="cursor-pointer"
+											onClick={() => updateOrder(item, EnumStatusOrder.Cancel)}
+										>
+											Trả hàng
+										</span>
+									</div>
 								)}
-								{tabActive === EnumStatusOrder.Success && <p>iTrả hàng</p>}
+								{tabActive === EnumStatusOrder.Success && (
+									<div className="flex gap-2">
+										<span className="cursor-pointer">Đánh giá sản phẩm</span>
+									</div>
+								)}
 								{tabActive === EnumStatusOrder.Approved && (
-									<p>Người gửi đang chuẩn bị hàng</p>
+									<span className="cursor-pointer">
+										Người gửi đang chuẩn bị hàng
+									</span>
 								)}
-								{tabActive === EnumStatusOrder.Cancel && <p>Đặt mua lại</p>}
 								{tabActive === EnumStatusOrder.Reject && (
-									<p>Liên hệ người bán</p>
+									<span className="cursor-pointer">Liên hệ người bán</span>
 								)}
 							</div>
 							{item.products.map((productDetail: any, i: number) => {
@@ -86,7 +117,7 @@ const UserOrders = (props: Props) => {
 													height="150px"
 													alt={productDetail.name}
 													src={
-														"http://localhost:5000" +
+														API_URL_BASE +
 														"/" +
 														productDetail.productId.images[0]
 													}
@@ -97,6 +128,7 @@ const UserOrders = (props: Props) => {
 												<p>x{productDetail.quantity}</p>
 												{productDetail.option && (
 													<span
+														className="cursor-pointer"
 														key={idx}
 														className={`bg-gray-500 mr-2 px-1 py-0.5 cursor-pointer`}
 													>

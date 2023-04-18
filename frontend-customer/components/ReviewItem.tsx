@@ -12,7 +12,7 @@ export default function ReviewItem({ data }: Props) {
 			<div>
 				<div className="flex items-center mb-1">
 					<div className="text-sm font-semibold">{data.author}</div>
-					<div className="ml-2">
+					<div className="ml-2 flex gap-1">
 						{[...Array(data.rating)].map((_, i) => (
 							<p key={i}>✰</p>
 						))}

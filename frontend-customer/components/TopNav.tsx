@@ -55,7 +55,7 @@ const Style = styled.div`
 			background-color: #fff;
 			padding: 20px;
 			width: 300px;
-			z-index: 1000;
+			z-index: 10000000;
 		}
 		:hover {
 			.child-menu {
@@ -150,7 +150,7 @@ function TopNav({ category }: Props) {
 				</span>
 			),
 			handle: () => {
-				router.push("/user/wishlist");
+				router.push("/user/favorite-product");
 			},
 		},
 		{
@@ -242,7 +242,7 @@ function TopNav({ category }: Props) {
 
 				{authenReducer.isLoggedIn ? (
 					<div className="h-10 avatar w-10 hover:ring-4 user cursor-pointer relative ring-blue-700/30 rounded-full bg-cover bg-center bg-[url('https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80')]">
-						<div className="avatar-options drop-down w-48 overflow-hidden bg-white rounded-md shadow absolute top-12 right-1">
+						<div className="avatar-options z-50 drop-down w-48 overflow-hidden bg-white rounded-md shadow absolute top-12 right-1">
 							<ul>
 								{arrMenuAuthen.map((item, idx) => (
 									<li
