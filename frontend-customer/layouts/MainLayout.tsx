@@ -20,7 +20,7 @@ export default function MainLayout({ children }: Props) {
 	return (
 		<div>
 			<TopNav />
-			<div className="container mx-auto my-6 py-6">
+			<div className="container mx-auto my-6">
 				<>{children}</>
 			</div>
 			<Footer />

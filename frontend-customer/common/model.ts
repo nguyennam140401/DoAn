@@ -33,3 +33,12 @@ export interface Service {
 	des: string;
 	img: string;
 }
+
+export interface PostModel {
+	name: string;
+	description: string;
+	id: string;
+	image: string;
+	createdDate: Date;
+	updatedDate: Date;
+}

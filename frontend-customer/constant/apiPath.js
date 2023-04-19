@@ -7,6 +7,7 @@ export const userPath = "users";
 export const orderPath = "order";
 export const discountPath = "discount";
 export const brandPath = "brand";
+export const postPath = "post";
 export const API_URL = process.env.API_URL;
 export const API_URL_BASE = process.env.API_URL_BASE;
 export default {
@@ -21,4 +22,5 @@ export default {
 	orderPath,
 	brandPath,
 	discountPath,
+	postPath,
 };
