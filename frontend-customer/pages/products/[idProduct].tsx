@@ -2,7 +2,7 @@ import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { useEffect, useState } from "react";
 import ReviewItem from "../../components/ReviewItem";
 import { reviews } from "../../configData/reviews";
-import { ProductItemDetailModel } from "../../features/product/model";
+import { ProductItemDetailModel, Spec } from "../../features/product/model";
 import { ReviewItemList } from "../../features/review/model";
 import { axiosClient } from "../../common/axiosClient";
 import { API_URL_BASE, productPath, userPath } from "../../constant/apiPath";
@@ -19,6 +19,7 @@ type ProductDetailPageProps = {
 };
 
 const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
+	console.log(product);
 	const quantityProductInCart = useAppSelector(
 		(state: AppState) => state.cart.quantity
 	);
@@ -76,93 +77,115 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 	};
 	return (
 		<MainLayout>
-			<div className="flex flex-col md:flex-row">
-				<div className="w-full md:w-1/2">
-					<img
-						src={API_URL_BASE + "/" + product.images[0]}
-						alt={product.name}
-						className="object-cover w-full h-full"
-					/>
-				</div>
-				<div className="w-full md:w-1/2 p-4">
-					<h2 className="text-2xl font-bold mb-2">{product.name}</h2>
+			<div className="mx-12">
+				<div className="flex flex-col md:flex-row">
+					<div className="w-full md:w-1/2">
+						<img
+							src={API_URL_BASE + "/" + product.images[0]}
+							alt={product.name}
+							className="object-cover w-full h-full"
+						/>
+					</div>
+					<div className="w-full md:w-1/2 p-4">
+						<h2 className="text-2xl font-bold mb-2">{product.name}</h2>
 
-					{product.options &&
-						product.options.length > 0 &&
-						product.options.map((item, idx) => (
-							<span
-								onClick={() => {
-									setOptionIndex(idx);
-								}}
-								key={idx}
-								className={`bg-gray-${
-									optionIndex === idx ? "500" : "200"
-								} mr-2 px-1 py-0.5 cursor-pointer`}
-							>
-								{item.name}
-							</span>
-						))}
-					<p className="text-gray-700 font-bold my-2 text-2xl price">
-						{formatPrice(product?.options[optionIndex]?.price || product.price)}
-					</p>
-					<div className="flex items-center mb-4">
-						<span className="mr-2">Số lượng:</span>
-						<div className="flex mx-2">
-							<button
-								className="border border-gray-400 w-8 h-8"
-								onClick={() => setQuantity((state) => --state)}
-							>
-								-
-							</button>
-							<input
-								type="number"
-								min={1}
-								max={10}
-								value={quantity}
-								onChange={(e) => setQuantity(parseInt(e.target.value))}
-								className="w-20 h-8 px-2 py-1 border border-gray-400 text-gray-700 focus:outline-none focus:border-blue-500"
-							/>
-							<button
-								className="border border-gray-400 w-8 h-8"
-								onClick={() => setQuantity((state) => ++state)}
-							>
-								+
-							</button>
-						</div>
-						{/* <p>
+						{product.options &&
+							product.options.length > 0 &&
+							product.options.map((item, idx) => (
+								<span
+									onClick={() => {
+										setOptionIndex(idx);
+									}}
+									key={idx}
+									className={`bg-gray-${
+										optionIndex === idx ? "500" : "200"
+									} mr-2 px-1 py-0.5 cursor-pointer`}
+								>
+									{item.name}
+								</span>
+							))}
+						<p className="text-gray-700 font-bold my-2 text-2xl price">
+							{formatPrice(
+								product?.options[optionIndex]?.price || product.price
+							)}
+						</p>
+						<div className="flex items-center mb-4">
+							<span className="mr-2">Số lượng:</span>
+							<div className="flex mx-2">
+								<button
+									className="border border-gray-400 w-8 h-8"
+									onClick={() => setQuantity((state) => --state)}
+								>
+									-
+								</button>
+								<input
+									type="number"
+									min={1}
+									max={10}
+									value={quantity}
+									onChange={(e) => setQuantity(parseInt(e.target.value))}
+									className="w-20 h-8 px-2 py-1 border border-gray-400 text-gray-700 focus:outline-none focus:border-blue-500"
+								/>
+								<button
+									className="border border-gray-400 w-8 h-8"
+									onClick={() => setQuantity((state) => ++state)}
+								>
+									+
+								</button>
+							</div>
+							{/* <p>
 							Có sẵn{" "}
 							{product.inventory || product.options[optionIndex].inventory} sản
 							phẩm
 						</p> */}
+						</div>
+						<div className="">
+							<button
+								className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+								onClick={() => {
+									const payload = {
+										productId: product.id,
+										quantity: quantity,
+									};
+									handleAddCart(payload);
+								}}
+							>
+								Thêm vào giỏ hàng
+							</button>
+							<button
+								className={`${
+									isFavorite ? "bg-red-500" : "bg-gray-500"
+								} hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-4`}
+								onClick={toggleFavoriteProduct}
+							>
+								{isFavorite ? "Remove from favorites" : "Add to favorites"}
+							</button>
+						</div>
+						<div className="product_spec">
+							<p className="my-4 font-bold">Thông số sản phẩm</p>
+							{product.specs && product.specs.length > 0 ? (
+								product.specs.map((spec: Spec, idx: number) => (
+									<div className="flex ml-2">
+										<p>
+											{spec.name} : {spec.value} {spec.unit}
+										</p>
+									</div>
+								))
+							) : (
+								<>Chưa có thông tin</>
+							)}
+						</div>
 					</div>
-					<button
-						className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-						onClick={() => {
-							const payload = {
-								productId: product.id,
-								quantity: quantity,
-							};
-							handleAddCart(payload);
-						}}
-					>
-						Thêm vào giỏ hàng
-					</button>
-					<button
-						className={`${
-							isFavorite ? "bg-red-500" : "bg-gray-500"
-						} hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-4`}
-						onClick={toggleFavoriteProduct}
-					>
-						{isFavorite ? "Remove from favorites" : "Add to favorites"}
-					</button>
 				</div>
-			</div>
-			<div dangerouslySetInnerHTML={{ __html: product.description }}></div>
-			<div className="mt-8">
-				<h2 className="text-lg font-semibold mb-4">Đánh giá của khách hàng</h2>
-				{reviews.map((review: ReviewItemList) => (
-					<ReviewItem key={review.id} data={review} />
-				))}
+				<div dangerouslySetInnerHTML={{ __html: product.description }}></div>
+				<div className="mt-8">
+					<h2 className="text-lg font-semibold mb-4">
+						Đánh giá của khách hàng
+					</h2>
+					{reviews.map((review: ReviewItemList) => (
+						<ReviewItem key={review.id} data={review} />
+					))}
+				</div>
 			</div>
 		</MainLayout>
 	);

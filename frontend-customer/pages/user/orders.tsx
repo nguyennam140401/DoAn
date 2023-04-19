@@ -8,6 +8,8 @@ import { useGetOrderByIdQuery } from "../../features/order/orderApi";
 import MainLayout from "../../layouts/MainLayout";
 import { OrderModel } from "../../features/order/model";
 import { axiosClient } from "../../common/axiosClient";
+import FormReviewProduct from "../../components/FormReviewProduct";
+import { ProductItemDetailModel } from "../../features/product/model";
 
 type Props = {};
 
@@ -17,6 +19,9 @@ const UserOrders = (props: Props) => {
 		status: tabActive,
 		populate: "userId,products.productId",
 	});
+	const [isOpenFormReview, setIsOpenFormReview] = useState(false);
+	const [currentProductReview, setCurrentProductReview] =
+		useState<ProductItemDetailModel>(null);
 	const listStatusOrder = [
 		{ name: "Đang chờ duyệt", index: EnumStatusOrder.Pending },
 		{ name: "Đã duyệt", index: EnumStatusOrder.Approved },
@@ -93,11 +98,7 @@ const UserOrders = (props: Props) => {
 										</span>
 									</div>
 								)}
-								{tabActive === EnumStatusOrder.Success && (
-									<div className="flex gap-2">
-										<span className="cursor-pointer">Đánh giá sản phẩm</span>
-									</div>
-								)}
+
 								{tabActive === EnumStatusOrder.Approved && (
 									<span className="cursor-pointer">
 										Người gửi đang chuẩn bị hàng
@@ -110,39 +111,54 @@ const UserOrders = (props: Props) => {
 							{item.products.map((productDetail: any, i: number) => {
 								return (
 									<div key={idx} className="product-item mb-4">
-										<div className="flex gap-2 mb-2">
-											<div className="boxImg">
-												<img
-													width="150px"
-													height="150px"
-													alt={productDetail.name}
-													src={
-														API_URL_BASE +
-														"/" +
-														productDetail.productId.images[0]
-													}
-												></img>
+										<div className="flex justify-between">
+											<div className="flex gap-2 mb-2">
+												<div className="boxImg">
+													<img
+														width="150px"
+														height="150px"
+														alt={productDetail.name}
+														src={
+															API_URL_BASE +
+															"/" +
+															productDetail.productId.images[0]
+														}
+													></img>
+												</div>
+												<div className="productInfo">
+													<p>{productDetail.productId.name}</p>
+													<p>x{productDetail.quantity}</p>
+													{productDetail.option && (
+														<span
+															className="cursor-pointer"
+															key={idx}
+															className={`bg-gray-500 mr-2 px-1 py-0.5 cursor-pointer`}
+														>
+															{productDetail.option.name}
+														</span>
+													)}
+													<p className="price">
+														{formatPrice(
+															productDetail.option
+																? productDetail.option.price
+																: productDetail.productId.price
+														)}
+													</p>
+												</div>
 											</div>
-											<div className="productInfo">
-												<p>{productDetail.productId.name}</p>
-												<p>x{productDetail.quantity}</p>
-												{productDetail.option && (
+											{tabActive === EnumStatusOrder.Success && (
+												<div className="flex gap-2">
 													<span
 														className="cursor-pointer"
-														key={idx}
-														className={`bg-gray-500 mr-2 px-1 py-0.5 cursor-pointer`}
+														onClick={() => {
+															setIsOpenFormReview(true);
+															setCurrentProductReview(productDetail.productId);
+														}}
 													>
-														{productDetail.option.name}
+														Đánh giá sản phẩm
 													</span>
-												)}
-												<p className="price">
-													{formatPrice(
-														productDetail.option
-															? productDetail.option.price
-															: productDetail.productId.price
-													)}
-												</p>
-											</div>
+												</div>
+											)}
 										</div>
 									</div>
 								);
@@ -153,6 +169,15 @@ const UserOrders = (props: Props) => {
 					<p className="text-center mt-6">Không có dữ liệu</p>
 				)}
 			</div>
+			{isOpenFormReview && (
+				<FormReviewProduct
+					productData={currentProductReview}
+					isOpen={isOpenFormReview}
+					handleClose={() => {
+						setIsOpenFormReview(false);
+					}}
+				></FormReviewProduct>
+			)}
 		</MainLayout>
 	);
 };

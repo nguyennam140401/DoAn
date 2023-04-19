@@ -15,10 +15,17 @@ export interface ProductItemDetailModel {
 	images: Array<string>;
 	options: Array<ProductItemOptions>;
 	inventory: number;
+	specs?: Array<Spec>;
 }
 
 export interface ProductItemOptions {
 	name: string;
 	price: number;
 	inventory: number;
+}
+
+export interface Spec {
+	name: string;
+	unit: string;
+	value: string;
 }
