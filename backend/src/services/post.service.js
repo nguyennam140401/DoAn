@@ -11,7 +11,11 @@ const ApiError = require('../utils/ApiError');
  * @returns {Promise<post>}
  */
 const createPost = async (postBody) => {
-  const post = await Post.create(postBody);
+  const post = await Post.create({
+    ...postBody,
+    createdDate: new Date(),
+    updatedDate: new Date(),
+  });
   return post;
 };
 
@@ -26,15 +30,6 @@ const createPost = async (postBody) => {
  */
 const queryPosts = async (filter, options) => {
   const posts = await Post.paginate(filter, options);
-  return posts;
-};
-
-const getPostsInDay = async () => {
-  const currentDate = new Date();
-  const posts = await Post.find({
-    fromDate: { $lte: currentDate }, // Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày hiện tại
-    endDate: { $gte: currentDate }, // Ngày kết thúc phải lớn hơn hoặc bằng ngày hiện tại
-  });
   return posts;
 };
 
@@ -58,7 +53,10 @@ const updatePostById = async (postId, updateBody) => {
   if (!post) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Không tìm thấy phiếu giảm giá');
   }
-  Object.assign(post, updateBody);
+  Object.assign(post, {
+    ...updateBody,
+    updatedDate: new Date(),
+  });
   await post.save();
   return post;
 };
@@ -83,5 +81,4 @@ module.exports = {
   getPostById,
   updatePostById,
   deletePostById,
-  getPostsInDay,
 };

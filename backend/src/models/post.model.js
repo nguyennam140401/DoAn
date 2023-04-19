@@ -4,7 +4,7 @@ const findByIdAndPopulate = require('./plugins/findByIdAndPopulate.plugin');
 
 const PostScheam = new Schema(
   {
-    title: {
+    name: {
       type: String,
       required: true,
       unique: true,

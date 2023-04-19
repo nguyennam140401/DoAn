@@ -33,4 +33,5 @@ router
   )
   .delete(auth('manage_product'), validate(productValidation.deleteProduct), productController.deleteProduct);
 
+router.route('/:id/review').post(auth(), productController.addReviewProduct);
 module.exports = router;

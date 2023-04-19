@@ -50,6 +50,22 @@ const updateProduct = async (productId, productBody) => {
 
 /**
  *
+ * @param {string} productId id product
+ * @param {object} review Đánh giá của người dùng
+ * @returns Trả về thông tin sản phẩm được đánh giá
+ */
+const addReviewProduct = async (productId, review) => {
+  const product = await getProductById(productId);
+  if (!product) throw new ApiError(httpStatus.NOT_FOUND, 'Không tim thấy sản phẩm này');
+  if (!Array.isArray(product.review) || !product.review) product.review = [review];
+  else {
+    product.review.push(review);
+  }
+  await product.save();
+  return product;
+};
+/**
+ *
  * @param {MongoId} idProduct id sản phẩm
  * @returns {Promise<Product>}
  */
@@ -66,4 +82,5 @@ module.exports = {
   createProduct,
   updateProduct,
   deleteProduct,
+  addReviewProduct,
 };

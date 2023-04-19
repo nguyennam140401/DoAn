@@ -1,15 +1,18 @@
 const express = require('express');
+const multer = require('multer');
 const postController = require('../../controllers/post.controller');
 const auth = require('../../middlewares/auth');
+const { storage, uploadImageTest } = require('../../utils/uploadImage');
 
 const router = express.Router();
 
-router.route('/').post(postController.createPost).get(postController.getPosts);
+const upload = multer({ storage });
+router.route('/').post(upload.array('images', 12), uploadImageTest, postController.createPost).get(postController.getPosts);
 
 router
   .route('/:postId')
   .get(auth(), postController.getPost)
-  .patch(auth(), postController.updatePost)
+  .patch(auth(), upload.array('images[]', 12), uploadImageTest, postController.updatePost)
   .delete(auth(), postController.deletePost);
 
 module.exports = router;

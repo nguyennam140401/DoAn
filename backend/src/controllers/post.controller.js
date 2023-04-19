@@ -6,7 +6,10 @@ const { postService } = require('../services');
 const { permission } = require('../config/permission');
 
 const createPost = catchAsync(async (req, res) => {
-  const post = await postService.createPost(req.body);
+  const post = await postService.createPost({
+    ...req.body,
+    image: req.body.images[0],
+  });
   res.status(httpStatus.CREATED).send(post);
 });
 
@@ -15,11 +18,6 @@ const getPosts = catchAsync(async (req, res) => {
   const filter = pick(req.query, []);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const result = await postService.queryPosts(filter, options);
-  res.send(result);
-});
-
-const getPostsInDay = catchAsync(async (req, res) => {
-  const result = await postService.getPostsInDay();
   res.send(result);
 });
 
@@ -32,7 +30,7 @@ const getPost = catchAsync(async (req, res) => {
 });
 
 const updatePost = catchAsync(async (req, res) => {
-  const post = await postService.updatePostById(req.params.postId, req.body);
+  const post = await postService.updatePostById(req.params.postId, { ...req.body, image: req.body.images[0] });
   res.send(post);
 });
 
@@ -52,5 +50,4 @@ module.exports = {
   updatePost,
   deletePost,
   getPermission,
-  getPostsInDay,
 };

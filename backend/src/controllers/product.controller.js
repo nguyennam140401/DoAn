@@ -32,10 +32,17 @@ const deleteProduct = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const addReviewProduct = catchAsync(async (req, res) => {
+  req.body.userId = req.user.id;
+  const product = await productService.addReviewProduct(req.params.id, req.body);
+  res.send(product);
+});
+
 module.exports = {
   getProducts,
   getProductById,
   createProduct,
   updateProduct,
   deleteProduct,
+  addReviewProduct,
 };
