@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const { Product } = require('../models');
 const ApiError = require('../utils/ApiError');
+const categorieService = require('./category.service');
 
 /**
  * Query for users
@@ -12,6 +13,19 @@ const ApiError = require('../utils/ApiError');
  * @returns {Promise<QueryResult>}
  */
 const getProducts = async (filter, options) => {
+  if (filter.category != null) {
+    const populate = 'childrentIds.childrentIds.childrentIds';
+    const detailCategory = await categorieService.getCategoryById(filter.category, populate);
+    const arrCategoryId = detailCategory.childrentIds.reduce(
+      (pre, curr) => {
+        pre.push(curr.id);
+        return pre;
+      },
+      [detailCategory.id]
+    );
+    filter.category = arrCategoryId;
+  }
+
   const products = await Product.paginate({ ...filter }, options);
   return products;
 };
@@ -25,6 +39,14 @@ const getProductById = async (idProduct) => {
   return Product.findById(idProduct);
 };
 
+/**
+ *
+ * @param {MongoId} listIdProduct - danh sách id
+ * @returns {Promise<Product>}
+ */
+const getProductFromList = async (listIdProduct) => {
+  return Product.find({ _id: { $in: listIdProduct } });
+};
 /**
  *
  * @param {Object} productBody - Thông tin sản phẩm
@@ -83,4 +105,5 @@ module.exports = {
   updateProduct,
   deleteProduct,
   addReviewProduct,
+  getProductFromList,
 };

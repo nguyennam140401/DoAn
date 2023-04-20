@@ -13,6 +13,7 @@ router
 
 router
   .route('/favorite')
+  .get(auth(), userController.getListFavorite)
   .patch(auth(), userController.addFavoriteProduct)
   .post(auth(), userController.checkProductIsFavorite);
 router

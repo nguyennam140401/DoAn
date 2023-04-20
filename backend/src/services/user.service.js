@@ -3,6 +3,7 @@ const { User } = require('../models');
 const ApiError = require('../utils/ApiError');
 const { getProductById } = require('./product.service');
 const { toggleArrayItem } = require('../common/commonFunction');
+const productService = require('./product.service');
 /**
  * Create a user
  * @param {Object} userBody
@@ -109,11 +110,12 @@ const checkProductIsFavorite = async (userId, productId) => {
   return user.favorite.findIndex((item) => item === productId) !== -1;
 };
 
-// const getProductsFavorite = async (userId) => {
-//   const user = await getUserById(userId);
-//   if (!user.favorite) return [];
-//   return user.favorite.findIndex((item) => item === productId) !== -1;
-// };
+const getProductsFavorite = async (userId) => {
+  const user = await getUserById(userId);
+  if (!user.favorite) return [];
+  const products = await productService.getProductFromList(user.favorite);
+  return products;
+};
 module.exports = {
   createUser,
   queryUsers,
@@ -123,4 +125,5 @@ module.exports = {
   deleteUserById,
   addFavoriteProduct,
   checkProductIsFavorite,
+  getProductsFavorite,
 };

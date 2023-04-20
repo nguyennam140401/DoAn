@@ -24,8 +24,8 @@ const queryCategories = async (filter, options) => {
  * @param {ObjectId} id
  * @returns {Promise<Category>}
  */
-const getCategoryById = async (id) => {
-  const response = await Category.findById(id);
+const getCategoryById = async (id, populate) => {
+  const response = await Category.findByIdAndPopulate(id, populate);
   if (!response) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Category not found');
   }

@@ -44,6 +44,8 @@ const paginate = (schema) => {
         [current]:
           current !== 'price'
             ? filter[current]
+            : current === 'category'
+            ? { $in: filter[current] }
             : { $gte: parseInt(filter[current].split('_')[0], 10), $lte: parseInt(filter[current].split('_')[1], 10) },
       };
     }, {});

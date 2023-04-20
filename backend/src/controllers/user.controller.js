@@ -42,6 +42,10 @@ const checkProductIsFavorite = catchAsync(async (req, res) => {
   const isFavorite = await userService.checkProductIsFavorite(req.user._id, req.body.productId);
   res.send(isFavorite);
 });
+const getListFavorite = catchAsync(async (req, res) => {
+  const results = await userService.getProductsFavorite(req.user._id);
+  res.send(results);
+});
 module.exports = {
   createUser,
   getUsers,
@@ -50,4 +54,5 @@ module.exports = {
   deleteUser,
   addFavoriteProduct,
   checkProductIsFavorite,
+  getListFavorite,
 };
