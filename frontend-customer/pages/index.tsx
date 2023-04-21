@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Loading from "../components/Loading";
 import ProductItemList from "../components/ProductItemList";
 import { ProductItemListModel } from "../features/product/model";
@@ -10,11 +10,13 @@ import { AppState } from "../store";
 import Slider from "react-slick";
 import { arrService } from "../common/data";
 import { Service } from "../common/model";
+import { axiosClient } from "../common/axiosClient";
+import { overviewPath } from "../constant/apiPath";
 const Home: NextPage = () => {
-	const { data, error, isLoading } = useGetProductsQuery({});
 	const authenReducer = useAppSelector(
 		(state: AppState) => state.authenReducer
 	);
+	const [dataOverview, setDataOverview] = useState<any>([]);
 	const settings = {
 		dots: true,
 		infinite: true,
@@ -23,6 +25,16 @@ const Home: NextPage = () => {
 		slidesToShow: 1,
 		slidesToScroll: 1,
 	};
+	useEffect(() => {
+		axiosClient
+			.get(overviewPath + "/overviewUser")
+			.then((res) => {
+				console.log(res);
+				setDataOverview(res.data);
+			})
+			.catch((err) => setDataOverview([]));
+	}, []);
+
 	return (
 		<MainLayout>
 			<>
@@ -71,10 +83,10 @@ const Home: NextPage = () => {
 					</div>
 				</Slider>
 				<div className="my-2">
-					<div className="grid grid-cols-1 gap-2 p-6 sm:grid-cols-5">
+					<div className="grid grid-cols-1 gap-2 sm:grid-cols-5 my-6">
 						{arrService &&
 							arrService.map((service: Service, idx: number) => (
-								<div className="flex gap-2 items-center" key={idx}>
+								<div className="flex gap-6 p-3 items-center bg-white" key={idx}>
 									<div className="h-12 w-12">
 										<img src={service.img} alt={service.title} />
 									</div>
@@ -86,14 +98,26 @@ const Home: NextPage = () => {
 							))}
 					</div>
 				</div>
-				<section className="py-10 bg-gray-100">
-					<div className="grid max-w-6xl grid-cols-1 gap-6 p-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-						{data?.results &&
-							data.results.map((item: ProductItemListModel, idx: number) => (
-								<ProductItemList data={item} key={idx} />
+				<div className="category-product">
+					{dataOverview.length > 0 &&
+						dataOverview
+							.filter((item) => item.products.length > 0)
+							.map((item, idx) => (
+								<div key={idx} className="mb-12">
+									<p className="text-3xl inline-block mb-6 relative have-hr-center">
+										{item.name}
+									</p>
+									<div className="grid gap-8 max-w-6xl grid-cols-1 gap-6sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+										{item.products &&
+											item.products.map(
+												(item: ProductItemListModel, idx: number) => (
+													<ProductItemList data={item} key={idx} />
+												)
+											)}
+									</div>
+								</div>
 							))}
-					</div>
-				</section>
+				</div>
 			</>
 		</MainLayout>
 	);

@@ -1,14 +1,11 @@
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { AppState } from "../store";
 import Input from "./Input";
 import { useRouter } from "next/router";
 import { logoutSuccess } from "../features/authen/authenSlice";
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { axiosClient } from "../common/axiosClient";
-import { categoryPath } from "../constant/apiPath";
 import { useGetCategoriesQuery } from "../features/category/categoryApi";
 import { useGetCartQuery } from "../features/cart/cartAPI";
 import { setQuantity } from "../features/cart/cartSlice";
@@ -47,6 +44,7 @@ const Style = styled.div`
 			width: 0px;
 			background-color: #1950e6;
 		}
+
 		.child-menu {
 			position: absolute;
 			display: none;
@@ -66,12 +64,24 @@ const Style = styled.div`
 				transition: 0.2s;
 			}
 		}
+		&.acitve {
+			::after {
+				width: 50%;
+			}
+		}
 	}
 `;
-function TopNav({ category }: Props) {
+function TopNav(props: Props) {
 	const quantityProductInCart = useAppSelector(
 		(state: AppState) => state.cart.quantity
 	);
+	const router = useRouter();
+	const [inputSearch, setInputSearch] = useState("");
+	const handleFindProduct = (e) => {
+		e.preventDefault();
+		console.log(inputSearch);
+		router.push({ pathname: "/products", query: { name: inputSearch } });
+	};
 	const {
 		data: dataCart,
 		error: errCart,
@@ -94,6 +104,7 @@ function TopNav({ category }: Props) {
 	} = useGetCategoriesQuery({
 		populate: "childrentIds.childrentIds.childrentIds",
 	});
+
 	const authenReducer = useAppSelector(
 		(state: AppState) => state.authenReducer
 	);
@@ -179,33 +190,56 @@ function TopNav({ category }: Props) {
 		},
 	];
 	const dispatch = useAppDispatch();
-	const router = useRouter();
 	const handleLogout = () => {
 		dispatch(logoutSuccess());
 		router.push("/");
 	};
 	return (
-		<Style className="px-4 flex justify-between">
-			<div className="flex">
-				<div className="px-3 py-2 bg-gray-200">Logo</div>
-				<form>
-					<Input label="" type="search" placeholder="Nhập tìm kiếm" />
+		<Style className="px-4 py-2 flex justify-between bg-white">
+			<div className="flex flex-1">
+				<Link href="/" className="box-img w-16 h-16">
+					<img
+						src="/assets/image/logo.jpg"
+						alt="Logo"
+						className="w-full h-full"
+					/>
+				</Link>
+				<form onSubmit={handleFindProduct}>
+					<div className="ml-4">
+						<Input
+							label=""
+							onChange={(e) => {
+								setInputSearch(e.target.value);
+							}}
+							type="search"
+							placeholder="Tìm kiếm sản phẩm"
+						/>
+					</div>
 				</form>
 			</div>
-			<ul className="flex gap-2 flex-end justify-end items-end">
-				<li className="p-3 nav-item">
-					<Link href="/">Trang chủ</Link>
-				</li>
+			<ul className="flex gap-2 flex-end justify-end items-center">
 				{arrItemInNav
 					.filter((item) => item.level === 0)
 					.map((item, idx) => {
 						return (
-							<li key={idx} className="p-3 relative nav-item">
+							<li
+								key={idx}
+								className={`p-3 relative nav-item ${
+									router.query.categoryId == item.id ? "active" : ""
+								} `}
+							>
 								<Link href={item.url}>{item.name}</Link>
 								{item.childrentIds.length > 0 && (
 									<ul className="child-menu">
 										{item.childrentIds.map((childMenu: any, i: number) => (
-											<li className="nav-item w-max" key={i}>
+											<li
+												className={`nav-item w-max ${
+													router.query.categoryId == childMenu.id
+														? "active"
+														: ""
+												}`}
+												key={i}
+											>
 												<Link href={"/category/" + childMenu.id}>
 													{childMenu.name}
 												</Link>
@@ -216,8 +250,12 @@ function TopNav({ category }: Props) {
 							</li>
 						);
 					})}
+				<li className="p-3 nav-item">
+					<Link href="/tin-tuc">Bài viết</Link>
+				</li>
 			</ul>
-			<div className="flex gap-3 items-center">
+
+			<div className="flex gap-3 items-center flex-1 justify-end">
 				<Link href="/cart">
 					<div className="relative scale-75 cursor-pointer">
 						<svg

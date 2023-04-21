@@ -91,10 +91,10 @@ export default function Layout({ children }: Props) {
 								))}
 						</div>
 						<div className="filter">
-							<p className="mt-2 text-uppercase text-lg text-md pb-2 border-b">
+							<p className="mt-2 text-uppercase text-lg text-md pb-2 border-b mb-5">
 								Lọc theo giá
 							</p>
-
+							{/* 
 							<div className="px-5">
 								<Slider
 									className="my-5"
@@ -103,7 +103,7 @@ export default function Layout({ children }: Props) {
 									defaultValue={[0, 70]}
 									onChange={(value) => console.log(value)}
 								/>
-							</div>
+							</div> */}
 							<div className="flex justify-between">
 								<input
 									value={minPrice}

@@ -1,9 +1,15 @@
-import React, { InputHTMLAttributes, useEffect, useState } from "react";
+import React, {
+	InputHTMLAttributes,
+	RefAttributes,
+	useEffect,
+	useState,
+} from "react";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 	label: string | null | undefined;
 	helpertext?: string | null | undefined;
 	error?: boolean;
+	ref?: any;
 }
 
 export default function Input({ label, error, ...rest }: InputProps) {

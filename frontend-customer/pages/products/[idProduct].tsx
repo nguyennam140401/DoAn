@@ -77,16 +77,16 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 	};
 	return (
 		<MainLayout>
-			<div className="mx-12">
-				<div className="flex flex-col md:flex-row">
-					<div className="w-full md:w-1/2">
+			<div>
+				<div className="flex flex-col gap-7 md:flex-row">
+					<div className="w-full md:w-1/3">
 						<img
 							src={API_URL_BASE + "/" + product.images[0]}
 							alt={product.name}
 							className="object-cover w-full h-full"
 						/>
 					</div>
-					<div className="w-full md:w-1/2 p-4">
+					<div className="w-full md:w-2/3 p-4">
 						<h2 className="text-2xl font-bold mb-2">{product.name}</h2>
 
 						{product.options &&
