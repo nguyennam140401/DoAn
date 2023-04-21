@@ -11,7 +11,7 @@ router.route('/').post(upload.array('images', 12), uploadImageTest, postControll
 
 router
   .route('/:postId')
-  .get(auth(), postController.getPost)
+  .get(postController.getPost)
   .patch(auth(), upload.array('images[]', 12), uploadImageTest, postController.updatePost)
   .delete(auth(), postController.deletePost);
 

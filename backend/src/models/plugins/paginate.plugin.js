@@ -42,7 +42,9 @@ const paginate = (schema) => {
       return {
         ...now,
         [current]:
-          current !== 'price'
+          current === 'name'
+            ? { $regex: filter[current] }
+            : current !== 'price'
             ? filter[current]
             : current === 'category'
             ? { $in: filter[current] }

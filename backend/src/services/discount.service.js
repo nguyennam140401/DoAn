@@ -32,6 +32,7 @@ const queryDiscounts = async (filter, options) => {
 const getDiscountsInDay = async () => {
   const currentDate = new Date();
   const discounts = await Discount.find({
+    quantity: { $gte: 1 },
     fromDate: { $lte: currentDate }, // Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày hiện tại
     endDate: { $gte: currentDate }, // Ngày kết thúc phải lớn hơn hoặc bằng ngày hiện tại
   });
