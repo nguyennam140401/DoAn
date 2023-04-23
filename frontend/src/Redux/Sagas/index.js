@@ -7,6 +7,7 @@ import roleSaga from "./Role.saga";
 import orderSaga from "./Order.saga";
 import brandSaga from "./Brand.saga";
 import discountSaga from "./Discount.saga";
+import postSaga from "./Post.saga";
 export function* rootSagas() {
 	yield all([fork(accountSaga)]);
 	yield all([fork(productSaga)]);
@@ -15,5 +16,6 @@ export function* rootSagas() {
 	yield all([fork(orderSaga)]);
 	yield all([fork(brandSaga)]);
 	yield all([fork(discountSaga)]);
+	yield all([fork(postSaga)]);
 }
 export default rootSagas;

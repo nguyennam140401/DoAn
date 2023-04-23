@@ -1,25 +1,34 @@
-import { Button, Dialog, TextField } from "@mui/material";
+import { Autocomplete, Button, Dialog, TextField } from "@mui/material";
 import { Box } from "@mui/system";
 import { removeEmpty } from "common";
 import { AlertContext } from "context/AlertContext";
+import { FormStateEnum } from "enum/StatusEnum";
 import { Formik } from "formik";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import Select from "react-select";
 import { accountActions } from "Redux/Actions";
+import { axiosClient } from "Services/axiosClient";
+import { roles } from "Services/ServiceURL";
 import * as yup from "yup";
 const FormDetailAccount = ({
 	isOpen,
 	data = null,
 	isEdit = true,
+	formState,
 	handleClose,
 }) => {
 	const { showAlert } = useContext(AlertContext);
 	const dispatch = useDispatch();
-	const [options, setOptions] = useState([
-		{ label: "admin", value: "admin" },
-		{ label: "user", value: "user" },
-	]);
+	const [arrRole, setArrRole] = useState([]);
+	useEffect(() => {
+		const paramGetRole = {
+			limit: 100,
+		};
+		axiosClient
+			.get(roles, { params: paramGetRole })
+			.then((res) => setArrRole(res.data.results));
+	}, []);
 
 	const formSchema = yup.object({
 		email: yup
@@ -54,6 +63,7 @@ const FormDetailAccount = ({
 		email: "",
 		name: "",
 		role: "",
+		roleId: "",
 		password: "",
 		confirmPassword: "",
 	};
@@ -62,6 +72,7 @@ const FormDetailAccount = ({
 			email: data.email,
 			name: data.name,
 			role: data.role,
+			roleId: data.roleId,
 			password: data.password,
 		};
 	};
@@ -116,13 +127,37 @@ const FormDetailAccount = ({
 						setFieldValue,
 					}) => (
 						<>
-							<Box mb={2}>
+							{/* <Box mb={2}>
 								<Select
 									defaultInputValue={values.role}
 									options={options}
 									onChange={(data) => {
 										setFieldValue("role", data.value);
 									}}
+								/>
+							</Box> */}
+							<Box mb={2}>
+								<Autocomplete
+									fullWidth
+									disabled={formState === FormStateEnum.View}
+									disablePortal
+									options={arrRole.map((item) => ({
+										label: item.name,
+										value: item.id,
+									}))}
+									defaultValue={values.role}
+									onChange={(e, data) => {
+										console.log(data);
+										setFieldValue("role", data.label);
+										setFieldValue("roleId", data.value);
+									}}
+									renderInput={(params) => (
+										<TextField
+											disabled={formState === FormStateEnum.View}
+											{...params}
+											label="Phân quyền"
+										/>
+									)}
 								/>
 							</Box>
 							<Box mb={2}>

@@ -14,7 +14,7 @@ const FormDetailBrand = ({ isOpen, data = null, handleClose, formState }) => {
 	const dispatch = useDispatch();
 
 	const formSchema = yup.object({
-		name: yup.string().required("Tên tài khoản không được để trống"),
+		name: yup.string().required("Tên hãng sản xuất không được để trống"),
 		description: yup
 			.string()
 			.required("Mô tả cho hãng sản xuất không được để trống"),

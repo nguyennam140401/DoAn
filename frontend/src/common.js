@@ -80,3 +80,9 @@ export const formatDate = (value) => {
 	const formattedDate = `${day}/${month}/${year}`; // tạo chuỗi ngày tháng năm định dạng "dd/mm/yyyy"
 	return formattedDate;
 };
+
+export const formatPrice = (value) => {
+	let val = (value / 1).toFixed(0).replace(".", ",");
+	if (val < 0) val = 0;
+	return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};

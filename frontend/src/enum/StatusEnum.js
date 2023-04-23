@@ -18,9 +18,14 @@ export const FormStateEnum = {
 	Edit: 2,
 	View: 3,
 };
+export const TypeDiscountVoucherEnum = {
+	Percent: 0,
+	Price: 1,
+};
 
 export default {
 	StatusColorEnum,
 	StatusEnum,
 	FormStateEnum,
+	TypeDiscountVoucherEnum,
 };

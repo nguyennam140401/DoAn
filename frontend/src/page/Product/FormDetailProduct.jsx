@@ -38,7 +38,6 @@ const FormDetailProduct = ({
 	formState,
 	handleClose,
 }) => {
-	console.log(detailProduct);
 	const { showAlert } = useContext(AlertContext);
 	const dispatch = useDispatch();
 	const { categories } = useSelector((state) => state.categoryReducer);
@@ -317,7 +316,7 @@ const FormDetailProduct = ({
 										color="primary"
 										onClick={() => {
 											const arr = values.options;
-											arr.push({ name: "", value: "" });
+											arr.push({ name: "", soldQuantity: 0 });
 											setFieldValue("options", arr);
 										}}
 									>

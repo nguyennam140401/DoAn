@@ -18,6 +18,7 @@ export default function CustomTable({
 	currentPage,
 	handleGetData = () => {},
 	populate,
+	queryProps = {},
 	...props
 }) {
 	const [page, setPage] = React.useState(currentPage ? currentPage - 1 : 0);
@@ -34,10 +35,10 @@ export default function CustomTable({
 
 	useEffect(() => {
 		const query = {
+			...queryProps,
 			page: page + 1,
 			name: textSearch,
 			limit: rowsPerPage,
-			populate: populate,
 		};
 		handleGetData(removeEmpty(query));
 	}, [page, rowsPerPage, textSearch]);
@@ -113,6 +114,7 @@ export default function CustomTable({
 						count !== -1 ? count : `more than ${to}`
 					}`;
 				}}
+				labelRowsPerPage={"Số bản ghi: "}
 			/>
 		</Paper>
 	) : (

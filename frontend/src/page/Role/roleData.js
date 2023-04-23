@@ -1,10 +1,15 @@
+import { RolePermission } from "enum/RoleEnum";
+
 export const listRole = {
 	product: {
 		name: "Quản lý sản phẩm",
 		roles: [
-			{ name: "Thêm, sửa sản phẩm", value: "manage_product" },
-			{ name: "Xóa sản phẩm", value: "delete_product" },
-			{ name: "Lấy sản phẩm", value: "get_product" },
+			{
+				name: "Thêm, sửa sản phẩm",
+				value: RolePermission.PRODUCT.MANAGE_PRODUCT,
+			},
+			{ name: "Xóa sản phẩm", value: RolePermission.PRODUCT.DELETE_PRODUCT },
+			{ name: "Lấy sản phẩm", value: RolePermission.PRODUCT.GET_PRODUCTS },
 		],
 	},
 	category: {
@@ -26,5 +31,13 @@ export const listRole = {
 	order: {
 		name: "Quản lý đơn hàng",
 		roles: [{ name: "Quản lý đơn hàng", value: "manage_order" }],
+	},
+	discount: {
+		name: "Quản lý mã giảm giá",
+		roles: [{ name: "Tạo mã giảm giá", value: "manage_discount" }],
+	},
+	post: {
+		name: "Quản lý bài viết",
+		roles: [{ name: "Quản lý bài viết", value: "manage_post" }],
 	},
 };

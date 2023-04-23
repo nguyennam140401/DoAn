@@ -5,6 +5,7 @@ import Category from "page/Category";
 import Dashboard from "page/Dashboard";
 import Discount from "page/Discount";
 import Order from "page/Order";
+import Post from "page/Post";
 import Product from "page/Product";
 import Role from "page/Role";
 
@@ -70,9 +71,10 @@ const routes = [
 				component: <Discount />,
 			},
 			{
-				path: "/child3",
-				name: "Child 3 nè",
-				component: () => <p>Child 3 nè</p>,
+				path: "/post",
+				name: "Quản lý bài viết",
+				icon: <SendIcon />,
+				component: <Post />,
 			},
 		],
 	},

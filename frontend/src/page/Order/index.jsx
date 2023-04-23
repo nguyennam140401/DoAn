@@ -15,6 +15,8 @@ import BlockIcon from "@mui/icons-material/Block";
 import DoneIcon from "@mui/icons-material/Done";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+import { TypeDiscountVoucherEnum } from "enum/StatusEnum";
+import { formatPrice } from "common";
 
 const Order = () => {
 	const dispatch = useDispatch();
@@ -52,27 +54,40 @@ const Order = () => {
 			})
 		);
 	};
+	const calcDiscountPrice = (discountVoucher, totalPrice) => {
+		if (!discountVoucher) return 0;
+		return !discountVoucher
+			? 0
+			: discountVoucher.type === TypeDiscountVoucherEnum.Price
+			? discountVoucher.amount
+			: discountVoucher.amount * 0.01 * totalPrice;
+	};
 	const configColumns = [
 		{ label: "Người nhận", id: "buyerName" },
 		{ label: "Điện thoại", id: "phoneNumber" },
 		{ label: "Số sản phẩm", id: "products.length" },
 		{
 			label: "Giá trị đơn hàng",
-			Cell: ({ data }) => (
-				<>
-					{data.products.reduce(
-						(pre, curr) => pre + curr.quantity * curr.productId.price,
-						0
-					)}
-				</>
-			),
+			Cell: ({ data }) => {
+				const totalAmout = data.products.reduce(
+					(pre, curr) => pre + curr.quantity * curr.productId.price,
+					0
+				);
+				return (
+					<>
+						{formatPrice(
+							totalAmout - calcDiscountPrice(data.discountId, totalAmout)
+						)}
+					</>
+				);
+			},
 		},
 		{
 			label: "Trạng thái",
 			id: "status",
 			Cell: (rowData) => (
 				<>
-					<CircleIcon
+					{/* <CircleIcon
 						color={
 							rowData.data.status === 0
 								? StatusColorEnum.Pending
@@ -82,7 +97,7 @@ const Order = () => {
 						}
 						fontSize="small"
 						scale="0.5"
-					/>
+					/> */}
 					{i18next.t("CommonI18n.StatusConfirm." + rowData.data.status)}
 				</>
 			),
@@ -129,7 +144,6 @@ const Order = () => {
 		},
 	];
 	const [query, setQuery] = useState({
-		page: 1,
 		populate: "products.productId.category,discountId",
 	});
 	const closeFormDetail = (isSubmit = false) => {
@@ -140,6 +154,7 @@ const Order = () => {
 		}
 	};
 	const handleGetOrders = (data = query) => {
+		console.log(data);
 		dispatch(orderActions.getOrders(queryString.stringify(data), {}));
 	};
 	useEffect(() => {
@@ -156,7 +171,7 @@ const Order = () => {
 				currentPage={orders.page}
 				isPending={isGetOrders}
 				handleGetData={handleGetOrders}
-				populate={"category"}
+				queryProps={query}
 			></CustomTable>
 
 			<FormDetailOrder

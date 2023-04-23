@@ -63,6 +63,7 @@ const FormDetailCategory = ({
 			);
 		} else {
 			const { id, ...payload } = data;
+			payload.childrentIds = payload.childrentIds.map((item) => item.id);
 			dispatch(
 				categoryActions.updateCategory(id, removeEmpty(payload), {
 					success: (data) => {

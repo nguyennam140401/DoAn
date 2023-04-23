@@ -42,7 +42,7 @@ const Role = () => {
 		showConfirm(
 			"Xác nhận xóa phân quyền",
 			"Bạn có chắc chắn muốn xóa phân quyền này không?",
-			handleRemove(data)
+			async () => handleRemove(data)
 		);
 	};
 	const handleRemove = (data) => {

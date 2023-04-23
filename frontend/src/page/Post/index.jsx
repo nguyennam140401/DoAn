@@ -3,47 +3,47 @@ import { Box } from "@mui/system";
 import CustomTable from "component/CustomTable";
 import React, { useContext, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { accountActions } from "Redux/Actions";
+import { postActions } from "Redux/Actions";
 import LayoutAdmin from "../LayoutAdmin";
 import ListActionButtonInTable from "component/ListActionButtonInTable";
-import FormDetailAccount from "./FormDetailAccount";
+import FormDetailPost from "./FormDetailPost";
 import { ConfirmContext } from "context/ConfirmContext";
 import { AlertContext } from "context/AlertContext";
-import queryString from "query-string";
-const Account = () => {
+import { FormStateEnum } from "enum/StatusEnum";
+import { formatDate } from "common";
+const Post = () => {
 	const dispatch = useDispatch();
 	const [isOpenFormDetail, setIsOpenFormDetail] = useState(false);
-	const { accounts, isGetAccounts } = useSelector(
-		(state) => state.accountReducer
-	);
-	const [query, setQuery] = useState({
-		page: 1,
-		limit: 10,
-		populate: "roleId",
-	});
+	const { posts, isGetPosts } = useSelector((state) => state.postReducer);
 	const { showConfirm } = useContext(ConfirmContext);
 	const { showAlert } = useContext(AlertContext);
-	const [currentAccount, setCurrentAccount] = useState(null);
-	const viewAction = (e, data) => {
-		setCurrentAccount(data);
+	const [currentPost, setCurrentPost] = useState(null);
+	const [formState, setFormState] = useState(FormStateEnum.View);
+
+	const openForm = (formData = null, formState = FormStateEnum.Add) => {
+		setCurrentPost(formData);
 		setIsOpenFormDetail(true);
+		setFormState(formState);
+	};
+
+	const viewAction = (data) => {
+		openForm(data, FormStateEnum.View);
 	};
 	const editAction = (data) => {
-		setCurrentAccount(data);
-		setIsOpenFormDetail(true);
+		openForm(data, FormStateEnum.Edit);
 	};
 	const removeAction = (data) => {
 		showConfirm(
-			"Xác nhận xóa người dùng",
-			"Bạn có chắc chắn muốn xóa người dùng này không?",
+			"Xác nhận xóa bài viết",
+			"Bạn có chắc chắn muốn xóa bài viết này không?",
 			async () => handleRemove(data)
 		);
 	};
 	const handleRemove = (data) => {
 		dispatch(
-			accountActions.deleteAccount(data.id, {
+			postActions.deletePost(data.id, {
 				success: () => {
-					handleGetAccounts();
+					handleGetPosts();
 					showAlert("success", "Xóa thành công");
 				},
 				failed: (err) => {
@@ -58,12 +58,13 @@ const Account = () => {
 			id: "name",
 		},
 		{
-			label: "Email",
-			id: "email",
+			label: "Mô tả",
+			id: "description",
 		},
 		{
-			label: "Vai trò",
-			id: "role",
+			label: "Ngày cập nhật",
+			id: "createdDate",
+			Cell: ({ data }) => formatDate(data.updatedDate),
 		},
 		{
 			label: "Hành động",
@@ -77,9 +78,9 @@ const Account = () => {
 			),
 		},
 	];
-	const handleGetAccounts = () => {
+	const handleGetPosts = () => {
 		dispatch(
-			accountActions.getAccounts(queryString.stringify(query), {
+			postActions.getPosts("", {
 				success: (res) => {
 					console.log(res);
 				},
@@ -91,36 +92,42 @@ const Account = () => {
 	};
 	React.useEffect(() => {
 		const handle = async function () {
-			await handleGetAccounts();
+			await handleGetPosts();
 		};
 		handle();
 	}, [dispatch]);
 	return (
 		<LayoutAdmin>
-			<Typography variant="h4">Danh sách tài khoản</Typography>
+			<Typography variant="h4">Danh sách bài viết</Typography>
 			<Box my={2} display="flex" justifyContent={"right"}>
-				<Button variant="contained" onClick={() => setIsOpenFormDetail(true)}>
+				<Button
+					variant="contained"
+					onClick={() => {
+						openForm();
+					}}
+				>
 					Thêm mới
 				</Button>
 			</Box>
 			<CustomTable
-				data={accounts.results}
+				data={posts.results}
 				columns={configColumns}
-				isPending={isGetAccounts}
-				handleGetData={handleGetAccounts}
-				totalResults={accounts.totalResults}
-				currentPage={accounts.page}
+				isPending={isGetPosts}
+				handleGetData={handleGetPosts}
+				totalResults={posts.totalResults}
+				currentPage={posts.page}
 			></CustomTable>
-			<FormDetailAccount
+			<FormDetailPost
 				isOpen={isOpenFormDetail}
 				handleClose={() => {
 					setIsOpenFormDetail(false);
-					setCurrentAccount(null);
+					setCurrentPost(null);
 				}}
-				data={currentAccount}
+				formState={formState}
+				data={currentPost}
 			/>
 		</LayoutAdmin>
 	);
 };
 
-export default Account;
+export default Post;
