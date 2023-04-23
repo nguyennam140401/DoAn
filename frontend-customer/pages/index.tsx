@@ -12,6 +12,7 @@ import { arrService } from "../common/data";
 import { Service } from "../common/model";
 import { axiosClient } from "../common/axiosClient";
 import { overviewPath } from "../constant/apiPath";
+import Link from "next/link";
 const Home: NextPage = () => {
 	const authenReducer = useAppSelector(
 		(state: AppState) => state.authenReducer
@@ -104,9 +105,12 @@ const Home: NextPage = () => {
 							.filter((item) => item.products.length > 0)
 							.map((item, idx) => (
 								<div key={idx} className="mb-12">
-									<p className="text-3xl inline-block mb-6 relative have-hr-center">
-										{item.name}
-									</p>
+									<div className="flex justify-between">
+										<div className="text-3xl  inline-block mb-6 relative have-hr-center">
+											{item.name}
+										</div>
+										<Link href={"/category/" + item._id}>Xem thêm</Link>
+									</div>
 									<div className="grid gap-8 max-w-6xl grid-cols-1 gap-6sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 										{item.products &&
 											item.products.map(

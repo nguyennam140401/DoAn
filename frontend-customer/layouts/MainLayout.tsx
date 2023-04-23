@@ -17,7 +17,7 @@ export default function MainLayout({ children }: Props) {
 	return (
 		<div>
 			<TopNav />
-			<div className="container px-12 my-6">
+			<div className="w-full px-12 my-6">
 				<>{children}</>
 			</div>
 			<Footer />

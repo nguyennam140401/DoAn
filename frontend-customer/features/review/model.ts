@@ -1,6 +1,6 @@
 export interface ReviewItemList {
 	rating: number;
-	author: string;
-	content: string;
+	name: string;
+	comment: string;
 	id: number;
 }

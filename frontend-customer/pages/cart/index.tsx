@@ -165,6 +165,7 @@ export default function Cart({}: Props) {
 			newArr.map((item) => {
 				handleRemoveProduct(item.productId.id, item?.option?.name);
 			});
+			hanelGetDiscount();
 			setDiscountVoucher(null);
 		}
 	};
@@ -181,10 +182,13 @@ export default function Cart({}: Props) {
 		setIsOpenPayment(true);
 	};
 	useEffect(() => {
+		hanelGetDiscount();
+	}, []);
+	const hanelGetDiscount = () => {
 		axiosClient.get(discountPath + "/discountsInDay").then((res) => {
 			setlistDiscount(res.data);
 		});
-	}, []);
+	};
 
 	return (
 		<MainLayout>

@@ -33,6 +33,7 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 		{ isLoading: isSaveCart }, // This is the destructured mutation result
 	] = useCreateCartMutation();
 	const handleAddCart = async (data: any) => {
+		console.log(data);
 		if (product.options.length > 0) {
 			data.option = product.options[optionIndex];
 		}
@@ -182,9 +183,13 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 					<h2 className="text-lg font-semibold mb-4">
 						Đánh giá của khách hàng
 					</h2>
-					{reviews.map((review: ReviewItemList) => (
-						<ReviewItem key={review.id} data={review} />
-					))}
+					{product.review && product.review.length > 0 ? (
+						product.review.map((review: ReviewItemList) => (
+							<ReviewItem key={review.id} data={review} />
+						))
+					) : (
+						<>Sản phẩm chưa có đánh giá</>
+					)}
 				</div>
 			</div>
 		</MainLayout>
@@ -197,7 +202,11 @@ export const getServerSideProps: GetServerSideProps = async (
 	const { params } = context;
 	const id = params?.idProduct;
 	try {
-		const result = await axiosClient.get("/" + productPath + "/" + id);
+		const result = await axiosClient.get("/" + productPath + "/" + id, {
+			params: {
+				populate: "review.userId",
+			},
+		});
 		return {
 			props: {
 				product: result.data,

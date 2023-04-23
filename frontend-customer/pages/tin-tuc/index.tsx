@@ -21,22 +21,27 @@ const Posts = (props: Props) => {
 					<div className="grid grid-cols-1 gap-8 mt-8 md:grid-cols-1">
 						{data.results.length > 0 ? (
 							data.results.map((post: PostModel, idx: number) => (
-								<div className="lg:flex" key={idx}>
+								<div className="flex" key={idx}>
 									<img
 										className="object-cover w-full h-32 rounded-lg lg:w-64"
 										src={API_URL_BASE + "/" + post.image}
 										alt=""
 									/>
 
-									<div className="flex flex-col justify-between py-6 lg:mx-6">
-										<Link
-											href={"tin-tuc/" + post.id}
-											className="text-xl font-semibold text-gray-800 hover:underline "
-										>
-											{post.name}
-										</Link>
-
-										<span className="text-sm text-gray-500 dark:text-gray-300">
+									<div className="flex flex-col justify-between lg:mx-6">
+										<div className="">
+											<Link
+												href={"tin-tuc/" + post.id}
+												className=" max-one-lines text-xl font-semibold text-gray-800 hover:underline "
+											>
+												{post.name}
+											</Link>
+											<div
+												className="description my-2 max-two-lines "
+												dangerouslySetInnerHTML={{ __html: post.description }}
+											></div>
+										</div>
+										<span className="text-sm mb-6 text-gray-500 dark:text-gray-300">
 											Ngày cập nhật: {formatDate(post.updatedDate)}
 										</span>
 									</div>

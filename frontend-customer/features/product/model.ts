@@ -1,3 +1,5 @@
+import { ReviewItemList } from "../review/model";
+
 export interface ProductItemListModel {
 	images: Array<string>;
 	price: number;
@@ -16,6 +18,7 @@ export interface ProductItemDetailModel {
 	options: Array<ProductItemOptions>;
 	inventory: number;
 	specs?: Array<Spec>;
+	review?: Array<ReviewItemList>;
 }
 
 export interface ProductItemOptions {
