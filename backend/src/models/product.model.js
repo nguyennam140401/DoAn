@@ -2,6 +2,28 @@ const { Schema, model, Types } = require('mongoose');
 const { toJSON, paginate } = require('./plugins');
 const findByIdAndPopulate = require('./plugins/findByIdAndPopulate.plugin');
 
+// const ReviewSchema = new Schema({
+//   name: {
+//     rating: {
+//       type: Number,
+//       required: true,
+//     },
+//     userId: {
+//       type: Types.ObjectId,
+//       ref: 'User',
+//       required: true,
+//     },
+//     comment: {
+//       type: String,
+//       required: true,
+//     },
+//   },
+// });
+const ReviewSchema = new Schema({
+  userId: { type: Schema.Types.ObjectId, ref: 'User' },
+  comment: String,
+  rating: Number,
+});
 const ProductScheam = new Schema(
   {
     name: {
@@ -31,7 +53,7 @@ const ProductScheam = new Schema(
       default: [],
     },
     review: {
-      type: Array,
+      type: [ReviewSchema],
       default: [],
     },
     images: {

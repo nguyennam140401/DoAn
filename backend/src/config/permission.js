@@ -31,6 +31,12 @@ const permission = {
   ORDER: {
     MANAGE_ORDER: 'manage_order',
   },
+  DISCOUNT: {
+    MANAGE_DISCOUNT: 'manage_discount',
+  },
+  POST: {
+    MANAGE_POST: 'manage_post',
+  },
 };
 const permissionArr = Object.values(permission).reduce((pNow, pCurren) => {
   let pNowTemp = pNow;

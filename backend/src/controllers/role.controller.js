@@ -12,8 +12,8 @@ const createRole = catchAsync(async (req, res) => {
 
 const getRoles = catchAsync(async (req, res) => {
   // const filter = pick(req.query, ['name', 'role']);
-  const filter = pick(req.query, []);
-  const options = pick(req.query, ['sortBy', 'limit', 'page']);
+  const filter = pick(req.query, ['']);
+  const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);
   const result = await roleService.queryRoles(filter, options);
   res.send(result);
 });

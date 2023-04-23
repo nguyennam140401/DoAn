@@ -2,6 +2,15 @@ const httpStatus = require('http-status');
 const { EnumStatusOrder } = require('../common/enummeric');
 const { Order, Product, Discount } = require('../models');
 const ApiError = require('../utils/ApiError');
+const { productService } = require('.');
+
+function mongooseArrayToArray(mongooseArray) {
+  const array = [];
+  for (let i = 0; i < mongooseArray.length; i += 1) {
+    array.push(mongooseArray[i]);
+  }
+  return array;
+}
 
 const createOrder = async (userId, orderBody) => {
   //Kiểm tra số lượng tồn trong kho
@@ -24,67 +33,47 @@ const createOrder = async (userId, orderBody) => {
 
   //Ghi giảm số lượng phiếu giảm giá
   if (orderBody.discountId) {
-    await Discount.updateOne({ _id: orderBody.discountId }, { $inc: { quantity: -1 } }, (error, discount) => {
-      console.log(discount);
-      if (error) {
-        throw new ApiError(httpStatus.BAD_REQUEST, `Không thể cập nhật số lượng tồn cho phiếu giảm giá ${discount.name}`);
-      }
-    });
+    const discount = await Discount.findById(orderBody.discountId);
+    if (!discount) {
+      throw new ApiError(httpStatus.BAD_REQUEST, `Không thể cập nhật số lượng tồn cho phiếu giảm giá ${discount.name}`);
+    }
+    discount.quantity -= 1;
+    await discount.save();
   }
   const order = await Order.create({
     userId,
     ...orderBody,
     status: EnumStatusOrder.Pending,
   });
-  // .then(() => {
-  //   //Sau khi tạo đơn hàng thành công thì cập nhật số lượng tồn cho từng sản phẩm
-  //   orderBody.products.forEach(async (item) => {
-  //     if (!item.option) {
-  //       await Product.updateOne(
-  //         { _id: item.productId },
-  //         { $inc: { inventory: -item.quantity, soldQuantity: item.quantity } },
-  //         (error, product) => {
-  //           if (error) {
-  //             throw new ApiError(httpStatus.BAD_REQUEST, `Không thể cập nhật số lượng tồn cho sản phẩm ${product.name}`);
-  //           }
-  //         }
-  //       );
-  //     } else {
-  //       const product = await productService.getProductById(item.productId);
-  //       if (!product) {
-  //         throw new ApiError(httpStatus.BAD_REQUEST, `Không thể cập nhật số lượng tồn cho sản phẩm ${product.name}`);
-  //       }
-  //       // await Product.updateOne({ _id: item.productId }, { options: [...options] }, (error, productRes) => {
-  //       //   if (error) {
-  //       //     throw new ApiError(httpStatus.BAD_REQUEST, `Không thể cập nhật số lượng tồn cho sản phẩm ${productRes.name}`);
-  //       //   }
-  //       // });
-  //       // Tìm option tương ứng
-  //       const optionIdx = product.options.findIndex((opt) => opt.name === item.option.name);
-  //       // Trừ số lượng sản phẩm từ kho
-  //       const { options: optionsChange } = product;
-  //       optionsChange[optionIdx].inventory = '100';
-
-  //       // product.options = options;
-  //       // // Cộng số lượng đã bán vào option tương ứng
-  //       // // product.options[optionIdx].soldQuantity =
-  //       // //   parseInt(product.options[optionIdx].soldQuantity || 0, 10) + parseInt(item.quantity, 10);
-  //       // // Lưu lại thông tin của sản phẩm
-  //       // try {
-  //       //   await product.save();
-  //       //   console.log(product);
-  //       // } catch (err) {
-  //       //   console.log(err);
-  //       // }
-  //       console.log(optionsChange);
-  //       await Product.updateOne({ _id: item.productId }, { options: optionsChange }, (error, productRes) => {
-  //         if (error) {
-  //           throw new ApiError(httpStatus.BAD_REQUEST, `Không thể cập nhật số lượng tồn cho sản phẩm ${productRes.name}`);
-  //         }
-  //       });
-  //     }
-  //   });
-  // });
+  //Sau khi tạo đơn hàng thành công thì cập nhật số lượng tồn cho từng sản phẩm
+  const arrProductAfterUpdate = await Promise.all(
+    orderBody.products.map(async (item) => {
+      const productBuy = await productService.getProductById(item.productId);
+      if (!productBuy) {
+        throw new ApiError(httpStatus.BAD_REQUEST, `Không thể cập nhật số lượng tồn cho sản phẩm ${productBuy.name}`);
+      }
+      if (!item.option) {
+        productBuy.inventory -= item.quantity;
+        productBuy.soldQuantity += item.quantity;
+      } else {
+        productBuy.inventory = 0;
+        productBuy.soldQuantity += item.quantity;
+        // Tìm option tương ứng
+        const arrOptions = JSON.parse(JSON.stringify(productBuy.options));
+        const optionBuy = arrOptions.find((opt) => opt.name === item.option.name);
+        optionBuy.inventory -= item.quantity;
+        optionBuy.soldQuantity = parseInt(optionBuy.soldQuantity || 0, 10) + item.quantity;
+        productBuy.options = arrOptions;
+        await productBuy.save(); // Lưu lại productBuy sau khi đã cập nhật giá trị cho optionBuy
+      }
+      try {
+        return await productBuy.save();
+      } catch (error) {
+        console.log(error);
+      }
+    })
+  );
+  order.products = arrProductAfterUpdate;
   return order;
 };
 const getOrders = async (filter, options) => {

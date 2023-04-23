@@ -6,7 +6,8 @@ const createUser = {
     email: Joi.string().required().email(),
     password: Joi.string().required().custom(password),
     name: Joi.string().required(),
-    role: Joi.string().required().valid('user', 'admin'),
+    role: Joi.string().required(),
+    roleId: Joi.string(),
   }),
 };
 
@@ -18,6 +19,7 @@ const getUsers = {
     limit: Joi.number().integer(),
     page: Joi.number().integer(),
     populate: Joi.string(),
+    roleId: Joi.string(),
   }),
 };
 
@@ -37,6 +39,7 @@ const updateUser = {
       password: Joi.string().custom(password),
       name: Joi.string().required(),
       role: Joi.string().required(),
+      roleId: Joi.string(),
     })
     .min(1),
 };

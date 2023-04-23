@@ -36,7 +36,8 @@ const getProducts = async (filter, options) => {
  * @returns {Promise<Product>}
  */
 const getProductById = async (idProduct) => {
-  return Product.findById(idProduct);
+  const product = await Product.findByIdAndPopulate(idProduct, 'review.userId');
+  return product;
 };
 
 /**
