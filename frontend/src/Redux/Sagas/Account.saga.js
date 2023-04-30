@@ -157,7 +157,7 @@ export function* getCurrentAccount(data) {
 				type: TypeActions.GET_CURRENT_ACCOUNT_SUCCESS,
 				data: res.data,
 			});
-			!!callback?.success && callback.success(res.message);
+			!!callback?.success && callback.success(res);
 		}
 	} catch (error) {
 		yield put({

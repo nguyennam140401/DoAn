@@ -24,23 +24,15 @@ export const notify = (notificationAlertRef, type, title, message) => {
  * @param {array} prop list role want to check
  * @returns true if account have some role in array
  */
-export const checkRole = (currentAccount, prop) => {
-	// console.log(currentAccount, prop);
-	// let validRole = false;
-	// const validPropRoles =
-	// 	_.get(prop, "roles", undefined) !== undefined && Array.isArray(prop.roles);
-	// currentAccount.role.permission.every((item) => {
-	// 	if (
-	// 		validPropRoles &&
-	// 		(prop.roles.indexOf(item) !== -1 || _.isEmpty(prop.roles))
-	// 	) {
-	// 		validRole = true;
-	// 		return false;
-	// 	}
-	// 	return true;
-	// });
-	//return validRole;
-	return true;
+export const checkRole = (prop) => {
+	const currentAccount = JSON.parse(localStorage.getItem("user"));
+	if (!currentAccount) return false;
+	if (localStorage.getItem("role") === "admin") return true;
+	if (!prop.role) return true;
+	return (
+		currentAccount.roleId.permission.findIndex((item) => item === prop.role) !==
+		-1
+	);
 };
 
 export const currencyFormat = (num) => {

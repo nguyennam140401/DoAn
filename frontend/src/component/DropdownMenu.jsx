@@ -7,6 +7,7 @@ import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import { Link } from "react-router-dom";
+import { checkRole } from "common";
 
 const DropdownMenu = ({ menuItem }) => {
 	const [open, setOpen] = React.useState(true);
@@ -23,17 +24,19 @@ const DropdownMenu = ({ menuItem }) => {
 			</ListItemButton>
 			<Collapse in={open} timeout="auto" unmountOnExit>
 				<List component="div" disablePadding>
-					{menuItem.views.map((item, idx) => (
-						<ListItemButton
-							key={idx}
-							sx={{ pl: 4 }}
-							component={Link}
-							to={"/" + menuItem.path + item.path}
-						>
-							<ListItemIcon>{item.icon}</ListItemIcon>
-							<ListItemText primary={item.name} />
-						</ListItemButton>
-					))}
+					{menuItem.views
+						.filter((item) => checkRole(item))
+						.map((item, idx) => (
+							<ListItemButton
+								key={idx}
+								sx={{ pl: 4 }}
+								component={Link}
+								to={"/" + menuItem.path + item.path}
+							>
+								<ListItemIcon>{item.icon}</ListItemIcon>
+								<ListItemText primary={item.name} />
+							</ListItemButton>
+						))}
 				</List>
 			</Collapse>
 		</>

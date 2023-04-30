@@ -32,6 +32,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import "react-quill/dist/quill.snow.css";
 import { FormStateEnum } from "enum/StatusEnum";
 import { brandActions } from "Redux/Actions";
+import _ from "lodash";
 const FormDetailProduct = ({
 	isOpen,
 	detailProduct,
@@ -103,7 +104,8 @@ const FormDetailProduct = ({
 			}))
 		);
 	}, [categories]);
-	const submit = (data) => {
+	const submit = (formData) => {
+		const data = _.cloneDeep(formData);
 		data.category = data?.category?.id || data?.category?.value;
 		data.brand = data?.brand?.id || data?.brand?.value;
 

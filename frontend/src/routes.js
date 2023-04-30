@@ -1,4 +1,5 @@
 import SendIcon from "@mui/icons-material/Send";
+import { RolePermission } from "enum/RoleEnum";
 import Account from "page/Account";
 import Brand from "page/Brand";
 import Category from "page/Category";
@@ -23,6 +24,7 @@ const routes = [
 		icon: <SendIcon />,
 		path: "/category",
 		component: <Category />,
+		role: RolePermission.CATEGORY.MANAGE_CATEGORY,
 	},
 	{
 		collapse: false,
@@ -30,6 +32,7 @@ const routes = [
 		icon: <SendIcon />,
 		path: "/account",
 		component: <Account />,
+		role: RolePermission.USER.MANAGE_USER,
 	},
 	{
 		collapse: false,
@@ -37,6 +40,7 @@ const routes = [
 		icon: <SendIcon />,
 		path: "/products",
 		component: <Product />,
+		role: RolePermission.PRODUCT.MANAGE_PRODUCT,
 	},
 	{
 		collapse: false,
@@ -44,6 +48,7 @@ const routes = [
 		icon: <SendIcon />,
 		path: "/orders",
 		component: <Order />,
+		role: RolePermission.ORDER.MANAGE_ORDER,
 	},
 	{
 		collapse: false,
@@ -51,6 +56,7 @@ const routes = [
 		icon: <SendIcon />,
 		path: "/roles",
 		component: <Role />,
+		role: RolePermission.ROLE.MANAGE_ROLE,
 	},
 	{
 		collapse: true,
@@ -69,21 +75,16 @@ const routes = [
 				name: "Quản lý phiếu giảm giá",
 				icon: <SendIcon />,
 				component: <Discount />,
+				role: RolePermission.DISCOUNT.MANAGE_DISCOUNT,
 			},
 			{
 				path: "/post",
 				name: "Quản lý bài viết",
 				icon: <SendIcon />,
 				component: <Post />,
+				role: RolePermission.POST.MANAGE_POST,
 			},
 		],
-	},
-	{
-		collapse: false,
-		name: "KJhonf child menu",
-		icon: <SendIcon />,
-		path: "/noChild",
-		component: () => <p>No child nhé</p>,
 	},
 ];
 

@@ -39,6 +39,7 @@ const Login = () => {
 					localStorage.setItem("role", res.user.role);
 					localStorage.setItem("refreshtoken", res.tokens.refresh.token);
 					localStorage.setItem("id", res.user.id);
+					localStorage.setItem("user", JSON.stringify(res.user));
 					navigate("/");
 				},
 				failed: (res) => {},
@@ -67,6 +68,7 @@ const Login = () => {
 									{t("CommonI18n.Login")}
 								</Typography>
 								<TextField
+									sx={{ marginBottom: 3 }}
 									fullWidth
 									placeholder={t("CommonI18n.Form.UserName")}
 									label={t("CommonI18n.Form.UserName")}
@@ -80,6 +82,7 @@ const Login = () => {
 									className="mb-4"
 								></TextField>
 								<TextField
+									sx={{ marginBottom: 3 }}
 									fullWidth
 									placeholder={t("CommonI18n.Form.Password")}
 									label={t("CommonI18n.Form.Password")}

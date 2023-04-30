@@ -8,9 +8,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { orderActions } from "Redux/Actions";
 import FormDetailOrder from "./FormDetailOrder";
-import CircleIcon from "@mui/icons-material/Circle";
 import i18next from "i18next";
-import { StatusColorEnum, StatusEnum } from "enum/StatusEnum";
+import { StatusEnum } from "enum/StatusEnum";
 import BlockIcon from "@mui/icons-material/Block";
 import DoneIcon from "@mui/icons-material/Done";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
@@ -47,9 +46,11 @@ const Order = () => {
 					});
 					setListOrder(newListItem);
 					dispatch(showAlert("success", "Cập nhật trạng thái thành công"));
+					handleGetOrders();
 				},
 				failed: (err) => {
 					console.log(err);
+					handleGetOrders();
 				},
 			})
 		);
@@ -86,20 +87,7 @@ const Order = () => {
 			label: "Trạng thái",
 			id: "status",
 			Cell: (rowData) => (
-				<>
-					{/* <CircleIcon
-						color={
-							rowData.data.status === 0
-								? StatusColorEnum.Pending
-								: rowData.data.status === 1
-								? StatusColorEnum.Failed
-								: StatusColorEnum.Success
-						}
-						fontSize="small"
-						scale="0.5"
-					/> */}
-					{i18next.t("CommonI18n.StatusConfirm." + rowData.data.status)}
-				</>
+				<>{i18next.t("CommonI18n.StatusConfirm." + rowData.data.status)}</>
 			),
 		},
 		{
@@ -154,7 +142,6 @@ const Order = () => {
 		}
 	};
 	const handleGetOrders = (data = query) => {
-		console.log(data);
 		dispatch(orderActions.getOrders(queryString.stringify(data), {}));
 	};
 	useEffect(() => {

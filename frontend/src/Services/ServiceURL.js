@@ -16,6 +16,7 @@ export const orders = "order/admin";
 export const products = "product";
 export const category = "category";
 export const post = "post";
+export const overview = "overview";
 export default {
 	BASE_URL,
 	logIn,
@@ -32,4 +33,5 @@ export default {
 	brand,
 	discount,
 	post,
+	overview,
 };
