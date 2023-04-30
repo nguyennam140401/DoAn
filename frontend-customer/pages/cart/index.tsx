@@ -166,7 +166,7 @@ export default function Cart({}: Props) {
 				handleRemoveProduct(item.productId.id, item?.option?.name);
 			});
 			hanelGetDiscount();
-			setDiscountVoucher(null);
+			setDiscountVoucher({});
 		}
 	};
 	const handleOpen = () => {
@@ -404,7 +404,7 @@ export default function Cart({}: Props) {
 						isOpen={isOpenPayment}
 						listProduct={listProductInCart.filter((item) => item.isBuy)}
 						handleClose={handleClose}
-						discountVoucher={discountVoucher.id}
+						discountVoucher={discountVoucher?.id}
 					/>
 				)}
 			</div>

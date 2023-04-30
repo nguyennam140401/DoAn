@@ -21,6 +21,14 @@ export default function SignUp({}: Props) {
 			.string()
 			.required("Email không được để trống")
 			.email("Email không đúng định dạng"),
+		address: yup.string().required("Địa chỉ nhận hàng không được để trống"),
+		phoneNumber: yup
+			.string()
+			.required("Số điện thoại người nhận không được để trống")
+			.matches(
+				/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/,
+				"Số điện thoại không đúng định dạng"
+			),
 		password: yup
 			.string()
 			.required("Mật khẩu không được để trống")
@@ -35,6 +43,8 @@ export default function SignUp({}: Props) {
 	const initalValue = {
 		name: "",
 		email: "",
+		address: "",
+		phoneNumber: "",
 		password: "",
 		confirmPassword: "",
 	};

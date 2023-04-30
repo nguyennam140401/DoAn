@@ -29,9 +29,9 @@ const FormReviewProduct = (props: Props) => {
 		axiosClient
 			.post(productPath + "/" + props.productData.id + "/review", payload)
 			.then((res) => {
-				console.log(res);
 				setRating(0);
 				setComment("");
+				props.handleClose();
 			})
 			.catch((err) => console.log(err));
 	};

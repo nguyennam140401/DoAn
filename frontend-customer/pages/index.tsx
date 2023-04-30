@@ -1,18 +1,16 @@
 import type { NextPage } from "next";
 import { useEffect, useState } from "react";
-import Loading from "../components/Loading";
 import ProductItemList from "../components/ProductItemList";
 import { ProductItemListModel } from "../features/product/model";
-import { useGetProductsQuery } from "../features/product/productSlice";
 import { useAppSelector } from "../hooks";
 import MainLayout from "../layouts/MainLayout";
 import { AppState } from "../store";
 import Slider from "react-slick";
 import { arrService } from "../common/data";
 import { Service } from "../common/model";
-import { axiosClient } from "../common/axiosClient";
 import { overviewPath } from "../constant/apiPath";
 import Link from "next/link";
+import { axiosNoAuthen } from "../common/axiosNoAuthen";
 const Home: NextPage = () => {
 	const authenReducer = useAppSelector(
 		(state: AppState) => state.authenReducer
@@ -27,10 +25,9 @@ const Home: NextPage = () => {
 		slidesToScroll: 1,
 	};
 	useEffect(() => {
-		axiosClient
+		axiosNoAuthen
 			.get(overviewPath + "/overviewUser")
 			.then((res) => {
-				console.log(res);
 				setDataOverview(res.data);
 			})
 			.catch((err) => setDataOverview([]));

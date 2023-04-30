@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { Product, ProductItemListModel } from "../../features/product/model";
 import Layout from "./layout";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { axiosClient } from "../../common/axiosClient";
 import { productPath } from "../../constant/apiPath";
 import { ResponseModel } from "../../common/model";
 import ProductItemList from "../../components/ProductItemList";
 import { useRouter } from "next/router";
+import { axiosNoAuthen } from "../../common/axiosNoAuthen";
 
 interface ProductListProps {
 	data: ResponseModel<Product>;
@@ -46,7 +46,7 @@ export const getServerSideProps: GetServerSideProps = async (
 			price: range,
 			sortBy: sortBy,
 		};
-		const result = await axiosClient.get("/" + productPath, {
+		const result = await axiosNoAuthen.get("/" + productPath, {
 			params: payload,
 		});
 		return {

@@ -1,7 +1,6 @@
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { useEffect, useState } from "react";
 import ReviewItem from "../../components/ReviewItem";
-import { reviews } from "../../configData/reviews";
 import { ProductItemDetailModel, Spec } from "../../features/product/model";
 import { ReviewItemList } from "../../features/review/model";
 import { axiosClient } from "../../common/axiosClient";
@@ -14,6 +13,7 @@ import { Status } from "../../common/enum";
 import { addNotification } from "../../features/application/applicationSlice";
 import { setQuantity as setQuantityStore } from "../../features/cart/cartSlice";
 import { AppState } from "../../store";
+import { axiosNoAuthen } from "../../common/axiosNoAuthen";
 type ProductDetailPageProps = {
 	product: ProductItemDetailModel;
 };
@@ -58,13 +58,16 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 		}
 	};
 	useEffect(() => {
-		axiosClient
-			.post(userPath + "/favorite", {
-				productId: product.id,
-			})
-			.then((res) => {
-				setIsFavorite(res.data);
-			});
+		const user: string = localStorage.getItem("user") || "";
+		if (user) {
+			axiosClient
+				.post(userPath + "/favorite", {
+					productId: product.id,
+				})
+				.then((res) => {
+					setIsFavorite(res.data);
+				});
+		}
 	}, [product]);
 
 	const toggleFavoriteProduct = async () => {
@@ -202,7 +205,7 @@ export const getServerSideProps: GetServerSideProps = async (
 	const { params } = context;
 	const id = params?.idProduct;
 	try {
-		const result = await axiosClient.get("/" + productPath + "/" + id, {
+		const result = await axiosNoAuthen.get("/" + productPath + "/" + id, {
 			params: {
 				populate: "review.userId",
 			},

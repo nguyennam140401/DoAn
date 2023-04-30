@@ -38,6 +38,13 @@ const UserOrders = (props: Props) => {
 		});
 	};
 	if (isLoading) return <p>Loading.....</p>;
+	const calcTotalPrice = (products: any) => {
+		return products.reduce(
+			(pre, curr) =>
+				pre + curr.quantity * (curr?.option?.price || curr?.productId?.price),
+			0
+		);
+	};
 	return (
 		<MainLayout>
 			<div className="flex justify-center">
@@ -59,6 +66,11 @@ const UserOrders = (props: Props) => {
 				{data?.results?.length > 0 ? (
 					data?.results.map((item: any, idx: number) => (
 						<div className="bg-white p-2 mb-4 relative">
+							<div className="flex py-3 justify-between bg-gray-400">
+								<div>Người nhận: {item.buyerName} </div>
+								<div>SĐT người nhận: {item.phoneNumber} </div>
+								<div>Giá trị đơn hàng : {calcTotalPrice(item.products)}</div>
+							</div>
 							<div className="button-action absolute top-3 right-3">
 								{tabActive === EnumStatusOrder.Pending && (
 									<span

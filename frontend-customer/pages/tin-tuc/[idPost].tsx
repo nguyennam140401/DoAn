@@ -1,10 +1,10 @@
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import React from "react";
-import { axiosClient } from "../../common/axiosClient";
 import { postPath } from "../../constant/apiPath";
 import { PostModel } from "../../common/model";
 import { formatDate } from "../../common/commonFunction";
 import MainLayout from "../../layouts/MainLayout";
+import { axiosNoAuthen } from "../../common/axiosNoAuthen";
 
 type Props = {
 	post: PostModel;
@@ -29,7 +29,7 @@ export const getServerSideProps: GetServerSideProps = async (
 	const { params } = context;
 	const id = params?.idPost;
 	try {
-		const result = await axiosClient.get("/" + postPath + "/" + id);
+		const result = await axiosNoAuthen.get("/" + postPath + "/" + id);
 		return {
 			props: {
 				post: result.data,

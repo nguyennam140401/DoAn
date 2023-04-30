@@ -1,11 +1,11 @@
 import React from "react";
 import MainLayout from "../../layouts/MainLayout";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { axiosClient } from "../../common/axiosClient";
 import { API_URL_BASE, postPath } from "../../constant/apiPath";
 import { PostModel, ResponseModel } from "../../common/model";
 import Link from "next/link";
 import { formatDate } from "../../common/commonFunction";
+import { axiosNoAuthen } from "../../common/axiosNoAuthen";
 
 type Props = {
 	data: ResponseModel<PostModel>;
@@ -61,7 +61,7 @@ export const getServerSideProps: GetServerSideProps = async (
 	context: GetServerSidePropsContext
 ) => {
 	try {
-		const result = await axiosClient.get("/" + postPath);
+		const result = await axiosNoAuthen.get("/" + postPath);
 		return {
 			props: {
 				data: result.data,
