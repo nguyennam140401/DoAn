@@ -8,6 +8,11 @@ const getOverviewUser = catchAsync(async (req, res) => {
   res.send(result);
 });
 
+const getDashboardAdmin = catchAsync(async (req, res) => {
+  const result = await overviewService.getDashboardAdmin();
+  res.send(result);
+});
 module.exports = {
   getOverviewUser,
+  getDashboardAdmin,
 };

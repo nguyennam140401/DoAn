@@ -7,6 +7,11 @@ const EnumStatusOrder = {
   Cancel: 5,
 };
 
+const TypeDiscountVoucherEnum = {
+  Percent: 0,
+  Price: 1,
+};
 module.exports = {
   EnumStatusOrder,
+  TypeDiscountVoucherEnum,
 };

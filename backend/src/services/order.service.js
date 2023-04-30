@@ -4,32 +4,24 @@ const { Order, Product, Discount } = require('../models');
 const ApiError = require('../utils/ApiError');
 const { productService } = require('.');
 
-function mongooseArrayToArray(mongooseArray) {
-  const array = [];
-  for (let i = 0; i < mongooseArray.length; i += 1) {
-    array.push(mongooseArray[i]);
-  }
-  return array;
-}
-
 const createOrder = async (userId, orderBody) => {
   //Kiểm tra số lượng tồn trong kho
-  // const validData = await Promise.all(
-  //   orderBody.products.map(async (productInCart) => {
-  //     const productInDB = await Product.findById(productInCart.productId);
-  //     //Lấy số lượng tồn
-  //     const inventory = productInCart.option
-  //       ? productInDB.options.find((item) => item.name === productInCart.option.name).inventory
-  //       : productInDB.inventory;
-  //     if (parseInt(productInCart.quantity, 10) > parseInt(inventory, 10)) {
-  //       return false;
-  //     }
-  //     return true;
-  //   })
-  // );
-  // if (validData.some((item) => item === false)) {
-  //   throw new ApiError(httpStatus.BAD_REQUEST, 'Số lượng sản phẩm  vượt quá số lượng tồn trong kho, vui lòng kiểm tra lại');
-  // }
+  const validData = await Promise.all(
+    orderBody.products.map(async (productInCart) => {
+      const productInDB = await Product.findById(productInCart.productId);
+      //Lấy số lượng tồn
+      const inventory = productInCart.option
+        ? productInDB.options.find((item) => item.name === productInCart.option.name).inventory
+        : productInDB.inventory;
+      if (parseInt(productInCart.quantity, 10) > parseInt(inventory, 10)) {
+        return false;
+      }
+      return true;
+    })
+  );
+  if (validData.some((item) => item === false)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Số lượng sản phẩm  vượt quá số lượng tồn trong kho, vui lòng kiểm tra lại');
+  }
 
   //Ghi giảm số lượng phiếu giảm giá
   if (orderBody.discountId) {
