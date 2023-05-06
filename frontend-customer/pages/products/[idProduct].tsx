@@ -181,7 +181,10 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 						</div>
 					</div>
 				</div>
-				<div dangerouslySetInnerHTML={{ __html: product.description }}></div>
+				<div>
+					<div className="text-xl font-bold mt-5 mb-3">Đánh giá sản phẩm</div>
+					<div dangerouslySetInnerHTML={{ __html: product.description }}></div>
+				</div>
 				<div className="mt-8">
 					<h2 className="text-lg font-semibold mb-4">
 						Đánh giá của khách hàng

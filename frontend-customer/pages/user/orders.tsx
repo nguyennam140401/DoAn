@@ -69,9 +69,11 @@ const UserOrders = (props: Props) => {
 							<div className="flex py-3 justify-between bg-gray-400">
 								<div>Người nhận: {item.buyerName} </div>
 								<div>SĐT người nhận: {item.phoneNumber} </div>
-								<div>Giá trị đơn hàng : {calcTotalPrice(item.products)}</div>
+								<div className="mr-9">
+									Giá trị đơn hàng : {calcTotalPrice(item.products)}
+								</div>
 							</div>
-							<div className="button-action absolute top-3 right-3">
+							<div className="button-action absolute top-14 right-3">
 								{tabActive === EnumStatusOrder.Pending && (
 									<span
 										className="cursor-pointer"
