@@ -83,15 +83,17 @@ export default function CustomTable({
 											: null;
 										return (
 											<TableCell key={idx} align={column.align}>
-												{!column.Cell ? (
-													column.format && typeof value === "number" ? (
-														column.format(value)
+												<div className="max-two-line">
+													{!column.Cell ? (
+														column.format && typeof value === "number" ? (
+															column.format(value)
+														) : (
+															value
+														)
 													) : (
-														value
-													)
-												) : (
-													<column.Cell data={row} />
-												)}
+														<column.Cell data={row} />
+													)}
+												</div>
 											</TableCell>
 										);
 									})}
