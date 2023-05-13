@@ -5,6 +5,7 @@ export interface ProductItemListModel {
 	price: number;
 	name: string;
 	id: string;
+	soldQuantity: number;
 	review: Array<any>;
 	options: Array<ProductItemOptions>;
 }
@@ -17,6 +18,7 @@ export interface ProductItemDetailModel {
 	images: Array<string>;
 	options: Array<ProductItemOptions>;
 	inventory: number;
+	soldQuantity?: number;
 	specs?: Array<Spec>;
 	review?: Array<ReviewItemList>;
 }

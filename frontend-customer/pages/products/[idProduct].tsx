@@ -81,8 +81,8 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 	};
 	return (
 		<MainLayout>
-			<div>
-				<div className="flex flex-col gap-7 md:flex-row">
+			<div className="mx-32">
+				<div className="flex flex-col gap-7 md:flex-row bg-white">
 					<div className="w-full md:w-1/3">
 						<img
 							src={API_URL_BASE + "/" + product.images[0]}
@@ -118,7 +118,10 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 							<div className="flex mx-2">
 								<button
 									className="border border-gray-400 w-8 h-8"
-									onClick={() => setQuantity((state) => --state)}
+									onClick={() => {
+										if (quantity == 0) return;
+										setQuantity((state) => --state);
+									}}
 								>
 									-
 								</button>
@@ -132,20 +135,27 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 								/>
 								<button
 									className="border border-gray-400 w-8 h-8"
-									onClick={() => setQuantity((state) => ++state)}
+									onClick={() => {
+										const maxQuantity =
+											product.inventory ||
+											product.options[optionIndex].inventory;
+										if (quantity >= maxQuantity) return;
+										setQuantity((state) => ++state);
+									}}
 								>
 									+
 								</button>
 							</div>
-							{/* <p>
-							Có sẵn{" "}
-							{product.inventory || product.options[optionIndex].inventory} sản
-							phẩm
-						</p> */}
+							<p>
+								Có sẵn{" "}
+								{product.inventory || product.options[optionIndex].inventory}{" "}
+								sản phẩm
+							</p>
 						</div>
+						<div className="mb-2">Đã bán: {product.soldQuantity || 0}</div>
 						<div className="">
 							<button
-								className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+								className="bg-blue-500 mr-4 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
 								onClick={() => {
 									const payload = {
 										productId: product.id,
@@ -156,15 +166,36 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 							>
 								Thêm vào giỏ hàng
 							</button>
-							<button
-								className={`${
-									isFavorite ? "bg-red-500" : "bg-gray-500"
-								} hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-4`}
-								onClick={toggleFavoriteProduct}
-							>
-								{isFavorite ? "Remove from favorites" : "Add to favorites"}
-							</button>
+
+							{isFavorite ? (
+								<svg
+									onClick={toggleFavoriteProduct}
+									xmlns="http://www.w3.org/2000/svg"
+									viewBox="0 0 24 24"
+									fill="red"
+									className="w-6 h-6"
+								>
+									<path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+								</svg>
+							) : (
+								<svg
+									onClick={toggleFavoriteProduct}
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									strokeWidth={1.5}
+									stroke="currentColor"
+									className="w-6 h-6"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
+									/>
+								</svg>
+							)}
 						</div>
+
 						<div className="product_spec">
 							<p className="my-4 font-bold">Thông số sản phẩm</p>
 							{product.specs && product.specs.length > 0 ? (
@@ -181,11 +212,11 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product }) => {
 						</div>
 					</div>
 				</div>
-				<div>
-					<div className="text-xl font-bold mt-5 mb-3">Đánh giá sản phẩm</div>
+				<div className="bg-white mt-8 p-5">
+					<div className="text-xl font-bold mb-3">Đánh giá sản phẩm</div>
 					<div dangerouslySetInnerHTML={{ __html: product.description }}></div>
 				</div>
-				<div className="mt-8">
+				<div className="mt-8 bg-white p-5">
 					<h2 className="text-lg font-semibold mb-4">
 						Đánh giá của khách hàng
 					</h2>

@@ -79,7 +79,6 @@ function TopNav(props: Props) {
 	const [inputSearch, setInputSearch] = useState("");
 	const handleFindProduct = (e) => {
 		e.preventDefault();
-		console.log(inputSearch);
 		router.push({ pathname: "/products", query: { name: inputSearch } });
 	};
 	const {

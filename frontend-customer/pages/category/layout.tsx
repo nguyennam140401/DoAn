@@ -56,10 +56,14 @@ export default function Layout({ children }: Props) {
 		query.sortBy = item;
 		router.push(currentPath.split("?")[0] + "?" + queryString.stringify(query));
 	};
-	const handleFilterPrice = () => {
+	const handleFilterPrice = (isClear = false) => {
 		const currentPath = router.asPath;
 		const query: any = queryString.parse(currentPath.split("?")[1]);
 		query.range = minPrice + "_" + maxPrice;
+		if (isClear) {
+			router.push(currentPath.split("?")[0]);
+			return;
+		}
 		router.push(currentPath.split("?")[0] + "?" + queryString.stringify(query));
 	};
 	return (
@@ -80,13 +84,16 @@ export default function Layout({ children }: Props) {
 										<input
 											checked={brand.id === router.query.brand}
 											value={brand.id}
+											id={brand.id}
 											type="checkbox"
-											className="appearance-none checked:bg-blue-500 "
+											className=""
 											onChange={() => {
 												addParamBrand(brand);
 											}}
 										/>
-										<p key={idx}>{brand.name}</p>
+										<label htmlFor={brand.id} key={idx}>
+											{brand.name}
+										</label>
 									</div>
 								))}
 						</div>
@@ -111,7 +118,7 @@ export default function Layout({ children }: Props) {
 										setMinPrice(parseInt(e.target.value));
 									}}
 									type="number"
-									className="hidden-control w-20 text-xs h-7"
+									className="hidden-control w-20 text-xs h-7 border p-1"
 								/>
 								<input
 									value={maxPrice}
@@ -119,13 +126,23 @@ export default function Layout({ children }: Props) {
 										setMaxPrice(parseInt(e.target.value));
 									}}
 									type="text"
-									className="hidden-control w-20 text-xs h-7"
+									className="hidden-control w-20 text-xs h-7 border p-1"
 								/>
 							</div>
 							<div className="text-center mt-2">
 								<button
+									className="text-white bg-red-600 rounded px-8 py-1 mr-3 "
+									onClick={() => {
+										handleFilterPrice(true);
+									}}
+								>
+									Bỏ lọc
+								</button>
+								<button
 									className="text-white bg-blue-600 rounded px-8 py-1 "
-									onClick={handleFilterPrice}
+									onClick={() => {
+										handleFilterPrice();
+									}}
 								>
 									Lọc
 								</button>

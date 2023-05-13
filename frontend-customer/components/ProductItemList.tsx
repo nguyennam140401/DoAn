@@ -21,7 +21,7 @@ export default function ProductItemList({ data }: Props) {
 
 				<div className="mt-1 p-2">
 					<h2 className="text-slate-700">{data.name}</h2>
-
+					<p className="mt-2">Đã bán : {data.soldQuantity}</p>
 					<div className="mt-3 flex items-end justify-between">
 						<p className="text-lg font-bold text-blue-500 price">
 							{formatPrice(data.price || data.options[0].price)}

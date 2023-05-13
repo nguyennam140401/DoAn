@@ -65,8 +65,8 @@ const UserOrders = (props: Props) => {
 			<div className="list-order px-8">
 				{data?.results?.length > 0 ? (
 					data?.results.map((item: any, idx: number) => (
-						<div className="bg-white p-2 mb-4 relative">
-							<div className="flex py-3 justify-between bg-gray-400">
+						<div className="bg-white mb-4 relative">
+							<div className="flex p-3 justify-between bg-gray-400">
 								<div>Người nhận: {item.buyerName} </div>
 								<div>SĐT người nhận: {item.phoneNumber} </div>
 								<div className="mr-9">
@@ -99,13 +99,13 @@ const UserOrders = (props: Props) => {
 								{tabActive === EnumStatusOrder.Shipping && (
 									<div className="flex gap-2">
 										<span
-											className="cursor-pointer"
+											className="cursor-pointer bg-blue-400 p-2"
 											onClick={() => updateOrder(item, EnumStatusOrder.Success)}
 										>
 											Đã nhận được hàng
 										</span>
 										<span
-											className="cursor-pointer"
+											className="cursor-pointer bg-red-400 p-2"
 											onClick={() => updateOrder(item, EnumStatusOrder.Cancel)}
 										>
 											Trả hàng
@@ -114,7 +114,7 @@ const UserOrders = (props: Props) => {
 								)}
 
 								{tabActive === EnumStatusOrder.Approved && (
-									<span className="cursor-pointer">
+									<span className="cursor-pointer bg-green-400 p-2">
 										Người gửi đang chuẩn bị hàng
 									</span>
 								)}
@@ -124,7 +124,7 @@ const UserOrders = (props: Props) => {
 							</div>
 							{item.products.map((productDetail: any, i: number) => {
 								return (
-									<div key={idx} className="product-item mb-4">
+									<div key={idx} className="product-item mb-4 p-3">
 										<div className="flex justify-between">
 											<div className="flex gap-2 mb-2">
 												<div className="boxImg">
@@ -144,9 +144,8 @@ const UserOrders = (props: Props) => {
 													<p>x{productDetail.quantity}</p>
 													{productDetail.option && (
 														<span
-															className="cursor-pointer"
 															key={idx}
-															className={`bg-gray-500 mr-2 px-1 py-0.5 cursor-pointer`}
+															className={`bg-gray-400 mr-2 px-1 py-0.5 cursor-pointer`}
 														>
 															{productDetail.option.name}
 														</span>

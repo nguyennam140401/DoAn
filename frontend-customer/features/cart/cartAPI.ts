@@ -12,10 +12,10 @@ export const cartAPI = createApi({
 				localStorage.getItem("jwt") || ""
 			);
 			let token = tokenData.token;
-			const isTokenExpired = isExpired(token);
-			if (!isTokenExpired) {
-				token = await refreshToken(); // Gọi hàm refresh token để lấy token mới
-			}
+			// const isTokenExpired = isExpired(token);
+			// if (!isTokenExpired) {
+			// 	token = await refreshToken(); // Gọi hàm refresh token để lấy token mới
+			// }
 			headers.set("Authorization", `Bearer ${token}`);
 			return headers;
 		},

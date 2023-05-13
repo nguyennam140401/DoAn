@@ -12,9 +12,6 @@ import { overviewPath } from "../constant/apiPath";
 import Link from "next/link";
 import { axiosNoAuthen } from "../common/axiosNoAuthen";
 const Home: NextPage = () => {
-	const authenReducer = useAppSelector(
-		(state: AppState) => state.authenReducer
-	);
 	const [dataOverview, setDataOverview] = useState<any>([]);
 	const settings = {
 		dots: true,

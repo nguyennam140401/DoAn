@@ -154,7 +154,11 @@ export default function Cart({}: Props) {
 			);
 			setListOldProductInCart(newCart);
 			dispatch(
-				setQuantity(quantityProductInCart + quantity - product.quantity)
+				setQuantity(
+					parseInt(quantityProductInCart, 10) +
+						parseInt(quantity || 0, 10) -
+						product.quantity
+				)
 			);
 		}
 	};
@@ -236,6 +240,14 @@ export default function Cart({}: Props) {
 													{item.option.name}
 												</span>
 											)}
+											<p>
+												Số lượng tồn :{" "}
+												{item.option
+													? item.productId.options.find(
+															(x: any) => x.name === item.option.name
+													  ).inventory
+													: item.productId.inventory}
+											</p>
 										</div>
 										<div className="mt-4 flex justify-between sm:space-y-6 sm:mt-0 sm:block sm:space-x-6">
 											<div className="flex items-center border-gray-100">
@@ -330,7 +342,7 @@ export default function Cart({}: Props) {
 								</div>
 							))
 						) : (
-							<></>
+							<>Chưa có sản phẩm nào trong giỏ hàng</>
 						)}
 					</div>
 					<div className="mt-6 h-full rounded-lg border bg-white p-6 shadow-md md:mt-0 md:w-1/3">

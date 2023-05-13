@@ -15,9 +15,9 @@ export default function MainLayout({ children }: Props) {
 	}, []);
 
 	return (
-		<div>
+		<div className="bg-gray-100">
 			<TopNav />
-			<div className="w-full px-12 my-6">
+			<div className="w-full bg-gray-100 px-12 my-6">
 				<>{children}</>
 			</div>
 			<Footer />
