@@ -1,4 +1,4 @@
-import { Button, Dialog, TextField } from "@mui/material";
+import { Button, Dialog, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { removeEmpty } from "common";
 import { AlertContext } from "context/AlertContext";
@@ -79,6 +79,16 @@ const FormDetailBrand = ({ isOpen, data = null, handleClose, formState }) => {
 						handleSubmit,
 					}) => (
 						<>
+							<Box mb={2}>
+								<Typography variant="h5">
+									{formState === FormStateEnum.Add
+										? "Thêm"
+										: formState === FormStateEnum.Edit
+										? "Cập nhật"
+										: "Chi tiết"}{" "}
+									hãng sản xuất
+								</Typography>
+							</Box>
 							<Box mb={2}>
 								<TextField
 									disabled={formState === FormStateEnum.View}

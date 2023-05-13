@@ -101,6 +101,16 @@ const FormDetailCategory = ({
 						return (
 							<>
 								<Box mb={2}>
+									<Typography variant="h5">
+										{formState === FormStateEnum.Add
+											? "Thêm"
+											: formState === FormStateEnum.Edit
+											? "Cập nhật"
+											: "Chi tiết"}{" "}
+										danh mục
+									</Typography>
+								</Box>
+								<Box mb={2}>
 									<TextField
 										fullWidth
 										variant="outlined"
@@ -114,7 +124,9 @@ const FormDetailCategory = ({
 									></TextField>
 								</Box>
 								<Box mb={2}>
-									<Typography variant="h5">Các trường sản phẩm</Typography>
+									<Typography variant="h5" mb={2}>
+										Các trường sản phẩm
+									</Typography>
 									{values?.specs?.length > 0 &&
 										values.specs.map((item, idx) => (
 											<DetailParamInfo

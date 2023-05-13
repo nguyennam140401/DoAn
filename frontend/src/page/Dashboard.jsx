@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
 import LayoutAdmin from "./LayoutAdmin";
 import { Box, Card, Grid, Paper, Typography } from "@mui/material";
 import { useState } from "react";
@@ -17,7 +16,8 @@ import {
 	Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import { faker } from "@faker-js/faker";
+import { formatPrice } from "common";
+import { StatusEnum } from "enum/StatusEnum";
 ChartJS.register(
 	CategoryScale,
 	LinearScale,
@@ -42,27 +42,91 @@ const Dashboard = () => {
 				text: "Thống kê đơn hàng",
 			},
 		},
+		scales: {
+			y: {
+				min: 0,
+			},
+		},
 	};
-	const data = {
-		labels,
+
+	const [configChart, setConfigChart] = useState({
+		labels: [],
 		datasets: [
 			{
 				fill: true,
 				label: "Số đơn mua",
-				data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
+				data: [],
 				borderColor: "rgb(53, 162, 235)",
 				backgroundColor: "rgba(53, 162, 235, 0.5)",
 			},
 		],
-	};
-	console.log(data);
+	});
 	const [dataTotal, setDataTotal] = useState({});
 	useEffect(() => {
-		axiosClient
-			.get(overview + "/overviewDashBoard")
-			.then((res) => setDataTotal(res.data));
-	}, []);
+		axiosClient.get(overview + "/overviewDashBoard").then((res) => {
+			setDataTotal(res.data);
+			const arrMonth = [
+				...new Set(
+					res.data.allOrder.map((item) => {
+						let x = new Date(item.createdAt);
+						return x.getMonth() + 1;
+					})
+				),
+			].sort();
 
+			setConfigChart({
+				labels: arrMonth.map((item) => "Tháng " + item),
+				datasets: [
+					{
+						fill: true,
+						label: "Số đơn mua",
+						data: arrMonth.map(
+							(item) =>
+								res.data.allOrder.filter((order) => {
+									let x = new Date(order.createdAt);
+									return x.getMonth() === item - 1;
+								}).length
+						),
+						borderColor: "rgb(53, 162, 235)",
+						backgroundColor: "rgba(53, 162, 235, 0.5)",
+					},
+					{
+						fill: true,
+						label: "Số đơn thành công",
+						data: arrMonth.map(
+							(item) =>
+								res.data.allOrder.filter((order) => {
+									let x = new Date(order.createdAt);
+									return (
+										order.status == StatusEnum.Success &&
+										x.getMonth() === item - 1
+									);
+								}).length
+						),
+						borderColor: "rgb(20, 223, 30)",
+						backgroundColor: "rgba(129, 238, 153, 0.5)",
+					},
+					{
+						fill: true,
+						label: "Số đơn bị hủy",
+						data: arrMonth.map(
+							(item) =>
+								res.data.allOrder.filter((order) => {
+									let x = new Date(order.createdAt);
+									return (
+										order.status == StatusEnum.Cancel &&
+										x.getMonth() === item - 1
+									);
+								}).length
+						),
+						borderColor: "rgb(189, 61, 11)",
+						backgroundColor: "rgba(218, 107, 34, 0.5)",
+					},
+				],
+			});
+		});
+	}, []);
+	console.log(configChart);
 	return (
 		<LayoutAdmin>
 			<Grid container spacing={3}>
@@ -100,8 +164,8 @@ const Dashboard = () => {
 					<Card>
 						<Box p={3}>
 							<Typography>Tổng doanh thu</Typography>
-							<Typography variant="h4" mt={2}>
-								{dataTotal.totalRevenue}
+							<Typography variant="h4" mt={2} className="price">
+								{formatPrice(dataTotal.totalRevenue)}
 							</Typography>
 						</Box>
 					</Card>
@@ -110,13 +174,13 @@ const Dashboard = () => {
 			<Grid container spacing={3} mt={4}>
 				<Grid item xs={9}>
 					<Card>
-						<Line options={options} data={data} />
+						<Line options={options} data={configChart} />
 					</Card>
 				</Grid>
 				<Grid item xs={3}>
 					<Card>
 						<Box p={3}>
-							<Typography>Sản phẩm bán chạy nhất</Typography>
+							<Typography>Top 5 sản phẩm bán chạy nhất</Typography>
 							<hr style={{ margin: "15px 0px" }}></hr>
 							<Grid container spacing={2}>
 								<Grid item xs={10}>
@@ -129,7 +193,7 @@ const Dashboard = () => {
 							<hr style={{ margin: "0 15px" }}></hr>
 							{dataTotal.listProductHot &&
 								dataTotal.listProductHot.map((item, idx) => (
-									<>
+									<div key={idx}>
 										<Grid container spacing={2} key={idx}>
 											<Grid item xs={10}>
 												<Typography mb={1}>{item.name}</Typography>
@@ -139,7 +203,7 @@ const Dashboard = () => {
 											</Grid>
 										</Grid>
 										<hr style={{ margin: "0 15px" }}></hr>
-									</>
+									</div>
 								))}
 						</Box>
 					</Card>

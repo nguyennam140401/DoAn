@@ -1,4 +1,4 @@
-import { Button, Dialog, TextField } from "@mui/material";
+import { Button, Dialog, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { getBase64 } from "common";
 import { removeEmpty } from "common";
@@ -86,6 +86,16 @@ const FormDetailPost = ({ isOpen, data = null, handleClose, formState }) => {
 						setFieldValue,
 					}) => (
 						<>
+							<Box mb={2}>
+								<Typography variant="h5">
+									{formState === FormStateEnum.Add
+										? "Thêm"
+										: formState === FormStateEnum.Edit
+										? "Cập nhật"
+										: "Chi tiết"}{" "}
+									bài viết
+								</Typography>
+							</Box>
 							<Box mb={2}>
 								<TextField
 									disabled={formState === FormStateEnum.View}

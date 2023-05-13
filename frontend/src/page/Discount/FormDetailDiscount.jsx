@@ -106,6 +106,16 @@ const FormDetailDiscount = ({
 					}) => (
 						<>
 							<Box mb={2}>
+								<Typography variant="h5">
+									{formState === FormStateEnum.Add
+										? "Thêm"
+										: formState === FormStateEnum.Edit
+										? "Cập nhật"
+										: "Chi tiết"}{" "}
+									phiếu giảm giá
+								</Typography>
+							</Box>
+							<Box mb={2}>
 								<TextField
 									disabled={formState === FormStateEnum.View}
 									fullWidth
@@ -159,6 +169,7 @@ const FormDetailDiscount = ({
 										Giảm giá theo
 									</InputLabel>
 									<Select
+										disabled={formState === FormStateEnum.View}
 										labelId="demo-multiple-name-label"
 										id="demo-multiple-name"
 										value={values.type}
@@ -183,7 +194,7 @@ const FormDetailDiscount = ({
 										<Typography>Ngày có hiệu lực</Typography>
 										<LocalizationProvider dateAdapter={AdapterDayjs}>
 											<DatePicker
-												// value={values.fromDate}
+												//value={values.fromDate}
 												onChange={(data) => setFieldValue("fromDate", data.$d)}
 											/>
 										</LocalizationProvider>

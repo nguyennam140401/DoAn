@@ -1,5 +1,7 @@
 import { Box, Button, Dialog, Grid, Typography } from "@mui/material";
+import { formatPrice } from "common";
 import CustomTable from "component/CustomTable";
+import { TypeDiscountVoucherEnum } from "enum/StatusEnum";
 import { StatusEnum } from "enum/StatusEnum";
 import React from "react";
 import { useDispatch } from "react-redux";
@@ -31,13 +33,19 @@ const FormDetailOrder = ({
 		},
 		{ label: "Danh mục", id: "category.name" },
 		{ label: "Số lượng", id: "quantity" },
+		{
+			label: "Giá trị",
+			id: "price",
+			Cell: ({ data }) => (
+				<>{formatPrice(data.option ? data.option.price : data.price)}</>
+			),
+		},
 	];
 	const updateOrder = (status) => {
 		const body = { ...detailOrder, status: status };
 		dispatch(
 			orderActions.updateOrder("", body, {
 				success: (res) => {
-					console.log(res);
 					handleReload();
 					handleClose();
 				},
@@ -90,6 +98,31 @@ const FormDetailOrder = ({
 										: detailOrder.status == StatusEnum.Success
 										? "Giao hàng thành công"
 										: "Đơn hàng đã bị hủy"}
+								</Typography>
+							</Grid>
+							<Grid item md={6} xs={12}>
+								<Typography>
+									Tổng giá trị:{" "}
+									{formatPrice(
+										detailOrder.products.reduce(
+											(pre, curr) => pre + curr.quantity * curr.productId.price,
+											0
+										)
+									)}
+								</Typography>
+							</Grid>
+							<Grid item md={6} xs={12}>
+								<Typography>
+									Giảm giá:{" "}
+									{detailOrder.discountId
+										? detailOrder.discountId.amount +
+										  `${
+												detailOrder.discountId.type ===
+												TypeDiscountVoucherEnum.Price
+													? "đ"
+													: "%"
+										  }`
+										: "Không có"}
 								</Typography>
 							</Grid>
 

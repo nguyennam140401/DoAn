@@ -14,6 +14,6 @@ export const CommonI18n = {
 		2: "Đang giao hàng",
 		3: "Hoàn thành",
 		4: "Từ chối",
-		5: "Đang giao hàng",
+		5: "Người dùng đã hủy",
 	},
 };

@@ -57,7 +57,7 @@ export default function CustomTable({
 	return isPending ? (
 		<TablePending />
 	) : data?.length > 0 ? (
-		<Paper sx={{ width: "100%", overflow: "hidden" }}>
+		<Paper sx={{ width: "100%", overflow: "hidden", marginTop: 2 }}>
 			<TableContainer sx={{ maxHeight: 600 }} {...props}>
 				<Table stickyHeader aria-label="sticky table">
 					<TableHead>

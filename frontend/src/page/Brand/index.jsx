@@ -10,6 +10,7 @@ import FormDetailBrand from "./FormDetailBrand";
 import { ConfirmContext } from "context/ConfirmContext";
 import { AlertContext } from "context/AlertContext";
 import { FormStateEnum } from "enum/StatusEnum";
+import queryString from "query-string";
 const Brand = () => {
 	const dispatch = useDispatch();
 	const [isOpenFormDetail, setIsOpenFormDetail] = useState(false);
@@ -72,9 +73,12 @@ const Brand = () => {
 			),
 		},
 	];
-	const handleGetBrands = () => {
+	const [query, setQuery] = useState({
+		populate: "",
+	});
+	const handleGetBrands = (data = query) => {
 		dispatch(
-			brandActions.getBrands("", {
+			brandActions.getBrands(queryString.stringify(data), {
 				success: (res) => {
 					console.log(res);
 				},
@@ -110,6 +114,7 @@ const Brand = () => {
 				handleGetData={handleGetBrands}
 				totalResults={brands.totalResults}
 				currentPage={brands.page}
+				queryProps={query}
 			></CustomTable>
 			<FormDetailBrand
 				isOpen={isOpenFormDetail}

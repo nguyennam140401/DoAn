@@ -7,6 +7,7 @@ import {
 	FormLabel,
 	Switch,
 	TextField,
+	Typography,
 } from "@mui/material";
 import { Box } from "@mui/system";
 import { Formik } from "formik";
@@ -83,6 +84,16 @@ const FormDetailRole = ({
 						setFieldValue,
 					}) => (
 						<>
+							<Box mb={2}>
+								<Typography variant="h5">
+									{!isEdit
+										? "Chi tiết"
+										: detailRole.id
+										? "Cập nhật"
+										: "Thêm mới"}{" "}
+									phân quyền
+								</Typography>
+							</Box>
 							<Box mb={2}>
 								<TextField
 									fullWidth

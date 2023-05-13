@@ -7,13 +7,17 @@ import {
 	Typography,
 } from "@mui/material";
 import { Formik } from "formik";
-import React from "react";
+import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import AccountActions from "../Redux/Actions/Account.actions";
+import { ConfirmContext } from "context/ConfirmContext";
+import { AlertContext } from "context/AlertContext";
 const Login = () => {
+	const { showConfirm } = useContext(ConfirmContext);
+	const { showAlert } = useContext(AlertContext);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const { t } = useTranslation();
@@ -35,6 +39,10 @@ const Login = () => {
 		await dispatch(
 			AccountActions.accountLogin(data, {
 				success: (res) => {
+					if (res.user.role === "user" || res.user.roleId === null) {
+						showAlert("error", "Tài  khoản không có quyền quản trị");
+						return;
+					}
 					localStorage.setItem("token", res.tokens.access.token);
 					localStorage.setItem("role", res.user.role);
 					localStorage.setItem("refreshtoken", res.tokens.refresh.token);
@@ -42,7 +50,9 @@ const Login = () => {
 					localStorage.setItem("user", JSON.stringify(res.user));
 					navigate("/");
 				},
-				failed: (res) => {},
+				failed: (err) => {
+					showAlert("error", "Tài khoản hoặc mật khẩu không đúng");
+				},
 			})
 		);
 	};

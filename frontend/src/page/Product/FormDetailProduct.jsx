@@ -185,6 +185,16 @@ const FormDetailProduct = ({
 					}) => (
 						<>
 							<Box mb={2}>
+								<Typography variant="h5">
+									{formState === FormStateEnum.Add
+										? "Thêm"
+										: formState === FormStateEnum.Edit
+										? "Cập nhật"
+										: "Chi tiết"}{" "}
+									sản phẩm
+								</Typography>
+							</Box>
+							<Box mb={2}>
 								<TextField
 									disabled={formState === FormStateEnum.View}
 									fullWidth
@@ -436,7 +446,7 @@ const FormDetailProduct = ({
 										></DetailParamInfo>
 									))}
 							</Box>
-							{formState !== FormStateEnum.View && (
+							{/* {formState !== FormStateEnum.View && (
 								<Box position={"relative"} mb={2} minHeight={30}>
 									<Box position={"absolute"} bottom={0} right={0}>
 										<IconButton
@@ -453,7 +463,7 @@ const FormDetailProduct = ({
 										</IconButton>
 									</Box>
 								</Box>
-							)}
+							)} */}
 							<Box
 								mb={2}
 								textAlign="center"
@@ -461,11 +471,11 @@ const FormDetailProduct = ({
 								display={"flex"}
 								justifyContent={"center"}
 							>
-								{formState !== FormStateEnum.Add && (
+								{/* {formState !== FormStateEnum.Add && (
 									<Button variant="contained" color="error" onClick={stopSold}>
 										Ngừng kinh doanh
 									</Button>
-								)}
+								)} */}
 								<Button
 									variant="contained"
 									onClick={() => {

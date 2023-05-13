@@ -10,8 +10,10 @@ import FormDetailAccount from "./FormDetailAccount";
 import { ConfirmContext } from "context/ConfirmContext";
 import { AlertContext } from "context/AlertContext";
 import queryString from "query-string";
+import { FormStateEnum } from "enum/StatusEnum";
 const Account = () => {
 	const dispatch = useDispatch();
+	const [formState, setFormState] = useState(FormStateEnum.View);
 	const [isOpenFormDetail, setIsOpenFormDetail] = useState(false);
 	const { accounts, isGetAccounts } = useSelector(
 		(state) => state.accountReducer
@@ -24,14 +26,18 @@ const Account = () => {
 	const { showConfirm } = useContext(ConfirmContext);
 	const { showAlert } = useContext(AlertContext);
 	const [currentAccount, setCurrentAccount] = useState(null);
-	const viewAction = (e, data) => {
-		setCurrentAccount(data);
+	const openForm = (formData, formState) => {
 		setIsOpenFormDetail(true);
+		setCurrentAccount(formData);
+		setFormState(formState);
+	};
+	const viewAction = (data) => {
+		openForm(data, FormStateEnum.View);
 	};
 	const editAction = (data) => {
-		setCurrentAccount(data);
-		setIsOpenFormDetail(true);
+		openForm(data, FormStateEnum.Edit);
 	};
+
 	const removeAction = (data) => {
 		showConfirm(
 			"Xác nhận xóa người dùng",
@@ -99,7 +105,12 @@ const Account = () => {
 		<LayoutAdmin>
 			<Typography variant="h4">Danh sách tài khoản</Typography>
 			<Box my={2} display="flex" justifyContent={"right"}>
-				<Button variant="contained" onClick={() => setIsOpenFormDetail(true)}>
+				<Button
+					variant="contained"
+					onClick={() => {
+						openForm(null, FormStateEnum.Add);
+					}}
+				>
 					Thêm mới
 				</Button>
 			</Box>
@@ -118,6 +129,7 @@ const Account = () => {
 					setCurrentAccount(null);
 				}}
 				data={currentAccount}
+				formState={formState}
 			/>
 		</LayoutAdmin>
 	);

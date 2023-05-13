@@ -1,4 +1,10 @@
-import { Autocomplete, Button, Dialog, TextField } from "@mui/material";
+import {
+	Autocomplete,
+	Button,
+	Dialog,
+	TextField,
+	Typography,
+} from "@mui/material";
 import { Box } from "@mui/system";
 import { removeEmpty } from "common";
 import { AlertContext } from "context/AlertContext";
@@ -127,15 +133,16 @@ const FormDetailAccount = ({
 						setFieldValue,
 					}) => (
 						<>
-							{/* <Box mb={2}>
-								<Select
-									defaultInputValue={values.role}
-									options={options}
-									onChange={(data) => {
-										setFieldValue("role", data.value);
-									}}
-								/>
-							</Box> */}
+							<Box mb={2}>
+								<Typography variant="h5">
+									{formState === FormStateEnum.Add
+										? "Thêm"
+										: formState === FormStateEnum.Edit
+										? "Cập nhật"
+										: "Chi tiết"}{" "}
+									tài khoản
+								</Typography>
+							</Box>
 							<Box mb={2}>
 								<Autocomplete
 									fullWidth
@@ -163,6 +170,7 @@ const FormDetailAccount = ({
 							<Box mb={2}>
 								<TextField
 									fullWidth
+									disabled={formState === FormStateEnum.View}
 									variant="outlined"
 									label="Tên tài khoản"
 									placeholder="Tên tài khoản"
@@ -177,6 +185,7 @@ const FormDetailAccount = ({
 							<Box mb={2}>
 								<TextField
 									fullWidth
+									disabled={formState === FormStateEnum.View}
 									variant="outlined"
 									label="Email"
 									placeholder="Email"
@@ -191,6 +200,7 @@ const FormDetailAccount = ({
 							<Box mb={2}>
 								<TextField
 									fullWidth
+									disabled={formState === FormStateEnum.View}
 									variant="outlined"
 									label="Mật khẩu"
 									placeholder="Mật khẩu"
@@ -205,6 +215,7 @@ const FormDetailAccount = ({
 							</Box>
 							<Box mb={2}>
 								<TextField
+									disabled={formState === FormStateEnum.View}
 									fullWidth
 									variant="outlined"
 									label="Xác nhận mật khẩu"

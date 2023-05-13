@@ -12,6 +12,7 @@ import { AlertContext } from "context/AlertContext";
 import "react-quill/dist/quill.snow.css";
 import { BASE_API } from "Services/ServiceURL";
 import { FormStateEnum } from "enum/StatusEnum";
+import { formatPrice } from "common";
 const Product = () => {
 	const dispatch = useDispatch();
 	const { products, isGetProducts } = useSelector(
@@ -70,15 +71,32 @@ const Product = () => {
 			),
 		},
 		{ label: "Danh mục", id: "category.name" },
-		{ label: "Đơn giá", id: "price" },
-		{ label: "Tồn kho", id: "inventory" },
 		{
-			label: "Trạng thái",
-			id: "isActive",
-			Cell: ({ data }) => (
-				<p>{data.isActive ? "Đang kinh doanh" : "Ngừng kinh doanh"}</p>
-			),
+			label: "Đơn giá",
+			Cell: ({ data }) => <span>{formatPrice(data.price)}</span>,
 		},
+		{
+			label: "Tồn kho",
+			id: "inventory",
+			// Cell: ({ data }) => (
+			// 	<span>
+			// 		{data.options
+			// 			? data.options.reduce((pre, curr) => pre + curr.inventory, 0)
+			// 			: data.inventory}
+			// 	</span>
+			// ),
+		},
+		{
+			label: "Số lượng bán",
+			id: "soldQuantity",
+		},
+		// {
+		// 	label: "Trạng thái",
+		// 	id: "isActive",
+		// 	Cell: ({ data }) => (
+		// 		<p>{data.isActive ? "Đang kinh doanh" : "Ngừng kinh doanh"}</p>
+		// 	),
+		// },
 		{
 			label: "Hành động",
 			Cell: ({ data }) => (

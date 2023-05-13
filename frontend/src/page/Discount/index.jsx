@@ -12,6 +12,7 @@ import { AlertContext } from "context/AlertContext";
 import { FormStateEnum } from "enum/StatusEnum";
 import { formatDate } from "common";
 import queryString from "query-string";
+import { TypeDiscountVoucherEnum } from "enum/StatusEnum";
 const Discount = () => {
 	const dispatch = useDispatch();
 	const [isOpenFormDetail, setIsOpenFormDetail] = useState(false);
@@ -67,7 +68,14 @@ const Discount = () => {
 		{
 			label: "Giá trị",
 			id: "quantity",
-			Cell: ({ data }) => <>{data.amount}</>,
+			Cell: ({ data }) => (
+				<>
+					{data
+						? data.amount +
+						  `${data.type === TypeDiscountVoucherEnum.Price ? "đ" : "%"}`
+						: "Không có"}
+				</>
+			),
 		},
 		{
 			label: "Thời hạn",
