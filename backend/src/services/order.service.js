@@ -3,6 +3,8 @@ const { EnumStatusOrder } = require('../common/enummeric');
 const { Order, Product, Discount } = require('../models');
 const ApiError = require('../utils/ApiError');
 const { productService } = require('.');
+const { sendEmail } = require('./email.service');
+const { createOrderTransfer } = require('./transfer.service');
 
 const createOrder = async (userId, orderBody) => {
   //Kiểm tra số lượng tồn trong kho
@@ -59,13 +61,16 @@ const createOrder = async (userId, orderBody) => {
         await productBuy.save(); // Lưu lại productBuy sau khi đã cập nhật giá trị cho optionBuy
       }
       try {
-        return await productBuy.save();
+        await productBuy.save();
+        return productBuy;
       } catch (error) {
         console.log(error);
       }
     })
   );
   order.products = arrProductAfterUpdate;
+  sendEmail('nguyennam140401@gmail.com', 'Thông báo đơn hàng', 'Bạn có một đơn hàng mới');
+  createOrderTransfer(order, arrProductAfterUpdate);
   return order;
 };
 const getOrders = async (filter, options) => {
@@ -75,7 +80,6 @@ const getOrders = async (filter, options) => {
 
 const updateStatusOrder = async (orderId, status) => {
   const order = await Order.findById(orderId);
-
   if (!order) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Không tìm thấy đơn hàng này');
   }

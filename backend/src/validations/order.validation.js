@@ -4,7 +4,7 @@ const { objectId } = require('./custom.validation');
 const createOrder = {
   body: Joi.object().keys({
     buyerName: Joi.string().required(),
-    note: Joi.string().required(),
+    note: Joi.string(),
     phoneNumber: Joi.string().required(),
     address: Joi.string().required(),
     products: Joi.array().items(

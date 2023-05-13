@@ -1,7 +1,8 @@
 const { Schema, model } = require('mongoose');
 const { EnumStatusOrder } = require('../common/enummeric');
-const { toJSON, paginate } = require('./plugins');
+const { paginate } = require('./plugins');
 const findByIdAndPopulate = require('./plugins/findByIdAndPopulate.plugin');
+const toJSONHaveTime = require('./plugins/toJSONHaveTime');
 
 const OrderScheam = new Schema(
   {
@@ -54,7 +55,7 @@ const OrderScheam = new Schema(
 );
 
 // add plugin that converts mongoose to json
-OrderScheam.plugin(toJSON);
+OrderScheam.plugin(toJSONHaveTime);
 OrderScheam.plugin(paginate);
 OrderScheam.plugin(findByIdAndPopulate);
 
